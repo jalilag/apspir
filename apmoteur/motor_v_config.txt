@@ -1,5 +1,4 @@
 Acceleration 1000000
 Deceleration 1000000
 QS_Deceleration 1000000
-Velocity_Inc 10000
 /** Fichier de configuration du moteur vitesse **/

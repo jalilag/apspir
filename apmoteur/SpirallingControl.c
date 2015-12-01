@@ -102,7 +102,7 @@ int main(int argc,char **argv) {
 	signal(SIGINT, catch_signal);
 
 // Chemin vers la librairie CANFESTIVAL
-    char* LibraryPath="../../drivers/can_socket/libcanfestival_can_socket.so";
+    char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
 
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)

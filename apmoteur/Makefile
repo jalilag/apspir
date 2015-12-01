@@ -40,17 +40,17 @@ TIMERS_DRIVER = timers_unix
 APMOTEUR = "SpirallingControl"
 FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o lsstools.o od_callback.o keyword.o motor.o errgen.o
 
-INCLUDES = -I../../include -I../../include/$(TARGET) -I../../include/$(CAN_DRIVER) -I../../include/$(TIMERS_DRIVER)
+INCLUDES = -I../include -I../include/$(TARGET) -I../include/$(CAN_DRIVER) -I../include/$(TIMERS_DRIVER)
 
 MASTER_OBJS = SpirallingMaster.o SpirallingControl.o $(FUNCVAR)
 
-OBJS = $(MASTER_OBJS) ../../src/libcanfestival.a ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a
+OBJS = $(MASTER_OBJS) ../src/libcanfestival.a ../drivers/$(TARGET)/libcanfestival_$(TARGET).a
 
 
 Debug: $(APMOTEUR)
 
-../../drivers/$(TARGET)/libcanfestival_$(TARGET).a:
-	$(MAKE) -C  ../../drivers/$(TARGET) libcanfestival_$(TARGET).a
+../drivers/$(TARGET)/libcanfestival_$(TARGET).a:
+	$(MAKE) -C  ../drivers/$(TARGET) libcanfestival_$(TARGET).a
 
 
 $(APMOTEUR): $(OBJS)
