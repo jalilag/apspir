@@ -59,7 +59,7 @@ $(APMOTEUR): $(OBJS)
 
 SpirallingMaster.c: SpirallingMaster.od
 	$(MAKE) -C /home/jalil/Documents/programmation/python/objedit/ gnosis
-	python /home/jalil/Documents/programmation/python/objedit/objdictgen.py SpirallingMaster.od SpirallingMaster.c
+	python ../objedit/objdictgen.py SpirallingMaster.od SpirallingMaster.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES)  -o $@ -c $<
