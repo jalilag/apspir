@@ -8,404 +8,429 @@
 #include "gui.h"
 #include "motor.h"
 #include <glib.h>
+#include "master.h"
+#include "gtksig.h"
 extern pthread_mutex_t lock_slave;
-extern SLAVES_conf slaves[SLAVE_NUMBER];
-extern INTEGER32 vel_inc_V;
+extern GMutex lock_gui, lock_err;
+extern int SLAVE_NUMBER, PROFILE_NUMBER, run_init;
 
-char* motor_v_fn = "motor_v_config.txt";
-char* motor_c_fn = "motor_c_config.txt";
-char* motor_r_fn = "motor_r_config.txt";
+extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
+extern PARAM pardata[PARAM_NUMBER];
+extern PARVAR vardata[VAR_NUMBER];
+/**
+* Configuration des esclaves
+* 0: Echec; 1 Reussite
+**/
+int slave_config(UNS8 nodeID) {
+    /* CONFIG COM */
+    if (!slave_config_com(nodeID)) return 0;
+    /* CONFIG FIXE */
+    if (!slave_config_with_file(nodeID)) return 0;
+    return 1;
+}
 
 /**
-* Série de configuration suite à la mise d'un noeud en état préop
-* Renvoie un nombre d'érreur, si 0 pas d'erreur
+* Configuration des paramètres de com
+* 0: Echec; 1 Reussite
 **/
-int slave_config(char* slave_id) {
-    UNS8 nodeID = slave_get_node_with_id(slave_id);
+static int slave_config_com(UNS8 nodeID) {
     /** ACTIVATION HEARTBEAT PRODUCER **/
     UNS16 heartbeat_prod = HB_PROD;
     SDOR hbprod = {0x1017,0x00,0x06};
-    int error = 0, i=0;
     if(!cantools_write_sdo(nodeID,hbprod,&heartbeat_prod)) {
-        errgen_set(ERR_SLAVE_CONFIG_HB);
+        errgen_set(ERR_SLAVE_CONFIG_HB,slave_get_title_with_node(nodeID));
         return 0;
     }
     /** CONFIGURATION PDOT **/
     // StatusWord, Error Code
     if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOT1);
+        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
     }
-    // Voltage, Temp, Polarity
+    // Voltage, Temp
     if(!cantools_PDO_map_config(nodeID,0x1A01,0x20150110,0x20180108,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOT2);
-        return 0;
-    }
-    // Velocity
-    if(!cantools_PDO_map_config(nodeID,0x1A02,0x606C0020,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOT3);
-        return 0;
-   }
-    /** CONFIGURATION PDOR **/
-    // Vitesse
-    if(!cantools_PDO_map_config(nodeID,0x1600,0x60FF0020,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOR1);
+        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
     }
     /** ACTIVATION DES PDOs **/
-    if (!cantools_PDO_trans(nodeID,0x1800,0xFF,0x05)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO);
+    if (!cantools_PDO_trans(nodeID,0x1800,0xFF,0x000A,0x0000)) {
+        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,0x05)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO);
+    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,0x1388,0x0000)) {
+        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    if (!cantools_PDO_trans(nodeID,0x1802,0xFF,0x00)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO);
+    if (!cantools_PDO_trans(nodeID,0x1802,0xFF,0x0000,0x0000)) {
+        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    /** FULL CURRENT **/
-    SDOR curAdd = {0x2204,0x00,0x05};
-    UNS8 cur = 0x64;
-    if (!cantools_write_sdo(nodeID,curAdd,&cur)) {
-        errgen_set(ERR_SLAVE_CONFIG_CURRENT);
-        return 0;
-    }
-    /** FILE CONFIG **/
-    FILE* motor_fn = NULL;
-    SDOR profAdd = {0x6060,0x00,0x02};
-    UNS8 prof=0;
-    if (slave_id == "vitesse" || slave_id == "vitesse_aux") {
-        motor_fn = fopen(motor_v_fn,"r");
-        prof = 3;
-    } else if (slave_id == "couple") {
-        motor_fn = fopen(motor_c_fn,"r");
-        prof = 4;
-    } else if (slave_id == "rotation") {
-        motor_fn = fopen(motor_r_fn,"r");
-        prof = 3;
-    }
-    if (!cantools_write_sdo(nodeID,profAdd,&prof)) {
-        errgen_set(ERR_SLAVE_CONFIG_PROFILE);
-        return 0;
-    }
-    if (motor_fn != NULL) {
-        char title[20];
-        int data;
-        while(fscanf(motor_fn, "%s %d",&title,&data) == 2) {
-            if (strcmp(title,"Max_Velocity") == 0) {
-                SDOR mvelAdd = {0x6081,0x00,0x07};
-                UNS32 mvel = (UNS32)data;
-                if (!cantools_write_sdo(nodeID,mvelAdd,&mvel)) {
-                    errgen_set(ERR_SLAVE_CONFIG_MAX_VELOCITY);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Acceleration") == 0) {
-                SDOR accAdd = {0x6083,0x00,0x07};
-                UNS32 acc = (UNS32)data;
-                if (!cantools_write_sdo(nodeID,accAdd,&acc)) {
-                    errgen_set(ERR_SLAVE_CONFIG_ACCELERATION);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Deceleration") ==0) {
-                SDOR dccAdd = {0x6084,0x00,0x07};
-                UNS32 dcc = (UNS32)data;
-                if (!cantools_write_sdo(nodeID,dccAdd,&dcc)) {
-                    errgen_set(ERR_SLAVE_CONFIG_DECELERATION);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"QS_Deceleration") ==0) {
-                SDOR qsdccAdd = {0x6085,0x00,0x07};
-                UNS32 qsdcc = (UNS32)data;
-                if (!cantools_write_sdo(nodeID,qsdccAdd,&qsdcc)) {
-                    errgen_set(ERR_SLAVE_CONFIG_DECELERATION_QS);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Torque") ==0) {
-                SDOR torqueAdd = {0x6071,0x00,0x03};
-                INTEGER16 torque = (INTEGER16)data;
-                if (!cantools_write_sdo(nodeID,torqueAdd,&torque)) {
-                    errgen_set(ERR_SLAVE_CONFIG_TORQUE);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Torque_Slope") ==0) {
-                SDOR tslopeAdd = {0x6087,0x00,0x07};
-                UNS32 tslope = (UNS32)data;
-                if (!cantools_write_sdo(nodeID,tslopeAdd,&tslope)) {
-                    errgen_set(ERR_SLAVE_CONFIG_TORQUE_SLOPE);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Torque_Velocity") ==0) {
-                SDOR tmvelAdd = {0x2704,0x00,0x05};
-                UNS8 tmvel = (UNS8)data;
-                if (!cantools_write_sdo(nodeID,tmvelAdd,&tmvel)) {
-                    errgen_set(ERR_SLAVE_CONFIG_TORQUE_MAX_VELOCITY);
-                    return 0;
-                }
-            }
-            if (strcmp(title,"Velocity_Inc") ==0) {
-                vel_inc_V = (INTEGER32)data;
-            }
-        }
-        fclose(motor_fn);
-    } else {
+    if (!cantools_PDO_trans(nodeID,0x1803,0xFF,0x0000,0x0000)) {
+        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
     return 1;
 }
 /**
-* Affiche les paramètres
+* Configuration des esclaves à partir du fichier profile correspondant
+* 0: Echec; 1 Reussite
 **/
-int slave_load_config() {
-    INTEGER32 vali32 = 0;
-    SDOR acc_ad = {0x6083,0x00,0x07};
-    SDOR dcc_ad = {0x6084,0x00,0x07};
-    SDOR qsdcc_ad = {0x6085,0x00,0x07};
-    SDOR torque_ad = {0x6071,0x00,0x03};
-    SDOR torqueSlope_ad = {0x6087,0x00,0x07};
-    int i = 0;
-    UNS32 datu32;
-    UNS8 nodeID;
-    for (i=0;i<SLAVE_NUMBER;i++) {
-        nodeID = slave_get_node_with_index(i);
-        if (slave_get_id_with_index(i) == "vitesse") {
-            /** Moteur Vitesse **/
-            // Acceleration
-            if (!cantools_read_sdo(nodeID,acc_ad,&datu32)) {
-                errgen_set(ERR_LOAD_ACCELERATION);
-                return 0;
+int slave_config_with_file(UNS8 nodeID) {
+    FILE* motor_fn = fopen(slave_get_profile_filename(slave_get_profile_with_node(nodeID)),"r");
+    if (motor_fn != NULL) {
+        UNS32 datu32;
+        INTEGER32 dati32;
+        char title[20];
+        int k;
+        UNS32 pdot3[8]={0},pdot4[8]={0},pdor1[8]={0},pdor2[8]={0},pdor3[8]={0},pdor4[8]={0};
+        int p1=0,p2=0,p3=0,p4=0,p5=0,p6=0;
+        char chaine[1024] = "";
+        while(fgets(chaine,1024,motor_fn) != NULL) {
+            if (sscanf(chaine,"%19s ; ",title) == 1) {
+                if (strcmp(title,"Pdor1") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdor1[p1]=(UNS32)datu32; p1++;}
+                } else if (strcmp(title,"Pdor2") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdor2[p2]=(UNS32)datu32; p2++;}
+                } else if (strcmp(title,"Pdor3") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdor3[p3]=(UNS32)datu32; p3++;}
+                } else if (strcmp(title,"Pdor4") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdor4[p4]=(UNS32)datu32; p4++;}
+                } else if (strcmp(title,"Pdot3") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdot3[p5]=(UNS32)datu32; p5++;}
+                } else if (strcmp(title,"Pdot4") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {pdot4[p6]=(UNS32)datu32; p6++;}
+                } else if (strcmp(title,"Velinc") == 0) {
+                    if (sscanf(chaine,"%19s ; %d",title,&dati32) == 2) slave_set_param("Velinc",slave_get_index_with_node(nodeID),dati32);
+                } else if (strcmp(title,"TorqueHmtActive") == 0 || strcmp(title,"TorqueHmtControl") == 0) {
+                    if (sscanf(chaine,"%19s ; %x",title,&datu32) == 2) {
+                        if(!motor_set_param(nodeID,title,(INTEGER32)datu32)) {
+                            printf("title %19s data %x\n",title,datu32); exit(1);
+                            return 0;
+                        }
+                    }
+                } else {
+                    if (sscanf(chaine,"%19s ; %d",title,&dati32) == 2) {
+                        if(!motor_set_param(nodeID,title,(INTEGER32)dati32)) {
+                            printf("title %s data %d\n",title,dati32); exit(1);
+                            return 0;
+                        }
+                    }
+                }
             }
-            vali32 = datu32;
-            gui_entry_set("entParamMVelAcc",strtools_gnum2str(&vali32,0x04));
-            // Deceleration
-            if (!cantools_read_sdo(nodeID,dcc_ad,&datu32)) {
-                errgen_set(ERR_LOAD_DECELERATION);
-                return 0;
-            }
-            vali32 = datu32;
-            gui_entry_set("entParamMVelDcc",strtools_gnum2str(&vali32,0x04));
-            // QS Deceleration
-            if (!cantools_read_sdo(nodeID,qsdcc_ad,&datu32)) {
-                errgen_set(ERR_LOAD_DECELERATION_QS);
-                return 0;
-            }
-            vali32 = datu32;
-            gui_entry_set("entParamMVelDccqs",strtools_gnum2str(&vali32,0x04));
-            // Vel inc
-            gui_entry_set("entParamMVelVelinc",strtools_gnum2str(&vel_inc_V,0x04));
         }
-        if (slave_get_id_with_index(i) == "couple") {
-            /** Moteur Couple **/
-            INTEGER16 dati16;
-            // Torque
-            if (!cantools_read_sdo(nodeID,torque_ad,&dati16)) {
-                errgen_set(ERR_LOAD_TORQUE);
-                return 0;
-            }
-            gui_entry_set("entParamMCoupleCouple",strtools_gnum2str(&dati16,0x03));
-            // Torque Slope
-            if (!cantools_read_sdo(nodeID,torqueSlope_ad,&datu32)) {
-                errgen_set(ERR_LOAD_TORQUE_SLOPE);
-                return 0;
-            }
-            vali32 = (INTEGER32)datu32;
-            gui_entry_set("entParamMCoupleSlope",strtools_gnum2str(&vali32,0x04));
-        }
-    }
-    return 1;
-}
-
-int slave_save_config(int gen_config) {
-    INTEGER32 vali32 = 0;
-    INTEGER16 vali16 = 0;
-    UNS32 datu32;
-    SDOR acc_ad = {0x6083,0x00,0x07};
-    SDOR dcc_ad = {0x6084,0x00,0x07};
-    SDOR qsdcc_ad = {0x6085,0x00,0x07};
-    SDOR torque_ad = {0x6071,0x00,0x03};
-    SDOR torqueSlope_ad = {0x6087,0x00,0x07};
-    UNS8 nodeID;
-    int i;
-    for (i=0;i<SLAVE_NUMBER;i++) {
-        nodeID = slave_get_node_with_index(i);
-        if (slave_get_id_with_index(i) == "vitesse" || "vitesse_aux") {
-        /** Moteur Vitesse **/
-            // Acceleration
-            vali32 = (INTEGER32)gui_str2num(gui_entry_get("entParamMVelAcc"));
-            if (!motor_check_acceleration(vali32)) {
-                errgen_set(ERR_ACCELERATION_SET);
-                return 0;
-            }
-            datu32 = vali32;
-            char* strvelacc = strtools_concat("Acceleration ",gui_entry_get("entParamMVelAcc"),NULL);
-            if (!cantools_write_sdo(nodeID,acc_ad,&datu32)) {
-                errgen_set(ERR_ACCELERATION_SAVE);
-                return 0;
-            }
-            // Deceleration
-            vali32 = (INTEGER32)gui_str2num(gui_entry_get("entParamMVelDcc"));
-            if (!motor_check_acceleration(vali32)) {
-                errgen_set(ERR_ACCELERATION_SET);
-                return 0;
-            }
-            datu32 = vali32;
-            char* strveldcc = strtools_concat("Deceleration ",gui_entry_get("entParamMVelDcc"),NULL);
-            if (!cantools_write_sdo(nodeID,dcc_ad,&datu32)) {
-                errgen_set(ERR_DECELERATION_SAVE);
-                return 0;
-            }
-            // QS Deceleration
-            vali32 = (INTEGER32)gui_str2num(gui_entry_get("entParamMVelDccqs"));
-            if (!motor_check_acceleration(vali32)) {
-                errgen_set(ERR_ACCELERATION_SET);
-                return 0;
-            }
-            datu32 = vali32;
-            char* strveldccqs = strtools_concat("QS_Deceleration ",gui_entry_get("entParamMVelDccqs"),NULL);
-            if (!cantools_write_sdo(nodeID,qsdcc_ad,&datu32)) {
-                errgen_set(ERR_DECELERATION_QS_SAVE);
-                return 0;
-            }
-            // Vel inc
-            vel_inc_V = (INTEGER32)gui_str2num(gui_entry_get("entParamMVelVelinc"));
-            if (!motor_check_velocity(vel_inc_V)) {
-                errgen_set(ERR_VELOCITY_SET);
-                return 0;
-            }
-            char* strvelvelinc = strtools_concat("Velocity_Inc ",gui_entry_get("entParamMVelVelinc"),NULL);
-            // Sauvegarde des fichiers
-            if (gen_config) {
-                if (!slave_gen_config_file("vitesse",strvelacc,strveldcc,strveldccqs,strvelvelinc,NULL)){
-                    errgen_set(ERR_SAVE_FILE_GEN);
+        void* pdor[4]= {&pdor1,&pdor2,&pdor3,&pdor4};
+        int i;
+        for (i=0; i<4; i++) {
+            UNS32 *data = *(pdor+i);
+            if (data[0] != 0) {
+                if(!cantools_PDO_map_config(nodeID,0x1600+i,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],0)) {
+                    errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+                    return 0;
+                }
+                if (!cantools_PDO_trans(nodeID,0x1400+i,0xFF,0x0000,0x0000)) {
+                    errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
                     return 0;
                 }
             }
         }
-        if (slave_get_id_with_index(i) == "couple") {
-        /** Moteur Vitesse **/
-            // Torque
-            vali16 = (INTEGER16)gui_str2num(gui_entry_get("entParamMCoupleCouple"));
-            if (!motor_check_torque(vali16)) {
-                errgen_set(ERR_TORQUE_SET);
-                return 0;
-            }
-            char* strcouple = strtools_concat("Torque ",gui_entry_get("entParamMCoupleCouple"),NULL);
-            if (!cantools_write_sdo(nodeID,torque_ad,&vali16)) {
-                errgen_set(ERR_TORQUE_SAVE);
-                return 0;
-            }
-            // Torque Slope
-            vali32 = (INTEGER32)gui_str2num(gui_entry_get("entParamMCoupleSlope"));
-            if (!motor_check_torque_slope(vali32)) {
-                errgen_set(ERR_TORQUE_SLOPE_SET);
-                return 0;
-            }
-
-            datu32 = vali32;
-            char* strcoupleslope = strtools_concat("Torque_Slope ",gui_entry_get("entParamMCoupleSlope"),NULL);
-            if (!cantools_write_sdo(nodeID,torqueSlope_ad,&datu32)) {
-                errgen_set(ERR_TORQUE_SLOPE_SAVE);
-                return 0;
-            }
-
-            if (gen_config) {
-                if (!slave_gen_config_file("couple",strcouple,strcoupleslope,NULL)){
-                    errgen_set(ERR_SAVE_FILE_GEN);
+        void* pdot[2]= {&pdot3,&pdot4};
+        for (i=0; i<2; i++) {
+            INTEGER32 *data = *(pdot+i);
+            if (data[0] != 0) {
+                if(!cantools_PDO_map_config(nodeID,0x1A00+2+i,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],0)) {
+                    errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+                    return 0;
+                }
+                if (!cantools_PDO_trans(nodeID,0x1800+2+i,0xFF,0x0000,0x0000)) {
+                    errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
                     return 0;
                 }
             }
         }
-    }
-    return 1;
-}
-
-/** VERIFICATION DES FICHIERS DE CONFIGURATIONS **/
-int slave_check_config_file(char* slave_id) {
-    FILE* f = NULL;
-    if (slave_id == "vitesse") {
-        f = fopen(motor_v_fn,"r");
-        if (f != NULL) {
-            char title[20];
-            int data;
-            int i = 0;
-            while(fscanf(f, "%s %d",&title,&data) == 2) {
-                if (strcmp(title,"Acceleration") == 0) i++;
-                if (strcmp(title,"Deceleration") == 0) i++;
-                if (strcmp(title,"QS_Deceleration") == 0) i++;
-                if (strcmp(title,"Velocity_Inc") == 0) i++;
-            }
-            fclose(f);
-            if (i == 4) return 1;
-            else return 0;
-        } else return 0;
-    } else if (slave_id == "couple") {
-        f = fopen(motor_c_fn,"r");
-        if (f != NULL) {
-            char title[20];
-            int data;
-            int i = 0;
-            while(fscanf(f, "%s %d",&title,&data) == 2) {
-                if (strcmp(title,"Torque") == 0) i++;
-                if (strcmp(title,"Torque_Slope") == 0) i++;
-            }
-            fclose(f);
-            if (i == 2) return 1;
-            else return 0;
-        } else return 0;
-    } else if (slave_id == "rotation") {
-        f = fopen(motor_r_fn,"r");
-        if (f != NULL) {
-            char title[20];
-            int data;
-            int i = 0;
-            while(fscanf(f, "%s %d",&title,&data) == 2) {
-                if (strcmp(title,"Acceleration") == 0) i++;
-                if (strcmp(title,"Deceleration") == 0) i++;
-                if (strcmp(title,"QS_Deceleration") == 0) i++;
-            }
-            fclose(f);
-            if (i == 3) return 1;
-            else return 0;
-        } else return 0;
-    }
-    return 0;
-}
-
-/** Generation des fichiers de configuration **/
-int slave_gen_config_file(char* slave_id, ...) {
-    FILE * f = NULL;
-    va_list ap;
-    va_start(ap,slave_id);
-    char *arg = va_arg(ap,char*);
-    if (slave_id == "vitesse") f = fopen(motor_v_fn,  "w+");
-    else if (slave_id == "couple") f = fopen(motor_c_fn,  "w+");
-    else if (slave_id == "rotation") f = fopen(motor_r_fn,  "w+");
-    else return 0;
-    if (f != NULL) {
-        char* res = "";
-        while ( arg != NULL) {
-            res = strtools_concat(res,arg,"\n",NULL);
-            arg = va_arg(ap,char*);
-        }
-        res = strtools_concat(res,"/** Fichier de configuration du moteur ",slave_id," **/",NULL);
-        va_end(ap);
-        fputs(res,f);
-        fclose(f);
-        return 1;
+        fclose(motor_fn);
     } else {
-        printf("Le fichier ne s'ouvre pas");
+        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(slave_get_profile_with_node(nodeID)));
         return 0;
     }
+    return 1;
 }
+/**
+* Génération du grid state
+**/
+gboolean slave_gui_load_state(gpointer data) {
+    int i,j,k;
+    char* key;
+    GtkGrid* grid = gui_get_grid("gridState");
+    GtkWidget* lab = gui_create_widget("lab","labStateTitle",STATUT_TITLE,"h1","black",NULL);
+    gtk_widget_set_hexpand(lab,TRUE);
+    gtk_grid_attach (grid, lab, 0, 0, SLAVE_NUMBER+1, 1);
+    j=0;
+    char* dat2plot[9] = {"SlaveTitle","StateImg","State","StateError","Power","PowerError","Volt","Temp",NULL};
+    for (i=0;i<SLAVE_NUMBER;i++) {
+        j++; k=0;
+        while (dat2plot[k] != NULL) {
+            if (dat2plot[k] == "SlaveTitle") key = strtools_concat(slave_get_param_in_char("SlaveTitle",i),"\n",slave_get_param_in_char("SlaveProfile",i),NULL);
+            else key = DEFAULT;
+            GtkWidget* lab = gui_create_widget("lab",strtools_concat("labM",strtools_gnum2str(&j,0x02),dat2plot[k],NULL),key,"cell",NULL);
+            if (dat2plot[k] == "StateImg") {
+                lab = gui_create_widget("img",strtools_concat("imgM",strtools_gnum2str(&j,0x02),dat2plot[k],NULL),slave_get_param_in_char("StateImg",i),"cell",NULL);
+            }
+            gtk_grid_attach (grid, lab, i+1, k+1, 1, 1);
+            if (i == SLAVE_NUMBER-1) gtk_widget_set_margin_right (lab,3);
+            if (dat2plot[k] == "State") {
+                gtk_style_context_add_class (gtk_widget_get_style_context(lab), "cellTop");
+                gtk_style_context_add_class (gtk_widget_get_style_context(lab), "bold");
+            }
+            if (dat2plot[k] == "SlaveTitle") {
+                gtk_style_context_add_class (gtk_widget_get_style_context(lab), "bold");
+                gtk_label_set_justify(GTK_LABEL(lab), GTK_JUSTIFY_CENTER);
+                if (slave_get_param_in_num("SlaveProfile",i) == 0)
+                    gtk_style_context_add_class (gtk_widget_get_style_context(lab), "green");
+                else if (slave_get_param_in_num("SlaveProfile",i) == 1)
+                    gtk_style_context_add_class (gtk_widget_get_style_context(lab), "purple");
+            }
+            k++;
+        }
+        GtkGrid* grid2 = GTK_GRID(gtk_grid_new());
+        gtk_grid_attach (grid, GTK_WIDGET(grid2), i+1, k+1, 1, 1);
+        gtk_widget_set_halign(GTK_WIDGET(grid2),GTK_ALIGN_FILL);
+        gtk_widget_set_hexpand(GTK_WIDGET(grid2),TRUE);
+        GtkWidget* but = gui_create_widget("but",strtools_concat("butActive",strtools_gnum2str(&j,0x02),NULL),NULL,"stdButton2","butRed",NULL);
+        gtk_button_set_image(GTK_BUTTON(but),GTK_WIDGET(gtk_image_new_from_icon_name("user-offline",GTK_ICON_SIZE_DND)));
+        GtkWidget* but2 = gui_create_widget("but",strtools_concat("butHelp",strtools_gnum2str(&j,0x02),NULL),NULL,"stdButton2","butBlack",NULL);
+        gtk_button_set_image(GTK_BUTTON(but2),GTK_WIDGET(gtk_image_new_from_file("images/lock.png")));
+        gtk_widget_set_halign(but,GTK_ALIGN_CENTER);
+        gtk_widget_set_halign(but2,GTK_ALIGN_CENTER);
+        gtk_widget_set_hexpand(but,TRUE);
+        gtk_widget_set_hexpand(but2,TRUE);
+        gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid2)), "cell");
+        gtk_grid_attach (grid2, but, 0, 0, 1, 1);
+        gtk_grid_attach (grid2, but2, 1, 0, 1, 1);
+        g_signal_connect (G_OBJECT(but), "clicked", G_CALLBACK (on_butActive_clicked),&slaves[i].node);
+        g_signal_connect (G_OBJECT(but2), "clicked", G_CALLBACK (on_butFree_clicked),&slaves[i].node);
+    }
 
+    gtk_widget_show_all (gui_get_widget("mainWindow"));
+}
+/** Generation de la page param **/
+int slave_gui_param_gen(int ind) {
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor"));
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
+    if (ind == 0) {
+        // grid
+        GtkGrid* grid = gui_local_grid_set("gridMotor",MOTOR_PARAM_TITLE,6,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        // but add
+        GtkWidget* lab = gui_create_widget("but","butAddSlave",ADD);
+        gtk_button_set_image(GTK_BUTTON(lab),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+        gtk_grid_attach(grid,lab,5,1,1,1);
+        g_signal_connect (G_OBJECT(lab), "clicked", G_CALLBACK (on_butAddSlave_clicked),NULL);
+        // but del
+        GtkWidget* lab2 = gui_create_widget("but","butDelSlave",REMOVE);
+        gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_grid_attach(grid,lab2,0,1,1,1);
+        g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butDelSlave_clicked),NULL);
+        //list to del
+        GtkWidget* combdel = gui_create_widget("combo","listDel",NULL,NULL);
+        gtk_grid_attach(grid,combdel,1,1,1,1);
+        char* labtxt[7] = {"SlaveTitle","Vendor","Product","Revision","Serial","SlaveProfile",NULL};
+        int i;
+        for (i=0;i<6;i++) {
+            GtkWidget* lab = gui_create_widget("lab",strtools_concat("labParamM",labtxt[i],NULL),
+                slave_get_param_title(labtxt[i]),"bold",NULL);
+            gtk_grid_attach(grid,lab,i,2,1,1);
+        }
+        int j,k,l;
+        for (i=0;i<SLAVE_NUMBER;i++) {
+            j=i+1;
+            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combdel),strtools_gnum2str(&j,0x02),strtools_concat(NODE," : ",strtools_gnum2str(&j,0x02),NULL));
+            for (k=0;k<5;k++) {
+                GtkWidget* lab = gui_create_widget("ent",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),
+                    labtxt[k],NULL),slave_get_param_in_char(labtxt[k],i),NULL);
+                gtk_grid_attach(grid,lab,k,i+3,1,1);
+            }
+            GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
+            for (l=0; l<PROFILE_NUMBER;l++) {
+                gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),slave_profile[l].title);
+            }
+            gtk_grid_attach(grid,comb,5,i+3,1,1);
+            gtk_combo_box_set_active (GTK_COMBO_BOX(comb), slave_get_profile_with_index(i));
+        }
+    } else if (ind == 1){
+        GtkGrid* grid = gui_local_grid_set("gridProfile",MOTOR_PARAM_TITLE,4,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        GtkWidget* comb = gui_create_widget("combo","listProfile",NULL,NULL);
+        gtk_grid_attach(grid,comb,0,1,1,1);
+        int i;
+        for (i=0; i<PROFILE_NUMBER; i++) {
+            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),slave_profile[i].title);
+        }
+        g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
+    }
+    gtk_widget_show_all(gui_get_widget("boxParam"));
+}
+/**
+* Definition des esclaves
+**/
+int slave_read_definition() {
+    FILE* fslave = fopen(FILE_SLAVE_CONFIG,"r");
+    if (fslave != NULL) {
+        char chaine[1024] = "";
+        char title1[20],title2[20];
+        UNS32 vendor,product,revision,serial;
+        int profile,i1=0, i2=0;
+        while(fgets(chaine,1024,fslave) != NULL) {
+            if (sscanf(chaine,"--%19s ; %x ; %x ; %x ; %x ; %d",title1,&vendor,&product,&revision,&serial,&profile) == 6) {
+                slaves[i1].node = (UNS8)i1 + 0x02;
+                slaves[i1].title = g_strdup(title1);
+                slaves[i1].vendor = vendor;
+                slaves[i1].product = product;
+                slaves[i1].revision = revision;
+                slaves[i1].serial = serial;
+                slaves[i1].active = 1;
+                slaves[i1].profile = profile;
+                slaves[i1].state = 0;
+                slaves[i1].state_error = 0;
+                i1++;
+            }
+            if (sscanf(chaine,"##%19s",title2) == 1){
+                slave_profile[i2].title = g_strdup(title2);
+                i2++;
+            }
+        }
+        SLAVE_NUMBER = i1;
+        PROFILE_NUMBER = i2;
+        fclose(fslave);
+        if (i1 == 0 || i2 == 0) return 0;
+    } else {
+        errgen_set(ERR_FILE_OPEN,FILE_SLAVE_CONFIG);
+        return 0;
+    }
+    return 1;
+}
+int slave_save_param (int index) {
+    if (index == 0) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor");
+        int i = 3,j,k,l;
+        char* labtxt[7] = {"SlaveTitle","Vendor","Product","Revision","Serial","SlaveProfile",NULL};
+        char* str2build="";
+        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+            str2build = strtools_concat(str2build,"--",NULL);
+            j=i-2;
+            for (k=0;k<5;k++) {
+                const char* key = gtk_entry_get_text(GTK_ENTRY(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),labtxt[k],NULL))));
+                if (key == NULL) {
+                    free(str2build);
+                    return 0;
+                }
+                str2build = strtools_concat(str2build,(char*)key, " ; ",NULL);
+            }
+            l = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL))));
+            if (l == -1) {
+                free(str2build);
+                return 0;
+            }
+            str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
+            i++;
+        }
+        if (PROFILE_NUMBER > 0)
+            for (i=0; i<PROFILE_NUMBER; i++)
+                str2build = strtools_concat(str2build,"##",slave_profile[i].title, "\n",NULL);
+        else
+            str2build = strtools_concat(str2build,"##Translation\n##Rotation\n##Libre",NULL);
+        if (!strtools_build_file(FILE_SLAVE_CONFIG,str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        gui_widget2hide("windowParams",NULL);
+        if (run_init == -1) {
+            if (!slave_read_definition()) {
+                run_init = 0;
+                errgen_set(ERR_FILE_PROFILE,slave_get_profile_filename(i));
+            }
+            run_init = 1;
+        } else {
+            gui_info_box(RESET_APPLICATION_TITLE,RESET_APPLICATION_CONTENT,NULL);
+            Exit(1);
+            execlp("./SpirallingControl","SpirallingControl",NULL);
+        }
+    } else if (index == 1) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile");
+        char* str2build="";
+        int i=3,data,j;
+        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+            j=i-2;
+            const char* key = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i));
+            const char* key2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+            if (key == NULL ) {
+                if (str2build != "") free(str2build);
+                return 0;
+            }
+            if ( gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0)
+                return 0;
+            if (sscanf(key,"labParamP%d_",&data) == 1) {
+                str2build = strtools_concat(str2build,pardata[data].gui_code, " ; ",key2,"\n",NULL);
+            }
+            i++;
+        }
+        int ind = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(gui_get_widget("boxParam"),"listProfile")));
+        if(!strtools_build_file(slave_get_profile_filename(ind),str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        gui_widget2hide("windowParams",NULL);
+        gui_info_box(SAVE,SAVE_SUCCESS,NULL);
+        for (i=0; i<SLAVE_NUMBER;i++) {
+            if (slave_get_param_in_num("SlaveProfile",i) == ind)
+                slave_set_param("State",i,STATE_PREOP);
+        }
+        return 1;
+    }
+}
+/**
+* Check des fichiers profils
+**/
+int slave_check_profile_file(int profId) {
+    int i,j=0,res;
+    FILE *f = fopen(slave_get_profile_filename(profId),"r");
+    if (f != NULL) {
+        char title[20];
+        int data;
+        char chaine[1024]="";
+        while(fgets(chaine,1024,f) != NULL) {
+            if (sscanf(chaine,"%19s ; %d",title,&data) == 2) j++;
+                res = 0;
+                for (i=0; i<PARAM_NUMBER; i++)
+                    if (strcmp(pardata[i].gui_code,title) == 0 ) res = 1;
+                if (res == 0) {
+                    j = 0;
+                    errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,slave_get_profile_filename(profId));
+                }
+        }
+        fclose(f);
+        if (j > 0) return 1;
+        else {
+            strtools_build_file(slave_get_profile_filename(profId)," ");
+            errgen_set(ERR_FILE_EMPTY,slave_get_profile_filename(profId));
+        }
+    } else {
+        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(profId));
+        if (!strtools_build_file(slave_get_profile_filename(profId)," ")) {
+            errgen_set(ERR_FILE_GEN,slave_get_profile_filename(profId));
+            return 0;
+        }
+    }
+    return 1;
+}
 
 /**
 * Retourne node en fonction de i
@@ -421,25 +446,24 @@ UNS8 slave_get_node_with_index(int i) {
     }
 }
 /**
-* Retourne node en fonction de id
+* Retourne node en fonction du profil
+* Attention plusieurs noeuds peuvent avoir le meme profil
 **/
-UNS8 slave_get_node_with_id(char* id) {
-    int i,res = -1;
+UNS8 slave_get_node_with_profile(int profInd) {
+    int i;
+    UNS8 res = 0x00;
     pthread_mutex_lock (&lock_slave);
     for (i=0; i<SLAVE_NUMBER; i++) {
-        if (slaves[i].id == id) res=i;
+        if (slaves[i].profile == profInd)
+            res=slaves[i].node;
     }
     pthread_mutex_unlock (&lock_slave);
-    if (res == -1) {
-        printf("ERREUR ID %s non trouvé",id);
-        exit(EXIT_FAILURE);
-    } else
-        return slaves[res].node;
+    return res;
 }
 /**
 * Retourne state en fonction index
 **/
-int slave_get_state_with_index(int i) {
+static int slave_get_state_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state;
@@ -449,20 +473,11 @@ int slave_get_state_with_index(int i) {
         printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
-/**
-* Retourne state en fonction id
-**/
-int slave_get_state_with_id(char* slave_id) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    int dat = slaves[i].state;
-    pthread_mutex_unlock (&lock_slave);
-    return dat;
-}
+
 /**
 * Affectation du state en fonction index
 **/
-void slave_set_state_with_index(int i, int dat) {
+static void slave_set_state_with_index(int i, int dat) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         slaves[i].state = dat;
@@ -472,18 +487,9 @@ void slave_set_state_with_index(int i, int dat) {
     }
 }
 /**
-* Affectation du state en fonction id
-**/
-void slave_set_state_with_id(char* slave_id, int dat) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    slaves[i].state = dat;
-    pthread_mutex_unlock (&lock_slave);
-}
-/**
 * Retourne stateerror en fonction index
 **/
-int slave_get_state_error_with_index(int i) {
+static int slave_get_state_error_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state_error;
@@ -495,19 +501,9 @@ int slave_get_state_error_with_index(int i) {
     }
 }
 /**
-* Retourne stateerror en fonction id
-**/
-int slave_get_state_error_with_id(char* slave_id) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    int dat = slaves[i].state_error;
-    pthread_mutex_unlock (&lock_slave);
-    return dat;
-}
-/**
 * Affectation du state_error en fonction de l'index
 **/
-void slave_set_state_error_with_index (int i, int dat) {
+static void slave_set_state_error_with_index (int i, int dat) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         slaves[i].state_error = dat;
@@ -517,61 +513,28 @@ void slave_set_state_error_with_index (int i, int dat) {
         exit(EXIT_FAILURE);
     }
 }
-/**
-* Affectation du state_error en fonction de l'index
-**/
-void slave_set_state_error_with_id (char* slave_id, int dat) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    slaves[i].state_error = dat;
-    pthread_mutex_unlock (&lock_slave);
-}
-/**
-* Retourne powerstate en fonction de l'index
-**/
-UNS16 slave_get_powerstate_with_index(int i) {
+
+
+static void slave_set_active_with_index(int i, int var) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
-        UNS16 dat = slaves[i].powerstate;
+        slaves[i].active = var;
         pthread_mutex_unlock (&lock_slave);
-        return dat;
     } else {
-        printf("Index trop grand : %d",i);
-        exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
-/**
-* Retourne powerstate en fonction de l'id
-**/
-UNS16 slave_get_powerstate_with_id(char* slave_id) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    UNS16 dat = slaves[i].powerstate;
-    pthread_mutex_unlock (&lock_slave);
-    return dat;
-}
-/**
-* Affectation du powerstate en fonction de l'index
-**/
-void slave_set_powerstate_with_index (int i, int dat) {
+static int slave_get_active_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
-        slaves[i].powerstate = dat;
+        int var = slaves[i].active;
         pthread_mutex_unlock (&lock_slave);
+        return var;
     } else {
-        printf("Index trop grand : %d",i);
-        exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
-/**
-* Affectation du powerstate en fonction de l'id
-**/
-void slave_set_powerstate_with_id (char* slave_id, int dat) {
-    int i = slave_get_index_with_id(slave_id);
-    pthread_mutex_lock (&lock_slave);
-    slaves[i].powerstate = dat;
-    pthread_mutex_unlock (&lock_slave);
-}
+
 /**
 * Retourne index en fonction du nodeID
 **/
@@ -590,30 +553,13 @@ int slave_get_index_with_node(UNS8 nodeID) {
     }
 }
 /**
-* Retourne index en fonction de ID
+* retourne profile en fonction de l'index
 **/
-int slave_get_index_with_id(char* slave_id) {
-    int i,res = -1;
-    pthread_mutex_lock (&lock_slave);
-    for (i=0; i<SLAVE_NUMBER; i++) {
-        if (slaves[i].id == slave_id) res=i;
-    }
-    pthread_mutex_unlock (&lock_slave);
-    if (res != -1)
-        return res;
-    else {
-        printf("Slave id introuvable : %s",slave_id);
-        exit(EXIT_FAILURE);
-    }
-}
-/**
-* retourne id en fonction de l'index
-**/
-char* slave_get_id_with_index(int i) {
+int slave_get_profile_with_index(int i) {
     if (i<SLAVE_NUMBER) {
-        char* dat;
+        int dat;
         pthread_mutex_lock (&lock_slave);
-        dat = slaves[i].id;
+        dat = slaves[i].profile;
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
@@ -621,27 +567,106 @@ char* slave_get_id_with_index(int i) {
         exit(EXIT_FAILURE);
     }
 }
-/**
-* retourne id en fonction de l'index
+void slave_set_profile_with_index(int i, int dat) {
+    if (i<SLAVE_NUMBER) {
+        pthread_mutex_lock (&lock_slave);
+        slaves[i].profile = dat;
+        pthread_mutex_unlock (&lock_slave);
+    } else {
+        printf("Index trop grand : %d",i);
+        exit(EXIT_FAILURE);
+    }
+}
+static UNS32 slave_get_vendor_with_index(int i) {
+    if (i<SLAVE_NUMBER) {
+        UNS32 dat;
+        pthread_mutex_lock (&lock_slave);
+        dat = slaves[i].vendor;
+        pthread_mutex_unlock (&lock_slave);
+        return dat;
+    } else {
+        printf("Index trop grand : %d",i);
+        exit(EXIT_FAILURE);
+    }
+}
+static UNS32 slave_get_product_with_index(int i) {
+    if (i<SLAVE_NUMBER) {
+        UNS32 dat;
+        pthread_mutex_lock (&lock_slave);
+        dat = slaves[i].product;
+        pthread_mutex_unlock (&lock_slave);
+        return dat;
+    } else {
+        printf("Index trop grand : %d",i);
+        exit(EXIT_FAILURE);
+    }
+}
+static UNS32 slave_get_revision_with_index(int i) {
+    if (i<SLAVE_NUMBER) {
+        UNS32 dat;
+        pthread_mutex_lock (&lock_slave);
+        dat = slaves[i].revision;
+        pthread_mutex_unlock (&lock_slave);
+        return dat;
+    } else {
+        printf("Index trop grand : %d",i);
+        exit(EXIT_FAILURE);
+    }
+}
+static UNS32 slave_get_serial_with_index(int i) {
+    if (i<SLAVE_NUMBER) {
+        UNS32 dat;
+        pthread_mutex_lock (&lock_slave);
+        dat = slaves[i].serial;
+        pthread_mutex_unlock (&lock_slave);
+        return dat;
+    } else {
+        printf("Index trop grand : %d",i);
+        exit(EXIT_FAILURE);
+    }
+}/**
+* retourne profile en fonction du noeud
 **/
-char* slave_get_id_with_node(UNS8 node) {
+int slave_get_profile_with_node(UNS8 node) {
+    int i = slave_get_index_with_node(node);
+    int dat;
+    pthread_mutex_lock (&lock_slave);
+    dat = slaves[i].profile;
+    pthread_mutex_unlock (&lock_slave);
+    return dat;
+}
+/**
+* Retourne le titre en fonction de i
+**/
+char* slave_get_title_with_index(int i) {
+    char* dat;
+    pthread_mutex_lock (&lock_slave);
+    dat = slaves[i].title;
+    pthread_mutex_unlock (&lock_slave);
+    return dat;
+}
+/**
+* Retourne le titre en fonction de node
+**/
+char* slave_get_title_with_node(UNS8 node) {
     int i = slave_get_index_with_node(node);
     char* dat;
     pthread_mutex_lock (&lock_slave);
-    dat = slaves[i].id;
+    dat = slaves[i].title;
     pthread_mutex_unlock (&lock_slave);
     return dat;
 }
 /**
 * Retourne la correspondance en texte de l'état
 **/
-char* slave_get_state_title(int state) {
+static char* slave_get_state_title(int state) {
     if(state == STATE_LSS_CONFIG) return STATE_LSS_CONFIG_TXT;
     else if(state == STATE_PREOP) return STATE_PREOP_TXT;
     else if(state == STATE_CONFIG) return STATE_CONFIG_TXT;
     else if(state == STATE_OP) return STATE_OP_TXT;
     else if(state == STATE_SON) return STATE_SON_TXT;
     else if(state == STATE_READY) return STATE_READY_TXT;
+    else if(state == STATE_DISCONNECTED) return STATE_DISCONNECTED_TXT;
     else return DEFAULT;
 }
 /**
@@ -654,28 +679,194 @@ char* slave_get_state_img (int state) {
     else if(state == STATE_OP) return "go-next";
     else if(state == STATE_SON) return "gtk-connect";
     else if(state == STATE_READY) return "gtk-yes";
+    else if(state == STATE_DISCONNECTED) return "user-offline";
     else return "gtk-no";
 }
 /**
 * Retourne la correspondance en texte de l'état erreur
 **/
-char* slave_get_state_error_title(int state) {
+static char* slave_get_state_error_title(int state) {
     if(state == ERROR_STATE_NULL) return ERROR_STATE_NULL_TXT;
     else if(state == ERROR_STATE_LSS) return ERROR_STATE_LSS_TXT;
-    else if(state == ERROR_STATE_PREOP) return ERROR_STATE_PREOP_TXT;
+    else if(state == ERROR_STATE_CONFIG) return ERROR_STATE_CONFIG_TXT;
     else if(state == ERROR_STATE_OP) return ERROR_STATE_OP_TXT;
     else if(state == ERROR_STATE_SON) return ERROR_STATE_SON_TXT;
+    else if(state == ERROR_STATE_VOLTAGE) return ERROR_STATE_VOLTAGE_TXT;
     else return DEFAULT;
 }
-
-int slave_id_exist(char* slave_id) {
-    int i = 0;
-    int res = 0;
-    pthread_mutex_lock (&lock_slave);
-    for (i=0;i<SLAVE_NUMBER;i++) {
-        if (slaves[i].id == slave_id) res = 1;
-    }
-    pthread_mutex_unlock (&lock_slave);
-    if (res) return 1;
-    else return 0;
+/**
+* Renvoi le nom du fichier correspondant au profil
+**/
+char* slave_get_profile_filename(int index) {
+    printf("%s",slave_profile[index].title);
+    return g_strconcat("profile_",g_utf8_strdown(slave_profile[index].title,-1),"_config.txt",NULL);
 }
+char* slave_get_profile_name(int index) {
+    return slave_profile[index].title;
+}
+/**
+* Retourne en INTEGER32 le paramètre
+**/
+INTEGER32 slave_get_param_in_num(char* parid, int index) {
+    int i;
+    for (i=0;i<VAR_NUMBER;i++) {
+        if (parid == vardata[i].id) {
+            if (parid == "Volt") {
+                UNS16 *data = *(vardata[i].tab+index);
+                INTEGER32 data2= (INTEGER32)*data;
+                data2 = data2/10;
+                return data2;
+            } else if (parid == "Velinc") {
+                INTEGER32* data = (INTEGER32*)vardata[i].tab;
+                return (INTEGER32)data[index];
+            } else if (parid == "State") {
+                return (INTEGER32)slave_get_state_with_index(index);
+            } else if (parid == "StateError") {
+                return (INTEGER32)slave_get_state_with_index(index);
+            } else if (parid == "SlaveProfile") {
+                return (INTEGER32)slave_get_profile_with_index(index);
+            } else if (parid == "Vendor") {
+                return (INTEGER32)slave_get_vendor_with_index(index);
+            } else if (parid == "Product") {
+                return (INTEGER32)slave_get_product_with_index(index);
+            } else if (parid == "Revision") {
+                return (INTEGER32)slave_get_revision_with_index(index);
+            } else if (parid == "Serial") {
+                return (INTEGER32)slave_get_serial_with_index(index);
+            } else if (parid == "Active") {
+                return (INTEGER32)slave_get_active_with_index(index);
+            } else {
+                if (vardata[i].type == 0x02) {
+                    INTEGER8 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                } else if (vardata[i].type == 0x03) {
+                    INTEGER16 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                } else if (vardata[i].type == 0x04) {
+                    INTEGER32 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                } else if (vardata[i].type == 0x05) {
+                    UNS8 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                } else if (vardata[i].type == 0x06) {
+                    UNS16 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                } else if (vardata[i].type == 0x07) {
+                    UNS32 *data = *(vardata[i].tab+index);
+                    return (INTEGER32)*data;
+                }
+            }
+        }
+    }
+}
+/**
+* Affecte un paramètre
+**/
+void slave_set_param(char* parid, int index,INTEGER32 dat) {
+    int i, res=0;
+    for (i=0;i<VAR_NUMBER;i++) {
+        if (parid == vardata[i].id) {
+            res = 1;
+            if (parid == "Velinc") {
+                INTEGER32* data = (INTEGER32*)vardata[i].tab;
+                data[index]=(INTEGER32)dat;
+            } else if (parid == "State") {
+                slave_set_state_with_index(index,dat);
+            } else if (parid == "StateError") {
+                slave_set_state_error_with_index(index,dat);
+            } else if (parid == "Active") {
+                slave_set_active_with_index(index,dat);
+                g_idle_add(keyword_active_maj,&slaves[index].node);
+            } else if (parid == "SlaveProfile") {
+                slave_set_profile_with_index(index,dat);
+            } else {
+                if (vardata[i].type == 0x02) {
+                    INTEGER8 *data = *(vardata[i].tab+index);
+                    *data = (INTEGER8)dat;
+                } else if (vardata[i].type == 0x03) {
+                    INTEGER16 *data = *(vardata[i].tab+index);
+                    *data = (INTEGER16)dat;
+                } else if (vardata[i].type == 0x04) {
+                    INTEGER32 *data = *(vardata[i].tab+index);
+                    *data = (INTEGER32)dat;
+                } else if (vardata[i].type == 0x05) {
+                    UNS8 *data = *(vardata[i].tab+index);
+                    *data = (UNS8)dat;
+                } else if (vardata[i].type == 0x06) {
+                    UNS16 *data = *(vardata[i].tab+index);
+                    *data = (UNS16)dat;
+                } else if (vardata[i].type == 0x07) {
+                    UNS32 *data = *(vardata[i].tab+index);
+                    *data = (UNS32)dat;
+                }
+            }
+        }
+    }
+    if (res == 0) {
+        printf("PARID %s non trouvé \n",parid);
+        exit(1);
+    }
+}
+/**
+* Retourne en char* le paramètre
+**/
+char* slave_get_param_in_char(char* parid, int index) {
+    int i;
+    int res = 0;
+    for (i=0;i<VAR_NUMBER;i++) {
+        if (parid == vardata[i].id) {
+            res = 1;
+            if (parid == "Volt") {
+                UNS16 *data = *(vardata[i].tab+index);
+                INTEGER32 data2= (INTEGER32)*data;
+                data2 = data2/10;
+                return strtools_gnum2str(&data2,0x04);
+            } else if (parid == "SlaveTitle") {
+                return slave_get_title_with_index(index);
+            } else if (parid == "StateImg") {
+                return slave_get_state_img(slave_get_param_in_num("State",index));
+            } else if (parid == "SlaveProfile") {
+                return slave_profile[slave_get_profile_with_index(index)].title;
+            } else if (parid == "Vendor") {
+                UNS32 dat = slave_get_vendor_with_index(index);
+                return strtools_gnum2str(&dat,0x07);
+            } else if (parid == "Product") {
+                UNS32 dat = slave_get_product_with_index(index);
+                return strtools_gnum2str(&dat,0x07);
+            } else if (parid == "Revision") {
+                UNS32 dat = slave_get_revision_with_index(index);
+                return strtools_gnum2str(&dat,0x07);
+            } else if (parid == "Serial") {
+                UNS32 dat = slave_get_serial_with_index(index);
+                return strtools_gnum2str(&dat,0x07);
+            } else if (parid == "State") {
+                return slave_get_state_title(slave_get_state_with_index(index));
+            } else if (parid == "StateError") {
+                return slave_get_state_error_title(slave_get_state_error_with_index(index));
+            } else if (parid == "Power") {
+                UNS16*data = *(vardata[i].tab+index);
+                return motor_get_state_title(motor_get_state(*data));
+            } else if (parid == "PowerError") {
+                UNS16*data = *(vardata[i].tab+index);
+                return motor_get_error_title(*data);
+            } else
+            return strtools_gnum2str(*(vardata[i].tab+index),vardata[i].type);
+        }
+    }
+    if (res == 0) {
+        printf("Par ID non trouvé %s",parid);
+        exit(1);
+    }
+
+}
+
+char* slave_get_param_title (char* parid) {
+    int i;
+    for (i=0;i<VAR_NUMBER;i++) {
+        if (parid == vardata[i].id)
+            return vardata[i].title;
+    }
+    printf("parid : %s non trouvé",parid);
+    exit(1);
+}
+

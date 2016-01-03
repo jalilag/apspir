@@ -6,18 +6,30 @@
 /**************************************************************************/
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
-UNS16 StatusWord_V = 0x0;		/* Mapped at index 0x2000, subindex 0x00 */
-INTEGER8 InternalTemp_V = 0x0;		/* Mapped at index 0x2001, subindex 0x00 */
-UNS16 Voltage_V = 0x0;		/* Mapped at index 0x2002, subindex 0x00 */
-UNS16 ErrorCode_V = 0x0;		/* Mapped at index 0x2003, subindex 0x00 */
-UNS16 StatusWord_Vaux = 0x0;		/* Mapped at index 0x2004, subindex 0x00 */
-INTEGER32 Velocity_V = 0x0;		/* Mapped at index 0x2005, subindex 0x00 */
-INTEGER32 Vel2Send_V = 0x0;		/* Mapped at index 0x2006, subindex 0x00 */
-INTEGER8 InternalTemp_Vaux = 0x0;		/* Mapped at index 0x2007, subindex 0x00 */
-UNS16 Voltage_Vaux = 0x0;		/* Mapped at index 0x2008, subindex 0x00 */
-UNS16 ErrorCode_Vaux = 0x0;		/* Mapped at index 0x2009, subindex 0x00 */
-INTEGER32 Velocity_Vaux = 0x0;		/* Mapped at index 0x200A, subindex 0x00 */
-INTEGER32 Vel2Send_Vaux = 0x0;		/* Mapped at index 0x200B, subindex 0x00 */
+UNS16 StatusWord_1 = 0x0;		/* Mapped at index 0x2000, subindex 0x00 */
+INTEGER8 InternalTemp_1 = 0x0;		/* Mapped at index 0x2001, subindex 0x00 */
+UNS16 Voltage_1 = 0x0;		/* Mapped at index 0x2002, subindex 0x00 */
+UNS16 ErrorCode_1 = 0x0;		/* Mapped at index 0x2003, subindex 0x00 */
+UNS16 StatusWord_2 = 0x0;		/* Mapped at index 0x2004, subindex 0x00 */
+INTEGER32 Velocity_1 = 0x0;		/* Mapped at index 0x2005, subindex 0x00 */
+INTEGER32 Vel2Send_1 = 0x0;		/* Mapped at index 0x2006, subindex 0x00 */
+INTEGER8 InternalTemp_2 = 0x0;		/* Mapped at index 0x2007, subindex 0x00 */
+UNS16 Voltage_2 = 0x0;		/* Mapped at index 0x2008, subindex 0x00 */
+UNS16 ErrorCode_2 = 0x0;		/* Mapped at index 0x2009, subindex 0x00 */
+INTEGER32 Velocity_2 = 0x0;		/* Mapped at index 0x200A, subindex 0x00 */
+INTEGER32 Vel2Send_2 = 0x0;		/* Mapped at index 0x200B, subindex 0x00 */
+UNS16 StatusWord_3 = 0x0;		/* Mapped at index 0x200C, subindex 0x00 */
+INTEGER16 Voltage_3 = 0x0;		/* Mapped at index 0x200D, subindex 0x00 */
+INTEGER8 InternalTemp_3 = 0x0;		/* Mapped at index 0x200E, subindex 0x00 */
+UNS16 StatusWord_4 = 0x0;		/* Mapped at index 0x200F, subindex 0x00 */
+UNS16 Voltage_4 = 0x0;		/* Mapped at index 0x2010, subindex 0x00 */
+INTEGER8 InternalTemp_4 = 0x0;		/* Mapped at index 0x2011, subindex 0x00 */
+UNS16 ErrorCode_3 = 0x0;		/* Mapped at index 0x2012, subindex 0x00 */
+UNS16 ErrorCode_4 = 0x0;		/* Mapped at index 0x2013, subindex 0x00 */
+INTEGER32 Vel2Send_3 = 0x0;		/* Mapped at index 0x2014, subindex 0x00 */
+INTEGER32 Vel2Send_4 = 0x0;		/* Mapped at index 0x2015, subindex 0x00 */
+UNS8 Velocity_3 = 0x0;		/* Mapped at index 0x2016, subindex 0x00 */
+UNS8 Velocity_4 = 0x0;		/* Mapped at index 0x2017, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -45,7 +57,7 @@ UNS8 SpirallingMaster_bDeviceNodeId = 0x00;
 
 const UNS8 SpirallingMaster_iam_a_slave = 0;
 
-TIMER_HANDLE SpirallingMaster_heartBeatTimers[2] = {TIMER_NONE,TIMER_NONE};
+TIMER_HANDLE SpirallingMaster_heartBeatTimers[4] = {TIMER_NONE,TIMER_NONE,TIMER_NONE,TIMER_NONE};
 
 /*
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -122,9 +134,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1016 :   Consumer Heartbeat Time. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1016 = 2; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1016 = 4; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1016[] =
                     {
+                      0x64,	/* 100 */
+                      0x64,	/* 100 */
                       0x64,	/* 100 */
                       0x64	/* 100 */
                     };
@@ -132,7 +146,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1016 },
                        { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1016[0] },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1016[1] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1016[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1016[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1016[3] }
                      };
 
 /* index 0x1017 :   Producer Heartbeat Time */
@@ -177,6 +193,32 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1281_COB_ID_Client_to_Server_Transmit_SDO },
                        { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1281_COB_ID_Server_to_Client_Receive_SDO },
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1281_Node_ID_of_the_SDO_Server }
+                     };
+
+/* index 0x1282 :   Client SDO 3 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1282 = 3; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1282_COB_ID_Client_to_Server_Transmit_SDO = 0x604;	/* 1540 */
+                    UNS32 SpirallingMaster_obj1282_COB_ID_Server_to_Client_Receive_SDO = 0x584;	/* 1412 */
+                    UNS8 SpirallingMaster_obj1282_Node_ID_of_the_SDO_Server = 0x4;	/* 4 */
+                    subindex SpirallingMaster_Index1282[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1282 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1282_COB_ID_Client_to_Server_Transmit_SDO },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1282_COB_ID_Server_to_Client_Receive_SDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1282_Node_ID_of_the_SDO_Server }
+                     };
+
+/* index 0x1283 :   Client SDO 4 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1283 = 3; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1283_COB_ID_Client_to_Server_Transmit_SDO = 0x605;	/* 1541 */
+                    UNS32 SpirallingMaster_obj1283_COB_ID_Server_to_Client_Receive_SDO = 0x585;	/* 1413 */
+                    UNS8 SpirallingMaster_obj1283_Node_ID_of_the_SDO_Server = 0x5;	/* 5 */
+                    subindex SpirallingMaster_Index1283[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1283 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1283_COB_ID_Client_to_Server_Transmit_SDO },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1283_COB_ID_Server_to_Client_Receive_SDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1283_Node_ID_of_the_SDO_Server }
                      };
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
@@ -293,6 +335,196 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1405_SYNC_start_value }
                      };
 
+/* index 0x1406 :   Receive PDO 7 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1406 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1406_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1406_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1406_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1406_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1406_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1406_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index1406[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1406 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1406_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1406_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1406_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1406_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1406_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1406_SYNC_start_value }
+                     };
+
+/* index 0x1407 :   Receive PDO 8 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1407 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1407_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1407_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1407_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1407_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1407_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1407_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index1407[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1407 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1407_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1407_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1407_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1407_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1407_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1407_SYNC_start_value }
+                     };
+
+/* index 0x1408 :   Receive PDO 9 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1408 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1408_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1408_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1408_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1408_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1408_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1408_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index1408[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1408 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1408_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1408_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1408_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1408_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1408_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1408_SYNC_start_value }
+                     };
+
+/* index 0x1409 :   Receive PDO 10 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1409 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1409_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1409_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1409_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1409_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1409_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1409_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index1409[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1409 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1409_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1409_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1409_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1409_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1409_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1409_SYNC_start_value }
+                     };
+
+/* index 0x140A :   Receive PDO 11 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140A = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140A_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140A_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140A_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140A_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140A_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140A_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140A[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140A },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140A_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140A_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140A_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140A_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140A_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140A_SYNC_start_value }
+                     };
+
+/* index 0x140B :   Receive PDO 12 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140B = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140B_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140B_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140B_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140B_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140B_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140B_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140B[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140B },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140B_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140B_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140B_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140B_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140B_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140B_SYNC_start_value }
+                     };
+
+/* index 0x140C :   Receive PDO 13 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140C = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140C_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140C_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140C_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140C_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140C_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140C_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140C[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140C },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140C_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140C_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140C_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140C_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140C_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140C_SYNC_start_value }
+                     };
+
+/* index 0x140D :   Receive PDO 14 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140D = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140D_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140D_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140D_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140D_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140D_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140D_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140D[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140D },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140D_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140D_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140D_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140D_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140D_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140D_SYNC_start_value }
+                     };
+
+/* index 0x140E :   Receive PDO 15 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140E = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140E_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140E_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140E_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140E_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140E_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140E_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140E[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140E },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140E_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140E_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140E_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140E_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140E_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140E_SYNC_start_value }
+                     };
+
+/* index 0x140F :   Receive PDO 16 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj140F = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj140F_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140F_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140F_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140F_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj140F_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj140F_SYNC_start_value = 0x0;	/* 0 */
+                    subindex SpirallingMaster_Index140F[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj140F },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj140F_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140F_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140F_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140F_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj140F_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj140F_SYNC_start_value }
+                     };
+
 /* index 0x1600 :   Receive PDO 1 Mapping. */
                     UNS8 SpirallingMaster_highestSubIndex_obj1600 = 2; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1600[] =
@@ -322,37 +554,63 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1602 :   Receive PDO 3 Mapping. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1602 = 1; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1602 = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1602[] =
                     {
-                      0x20050020	/* 537198624 */
+                      0x20050020,	/* 537198624 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
                     };
                     subindex SpirallingMaster_Index1602[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1602 },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[0] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1602[7] }
                      };
 
 /* index 0x1603 :   Receive PDO 4 Mapping. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1603 = 2; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1603 = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1603[] =
                     {
-                      0x20040010,	/* 537133072 */
-                      0x20090010	/* 537460752 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
                     };
                     subindex SpirallingMaster_Index1603[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1603 },
                        { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[0] },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[1] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1603[7] }
                      };
 
 /* index 0x1604 :   Receive PDO 5 Mapping. */
                     UNS8 SpirallingMaster_highestSubIndex_obj1604 = 2; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1604[] =
                     {
-                      0x20080010,	/* 537395216 */
-                      0x20070008	/* 537329672 */
+                      0x20040010,	/* 537133072 */
+                      0x20090010	/* 537460752 */
                     };
                     subindex SpirallingMaster_Index1604[] =
                      {
@@ -362,15 +620,229 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1605 :   Receive PDO 6 Mapping. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1605 = 1; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1605 = 2; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1605[] =
                     {
-                      0x200A0020	/* 537526304 */
+                      0x20080010,	/* 537395216 */
+                      0x20070008	/* 537329672 */
                     };
                     subindex SpirallingMaster_Index1605[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1605 },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1605[0] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1605[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1605[1] }
+                     };
+
+/* index 0x1606 :   Receive PDO 7 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1606 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1606[] =
+                    {
+                      0x200A0020,	/* 537526304 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1606[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1606 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1606[7] }
+                     };
+
+/* index 0x1607 :   Receive PDO 8 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1607 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1607[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1607[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1607 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1607[7] }
+                     };
+
+/* index 0x1608 :   Receive PDO 9 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1608 = 2; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1608[] =
+                    {
+                      0x200C0010,	/* 537657360 */
+                      0x20120010	/* 538050576 */
+                    };
+                    subindex SpirallingMaster_Index1608[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1608 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1608[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1608[1] }
+                     };
+
+/* index 0x1609 :   Receive PDO 10 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1609 = 2; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1609[] =
+                    {
+                      0x200D0010,	/* 537722896 */
+                      0x200E0008	/* 537788424 */
+                    };
+                    subindex SpirallingMaster_Index1609[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1609 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1609[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1609[1] }
+                     };
+
+/* index 0x160A :   Receive PDO 11 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160A = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160A[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index160A[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160A },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160A[7] }
+                     };
+
+/* index 0x160B :   Receive PDO 12 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160B = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160B[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index160B[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160B },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160B[7] }
+                     };
+
+/* index 0x160C :   Receive PDO 13 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160C = 2; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160C[] =
+                    {
+                      0x200F0010,	/* 537853968 */
+                      0x20130010	/* 538116112 */
+                    };
+                    subindex SpirallingMaster_Index160C[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160C },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160C[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160C[1] }
+                     };
+
+/* index 0x160D :   Receive PDO 14 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160D = 2; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160D[] =
+                    {
+                      0x20100010,	/* 537919504 */
+                      0x20110008	/* 537985032 */
+                    };
+                    subindex SpirallingMaster_Index160D[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160D },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160D[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160D[1] }
+                     };
+
+/* index 0x160E :   Receive PDO 15 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160E = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160E[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index160E[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160E },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160E[7] }
+                     };
+
+/* index 0x160F :   Receive PDO 16 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj160F = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj160F[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index160F[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj160F },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj160F[7] }
                      };
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
@@ -489,28 +961,404 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1803_SYNC_start_value }
                      };
 
+/* index 0x1804 :   Transmit PDO 5 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1804 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1804_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1804_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1804_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1804_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1804_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1804_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1804_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1804[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1804 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1804_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1804_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1804_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1804_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1804_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1804_SYNC_start_value }
+                     };
+
+/* index 0x1805 :   Transmit PDO 6 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1805 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1805_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1805_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1805_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1805_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1805_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1805_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1805_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1805[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1805 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1805_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1805_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1805_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1805_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1805_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1805_SYNC_start_value }
+                     };
+
+/* index 0x1806 :   Transmit PDO 7 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1806 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1806_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1806_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1806_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1806_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1806_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1806_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1806_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1806[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1806 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1806_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1806_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1806_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1806_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1806_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1806_SYNC_start_value }
+                     };
+
+/* index 0x1807 :   Transmit PDO 8 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1807 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1807_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1807_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1807_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1807_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1807_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1807_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1807_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1807[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1807 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1807_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1807_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1807_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1807_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1807_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1807_SYNC_start_value }
+                     };
+
+/* index 0x1808 :   Transmit PDO 9 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1808 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1808_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1808_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1808_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1808_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1808_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1808_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1808_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1808[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1808 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1808_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1808_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1808_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1808_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1808_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1808_SYNC_start_value }
+                     };
+
+/* index 0x1809 :   Transmit PDO 10 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1809 = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1809_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1809_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1809_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1809_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj1809_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj1809_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index1809_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index1809[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1809 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1809_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1809_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1809_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1809_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj1809_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj1809_SYNC_start_value }
+                     };
+
+/* index 0x180A :   Transmit PDO 11 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180A = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180A_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180A_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180A_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180A_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180A_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180A_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180A_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180A[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180A },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180A_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180A_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180A_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180A_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180A_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180A_SYNC_start_value }
+                     };
+
+/* index 0x180B :   Transmit PDO 12 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180B = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180B_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180B_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180B_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180B_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180B_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180B_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180B_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180B[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180B },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180B_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180B_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180B_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180B_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180B_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180B_SYNC_start_value }
+                     };
+
+/* index 0x180C :   Transmit PDO 13 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180C = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180C_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180C_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180C_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180C_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180C_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180C_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180C_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180C[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180C },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180C_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180C_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180C_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180C_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180C_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180C_SYNC_start_value }
+                     };
+
+/* index 0x180D :   Transmit PDO 14 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180D = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180D_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180D_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180D_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180D_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180D_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180D_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180D_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180D[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180D },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180D_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180D_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180D_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180D_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180D_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180D_SYNC_start_value }
+                     };
+
+/* index 0x180E :   Transmit PDO 15 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180E = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180E_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180E_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180E_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180E_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180E_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180E_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180E_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180E[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180E },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180E_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180E_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180E_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180E_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180E_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180E_SYNC_start_value }
+                     };
+
+/* index 0x180F :   Transmit PDO 16 Parameter. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj180F = 6; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj180F_COB_ID_used_by_PDO = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180F_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180F_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180F_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 SpirallingMaster_obj180F_Event_Timer = 0x0;	/* 0 */
+                    UNS8 SpirallingMaster_obj180F_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t SpirallingMaster_Index180F_callbacks[] =
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex SpirallingMaster_Index180F[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj180F },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj180F_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180F_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180F_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180F_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&SpirallingMaster_obj180F_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_obj180F_SYNC_start_value }
+                     };
+
 /* index 0x1A00 :   Transmit PDO 1 Mapping. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1A00 = 1; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A00 = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1A00[] =
                     {
-                      0x20060020	/* 537264160 */
+                      0x20060020,	/* 537264160 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
                     };
                     subindex SpirallingMaster_Index1A00[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A00 },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[0] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A00[7] }
                      };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
-                    UNS8 SpirallingMaster_highestSubIndex_obj1A01 = 1; /* number of subindex - 1*/
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A01 = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj1A01[] =
                     {
-                      0x200B0020	/* 537591840 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
                     };
                     subindex SpirallingMaster_Index1A01[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A01 },
-                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[0] }
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A01[7] }
                      };
 
 /* index 0x1A02 :   Transmit PDO 3 Mapping. */
@@ -565,6 +1413,318 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A03[7] }
                      };
 
+/* index 0x1A04 :   Transmit PDO 5 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A04 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A04[] =
+                    {
+                      0x200B0020,	/* 537591840 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A04[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A04 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A04[7] }
+                     };
+
+/* index 0x1A05 :   Transmit PDO 6 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A05 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A05[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A05[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A05 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A05[7] }
+                     };
+
+/* index 0x1A06 :   Transmit PDO 7 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A06 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A06[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A06[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A06 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A06[7] }
+                     };
+
+/* index 0x1A07 :   Transmit PDO 8 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A07 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A07[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A07[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A07 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A07[7] }
+                     };
+
+/* index 0x1A08 :   Transmit PDO 9 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A08 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A08[] =
+                    {
+                      0x20140020,	/* 538181664 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A08[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A08 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A08[7] }
+                     };
+
+/* index 0x1A09 :   Transmit PDO 10 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A09 = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A09[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A09[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A09 },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A09[7] }
+                     };
+
+/* index 0x1A0A :   Transmit PDO 11 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0A = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0A[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0A[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0A },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0A[7] }
+                     };
+
+/* index 0x1A0B :   Transmit PDO 12 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0B = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0B[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0B[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0B },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0B[7] }
+                     };
+
+/* index 0x1A0C :   Transmit PDO 13 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0C = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0C[] =
+                    {
+                      0x20150020,	/* 538247200 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0C[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0C },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0C[7] }
+                     };
+
+/* index 0x1A0D :   Transmit PDO 14 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0D = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0D[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0D[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0D },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0D[7] }
+                     };
+
+/* index 0x1A0E :   Transmit PDO 15 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0E = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0E[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0E[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0E },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0E[7] }
+                     };
+
+/* index 0x1A0F :   Transmit PDO 16 Mapping. */
+                    UNS8 SpirallingMaster_highestSubIndex_obj1A0F = 8; /* number of subindex - 1*/
+                    UNS32 SpirallingMaster_obj1A0F[] =
+                    {
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0,	/* 0 */
+                      0x0	/* 0 */
+                    };
+                    subindex SpirallingMaster_Index1A0F[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&SpirallingMaster_highestSubIndex_obj1A0F },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[4] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[5] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[6] },
+                       { RW, uint32, sizeof (UNS32), (void*)&SpirallingMaster_obj1A0F[7] }
+                     };
+
 /* index 0x1F22 :   Concise DCF. */
                     UNS8 SpirallingMaster_highestSubIndex_obj1F22 = 1; /* number of subindex - 1*/
                     UNS8* SpirallingMaster_obj1F22[] =
@@ -577,84 +1737,156 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, candomain, 0, (void*)&SpirallingMaster_obj1F22[0] }
                      };
 
-/* index 0x2000 :   Mapped variable StatusWord_V */
-                    ODCallback_t StatusWord_V_callbacks[] =
+/* index 0x2000 :   Mapped variable StatusWord_1 */
+                    ODCallback_t StatusWord_1_callbacks[] =
                      {
                        NULL,
                      };
                     subindex SpirallingMaster_Index2000[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_V }
+                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_1 }
                      };
 
-/* index 0x2001 :   Mapped variable InternalTemp_V */
+/* index 0x2001 :   Mapped variable InternalTemp_1 */
                     subindex SpirallingMaster_Index2001[] =
                      {
-                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_V }
+                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_1 }
                      };
 
-/* index 0x2002 :   Mapped variable Voltage_V */
+/* index 0x2002 :   Mapped variable Voltage_1 */
                     subindex SpirallingMaster_Index2002[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&Voltage_V }
+                       { RW, uint16, sizeof (UNS16), (void*)&Voltage_1 }
                      };
 
-/* index 0x2003 :   Mapped variable ErrorCode_V */
+/* index 0x2003 :   Mapped variable ErrorCode_1 */
                     subindex SpirallingMaster_Index2003[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_V }
+                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_1 }
                      };
 
-/* index 0x2004 :   Mapped variable StatusWord_Vaux */
-                    ODCallback_t StatusWord_Vaux_callbacks[] =
+/* index 0x2004 :   Mapped variable StatusWord_2 */
+                    ODCallback_t StatusWord_2_callbacks[] =
                      {
                        NULL,
                      };
                     subindex SpirallingMaster_Index2004[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_Vaux }
+                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_2 }
                      };
 
-/* index 0x2005 :   Mapped variable Velocity_V */
+/* index 0x2005 :   Mapped variable Velocity_1 */
                     subindex SpirallingMaster_Index2005[] =
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_V }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_1 }
                      };
 
-/* index 0x2006 :   Mapped variable Vel2Send_V */
+/* index 0x2006 :   Mapped variable Vel2Send_1 */
                     subindex SpirallingMaster_Index2006[] =
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_V }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_1 }
                      };
 
-/* index 0x2007 :   Mapped variable InternalTemp_Vaux */
+/* index 0x2007 :   Mapped variable InternalTemp_2 */
                     subindex SpirallingMaster_Index2007[] =
                      {
-                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_Vaux }
+                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_2 }
                      };
 
-/* index 0x2008 :   Mapped variable Voltage_Vaux */
+/* index 0x2008 :   Mapped variable Voltage_2 */
                     subindex SpirallingMaster_Index2008[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&Voltage_Vaux }
+                       { RW, uint16, sizeof (UNS16), (void*)&Voltage_2 }
                      };
 
-/* index 0x2009 :   Mapped variable ErrorCode_Vaux */
+/* index 0x2009 :   Mapped variable ErrorCode_2 */
                     subindex SpirallingMaster_Index2009[] =
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_Vaux }
+                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_2 }
                      };
 
-/* index 0x200A :   Mapped variable Velocity_Vaux */
+/* index 0x200A :   Mapped variable Velocity_2 */
                     subindex SpirallingMaster_Index200A[] =
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_Vaux }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_2 }
                      };
 
-/* index 0x200B :   Mapped variable Vel2Send_Vaux */
+/* index 0x200B :   Mapped variable Vel2Send_2 */
                     subindex SpirallingMaster_Index200B[] =
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_Vaux }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_2 }
+                     };
+
+/* index 0x200C :   Mapped variable StatusWord_3 */
+                    subindex SpirallingMaster_Index200C[] =
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_3 }
+                     };
+
+/* index 0x200D :   Mapped variable Voltage_3 */
+                    subindex SpirallingMaster_Index200D[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&Voltage_3 }
+                     };
+
+/* index 0x200E :   Mapped variable InternalTemp_3 */
+                    subindex SpirallingMaster_Index200E[] =
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_3 }
+                     };
+
+/* index 0x200F :   Mapped variable StatusWord_4 */
+                    subindex SpirallingMaster_Index200F[] =
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&StatusWord_4 }
+                     };
+
+/* index 0x2010 :   Mapped variable Voltage_4 */
+                    subindex SpirallingMaster_Index2010[] =
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&Voltage_4 }
+                     };
+
+/* index 0x2011 :   Mapped variable InternalTemp_4 */
+                    subindex SpirallingMaster_Index2011[] =
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_4 }
+                     };
+
+/* index 0x2012 :   Mapped variable ErrorCode_3 */
+                    subindex SpirallingMaster_Index2012[] =
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_3 }
+                     };
+
+/* index 0x2013 :   Mapped variable ErrorCode_4 */
+                    subindex SpirallingMaster_Index2013[] =
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&ErrorCode_4 }
+                     };
+
+/* index 0x2014 :   Mapped variable Vel2Send_3 */
+                    subindex SpirallingMaster_Index2014[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_3 }
+                     };
+
+/* index 0x2015 :   Mapped variable Vel2Send_4 */
+                    subindex SpirallingMaster_Index2015[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_4 }
+                     };
+
+/* index 0x2016 :   Mapped variable Velocity_3 */
+                    subindex SpirallingMaster_Index2016[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_3 }
+                     };
+
+/* index 0x2017 :   Mapped variable Velocity_4 */
+                    subindex SpirallingMaster_Index2017[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_4 }
                      };
 
 /**************************************************************************/
@@ -672,26 +1904,72 @@ const indextable SpirallingMaster_objdict[] =
   { (subindex*)SpirallingMaster_Index1018,sizeof(SpirallingMaster_Index1018)/sizeof(SpirallingMaster_Index1018[0]), 0x1018},
   { (subindex*)SpirallingMaster_Index1280,sizeof(SpirallingMaster_Index1280)/sizeof(SpirallingMaster_Index1280[0]), 0x1280},
   { (subindex*)SpirallingMaster_Index1281,sizeof(SpirallingMaster_Index1281)/sizeof(SpirallingMaster_Index1281[0]), 0x1281},
+  { (subindex*)SpirallingMaster_Index1282,sizeof(SpirallingMaster_Index1282)/sizeof(SpirallingMaster_Index1282[0]), 0x1282},
+  { (subindex*)SpirallingMaster_Index1283,sizeof(SpirallingMaster_Index1283)/sizeof(SpirallingMaster_Index1283[0]), 0x1283},
   { (subindex*)SpirallingMaster_Index1400,sizeof(SpirallingMaster_Index1400)/sizeof(SpirallingMaster_Index1400[0]), 0x1400},
   { (subindex*)SpirallingMaster_Index1401,sizeof(SpirallingMaster_Index1401)/sizeof(SpirallingMaster_Index1401[0]), 0x1401},
   { (subindex*)SpirallingMaster_Index1402,sizeof(SpirallingMaster_Index1402)/sizeof(SpirallingMaster_Index1402[0]), 0x1402},
   { (subindex*)SpirallingMaster_Index1403,sizeof(SpirallingMaster_Index1403)/sizeof(SpirallingMaster_Index1403[0]), 0x1403},
   { (subindex*)SpirallingMaster_Index1404,sizeof(SpirallingMaster_Index1404)/sizeof(SpirallingMaster_Index1404[0]), 0x1404},
   { (subindex*)SpirallingMaster_Index1405,sizeof(SpirallingMaster_Index1405)/sizeof(SpirallingMaster_Index1405[0]), 0x1405},
+  { (subindex*)SpirallingMaster_Index1406,sizeof(SpirallingMaster_Index1406)/sizeof(SpirallingMaster_Index1406[0]), 0x1406},
+  { (subindex*)SpirallingMaster_Index1407,sizeof(SpirallingMaster_Index1407)/sizeof(SpirallingMaster_Index1407[0]), 0x1407},
+  { (subindex*)SpirallingMaster_Index1408,sizeof(SpirallingMaster_Index1408)/sizeof(SpirallingMaster_Index1408[0]), 0x1408},
+  { (subindex*)SpirallingMaster_Index1409,sizeof(SpirallingMaster_Index1409)/sizeof(SpirallingMaster_Index1409[0]), 0x1409},
+  { (subindex*)SpirallingMaster_Index140A,sizeof(SpirallingMaster_Index140A)/sizeof(SpirallingMaster_Index140A[0]), 0x140A},
+  { (subindex*)SpirallingMaster_Index140B,sizeof(SpirallingMaster_Index140B)/sizeof(SpirallingMaster_Index140B[0]), 0x140B},
+  { (subindex*)SpirallingMaster_Index140C,sizeof(SpirallingMaster_Index140C)/sizeof(SpirallingMaster_Index140C[0]), 0x140C},
+  { (subindex*)SpirallingMaster_Index140D,sizeof(SpirallingMaster_Index140D)/sizeof(SpirallingMaster_Index140D[0]), 0x140D},
+  { (subindex*)SpirallingMaster_Index140E,sizeof(SpirallingMaster_Index140E)/sizeof(SpirallingMaster_Index140E[0]), 0x140E},
+  { (subindex*)SpirallingMaster_Index140F,sizeof(SpirallingMaster_Index140F)/sizeof(SpirallingMaster_Index140F[0]), 0x140F},
   { (subindex*)SpirallingMaster_Index1600,sizeof(SpirallingMaster_Index1600)/sizeof(SpirallingMaster_Index1600[0]), 0x1600},
   { (subindex*)SpirallingMaster_Index1601,sizeof(SpirallingMaster_Index1601)/sizeof(SpirallingMaster_Index1601[0]), 0x1601},
   { (subindex*)SpirallingMaster_Index1602,sizeof(SpirallingMaster_Index1602)/sizeof(SpirallingMaster_Index1602[0]), 0x1602},
   { (subindex*)SpirallingMaster_Index1603,sizeof(SpirallingMaster_Index1603)/sizeof(SpirallingMaster_Index1603[0]), 0x1603},
   { (subindex*)SpirallingMaster_Index1604,sizeof(SpirallingMaster_Index1604)/sizeof(SpirallingMaster_Index1604[0]), 0x1604},
   { (subindex*)SpirallingMaster_Index1605,sizeof(SpirallingMaster_Index1605)/sizeof(SpirallingMaster_Index1605[0]), 0x1605},
+  { (subindex*)SpirallingMaster_Index1606,sizeof(SpirallingMaster_Index1606)/sizeof(SpirallingMaster_Index1606[0]), 0x1606},
+  { (subindex*)SpirallingMaster_Index1607,sizeof(SpirallingMaster_Index1607)/sizeof(SpirallingMaster_Index1607[0]), 0x1607},
+  { (subindex*)SpirallingMaster_Index1608,sizeof(SpirallingMaster_Index1608)/sizeof(SpirallingMaster_Index1608[0]), 0x1608},
+  { (subindex*)SpirallingMaster_Index1609,sizeof(SpirallingMaster_Index1609)/sizeof(SpirallingMaster_Index1609[0]), 0x1609},
+  { (subindex*)SpirallingMaster_Index160A,sizeof(SpirallingMaster_Index160A)/sizeof(SpirallingMaster_Index160A[0]), 0x160A},
+  { (subindex*)SpirallingMaster_Index160B,sizeof(SpirallingMaster_Index160B)/sizeof(SpirallingMaster_Index160B[0]), 0x160B},
+  { (subindex*)SpirallingMaster_Index160C,sizeof(SpirallingMaster_Index160C)/sizeof(SpirallingMaster_Index160C[0]), 0x160C},
+  { (subindex*)SpirallingMaster_Index160D,sizeof(SpirallingMaster_Index160D)/sizeof(SpirallingMaster_Index160D[0]), 0x160D},
+  { (subindex*)SpirallingMaster_Index160E,sizeof(SpirallingMaster_Index160E)/sizeof(SpirallingMaster_Index160E[0]), 0x160E},
+  { (subindex*)SpirallingMaster_Index160F,sizeof(SpirallingMaster_Index160F)/sizeof(SpirallingMaster_Index160F[0]), 0x160F},
   { (subindex*)SpirallingMaster_Index1800,sizeof(SpirallingMaster_Index1800)/sizeof(SpirallingMaster_Index1800[0]), 0x1800},
   { (subindex*)SpirallingMaster_Index1801,sizeof(SpirallingMaster_Index1801)/sizeof(SpirallingMaster_Index1801[0]), 0x1801},
   { (subindex*)SpirallingMaster_Index1802,sizeof(SpirallingMaster_Index1802)/sizeof(SpirallingMaster_Index1802[0]), 0x1802},
   { (subindex*)SpirallingMaster_Index1803,sizeof(SpirallingMaster_Index1803)/sizeof(SpirallingMaster_Index1803[0]), 0x1803},
+  { (subindex*)SpirallingMaster_Index1804,sizeof(SpirallingMaster_Index1804)/sizeof(SpirallingMaster_Index1804[0]), 0x1804},
+  { (subindex*)SpirallingMaster_Index1805,sizeof(SpirallingMaster_Index1805)/sizeof(SpirallingMaster_Index1805[0]), 0x1805},
+  { (subindex*)SpirallingMaster_Index1806,sizeof(SpirallingMaster_Index1806)/sizeof(SpirallingMaster_Index1806[0]), 0x1806},
+  { (subindex*)SpirallingMaster_Index1807,sizeof(SpirallingMaster_Index1807)/sizeof(SpirallingMaster_Index1807[0]), 0x1807},
+  { (subindex*)SpirallingMaster_Index1808,sizeof(SpirallingMaster_Index1808)/sizeof(SpirallingMaster_Index1808[0]), 0x1808},
+  { (subindex*)SpirallingMaster_Index1809,sizeof(SpirallingMaster_Index1809)/sizeof(SpirallingMaster_Index1809[0]), 0x1809},
+  { (subindex*)SpirallingMaster_Index180A,sizeof(SpirallingMaster_Index180A)/sizeof(SpirallingMaster_Index180A[0]), 0x180A},
+  { (subindex*)SpirallingMaster_Index180B,sizeof(SpirallingMaster_Index180B)/sizeof(SpirallingMaster_Index180B[0]), 0x180B},
+  { (subindex*)SpirallingMaster_Index180C,sizeof(SpirallingMaster_Index180C)/sizeof(SpirallingMaster_Index180C[0]), 0x180C},
+  { (subindex*)SpirallingMaster_Index180D,sizeof(SpirallingMaster_Index180D)/sizeof(SpirallingMaster_Index180D[0]), 0x180D},
+  { (subindex*)SpirallingMaster_Index180E,sizeof(SpirallingMaster_Index180E)/sizeof(SpirallingMaster_Index180E[0]), 0x180E},
+  { (subindex*)SpirallingMaster_Index180F,sizeof(SpirallingMaster_Index180F)/sizeof(SpirallingMaster_Index180F[0]), 0x180F},
   { (subindex*)SpirallingMaster_Index1A00,sizeof(SpirallingMaster_Index1A00)/sizeof(SpirallingMaster_Index1A00[0]), 0x1A00},
   { (subindex*)SpirallingMaster_Index1A01,sizeof(SpirallingMaster_Index1A01)/sizeof(SpirallingMaster_Index1A01[0]), 0x1A01},
   { (subindex*)SpirallingMaster_Index1A02,sizeof(SpirallingMaster_Index1A02)/sizeof(SpirallingMaster_Index1A02[0]), 0x1A02},
   { (subindex*)SpirallingMaster_Index1A03,sizeof(SpirallingMaster_Index1A03)/sizeof(SpirallingMaster_Index1A03[0]), 0x1A03},
+  { (subindex*)SpirallingMaster_Index1A04,sizeof(SpirallingMaster_Index1A04)/sizeof(SpirallingMaster_Index1A04[0]), 0x1A04},
+  { (subindex*)SpirallingMaster_Index1A05,sizeof(SpirallingMaster_Index1A05)/sizeof(SpirallingMaster_Index1A05[0]), 0x1A05},
+  { (subindex*)SpirallingMaster_Index1A06,sizeof(SpirallingMaster_Index1A06)/sizeof(SpirallingMaster_Index1A06[0]), 0x1A06},
+  { (subindex*)SpirallingMaster_Index1A07,sizeof(SpirallingMaster_Index1A07)/sizeof(SpirallingMaster_Index1A07[0]), 0x1A07},
+  { (subindex*)SpirallingMaster_Index1A08,sizeof(SpirallingMaster_Index1A08)/sizeof(SpirallingMaster_Index1A08[0]), 0x1A08},
+  { (subindex*)SpirallingMaster_Index1A09,sizeof(SpirallingMaster_Index1A09)/sizeof(SpirallingMaster_Index1A09[0]), 0x1A09},
+  { (subindex*)SpirallingMaster_Index1A0A,sizeof(SpirallingMaster_Index1A0A)/sizeof(SpirallingMaster_Index1A0A[0]), 0x1A0A},
+  { (subindex*)SpirallingMaster_Index1A0B,sizeof(SpirallingMaster_Index1A0B)/sizeof(SpirallingMaster_Index1A0B[0]), 0x1A0B},
+  { (subindex*)SpirallingMaster_Index1A0C,sizeof(SpirallingMaster_Index1A0C)/sizeof(SpirallingMaster_Index1A0C[0]), 0x1A0C},
+  { (subindex*)SpirallingMaster_Index1A0D,sizeof(SpirallingMaster_Index1A0D)/sizeof(SpirallingMaster_Index1A0D[0]), 0x1A0D},
+  { (subindex*)SpirallingMaster_Index1A0E,sizeof(SpirallingMaster_Index1A0E)/sizeof(SpirallingMaster_Index1A0E[0]), 0x1A0E},
+  { (subindex*)SpirallingMaster_Index1A0F,sizeof(SpirallingMaster_Index1A0F)/sizeof(SpirallingMaster_Index1A0F[0]), 0x1A0F},
   { (subindex*)SpirallingMaster_Index1F22,sizeof(SpirallingMaster_Index1F22)/sizeof(SpirallingMaster_Index1F22[0]), 0x1F22},
   { (subindex*)SpirallingMaster_Index2000,sizeof(SpirallingMaster_Index2000)/sizeof(SpirallingMaster_Index2000[0]), 0x2000},
   { (subindex*)SpirallingMaster_Index2001,sizeof(SpirallingMaster_Index2001)/sizeof(SpirallingMaster_Index2001[0]), 0x2001},
@@ -705,6 +1983,18 @@ const indextable SpirallingMaster_objdict[] =
   { (subindex*)SpirallingMaster_Index2009,sizeof(SpirallingMaster_Index2009)/sizeof(SpirallingMaster_Index2009[0]), 0x2009},
   { (subindex*)SpirallingMaster_Index200A,sizeof(SpirallingMaster_Index200A)/sizeof(SpirallingMaster_Index200A[0]), 0x200A},
   { (subindex*)SpirallingMaster_Index200B,sizeof(SpirallingMaster_Index200B)/sizeof(SpirallingMaster_Index200B[0]), 0x200B},
+  { (subindex*)SpirallingMaster_Index200C,sizeof(SpirallingMaster_Index200C)/sizeof(SpirallingMaster_Index200C[0]), 0x200C},
+  { (subindex*)SpirallingMaster_Index200D,sizeof(SpirallingMaster_Index200D)/sizeof(SpirallingMaster_Index200D[0]), 0x200D},
+  { (subindex*)SpirallingMaster_Index200E,sizeof(SpirallingMaster_Index200E)/sizeof(SpirallingMaster_Index200E[0]), 0x200E},
+  { (subindex*)SpirallingMaster_Index200F,sizeof(SpirallingMaster_Index200F)/sizeof(SpirallingMaster_Index200F[0]), 0x200F},
+  { (subindex*)SpirallingMaster_Index2010,sizeof(SpirallingMaster_Index2010)/sizeof(SpirallingMaster_Index2010[0]), 0x2010},
+  { (subindex*)SpirallingMaster_Index2011,sizeof(SpirallingMaster_Index2011)/sizeof(SpirallingMaster_Index2011[0]), 0x2011},
+  { (subindex*)SpirallingMaster_Index2012,sizeof(SpirallingMaster_Index2012)/sizeof(SpirallingMaster_Index2012[0]), 0x2012},
+  { (subindex*)SpirallingMaster_Index2013,sizeof(SpirallingMaster_Index2013)/sizeof(SpirallingMaster_Index2013[0]), 0x2013},
+  { (subindex*)SpirallingMaster_Index2014,sizeof(SpirallingMaster_Index2014)/sizeof(SpirallingMaster_Index2014[0]), 0x2014},
+  { (subindex*)SpirallingMaster_Index2015,sizeof(SpirallingMaster_Index2015)/sizeof(SpirallingMaster_Index2015[0]), 0x2015},
+  { (subindex*)SpirallingMaster_Index2016,sizeof(SpirallingMaster_Index2016)/sizeof(SpirallingMaster_Index2016[0]), 0x2016},
+  { (subindex*)SpirallingMaster_Index2017,sizeof(SpirallingMaster_Index2017)/sizeof(SpirallingMaster_Index2017[0]), 0x2017},
 };
 
 const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -721,39 +2011,97 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 		case 0x1018: i = 6;break;
 		case 0x1280: i = 7;break;
 		case 0x1281: i = 8;break;
-		case 0x1400: i = 9;break;
-		case 0x1401: i = 10;break;
-		case 0x1402: i = 11;break;
-		case 0x1403: i = 12;break;
-		case 0x1404: i = 13;break;
-		case 0x1405: i = 14;break;
-		case 0x1600: i = 15;break;
-		case 0x1601: i = 16;break;
-		case 0x1602: i = 17;break;
-		case 0x1603: i = 18;break;
-		case 0x1604: i = 19;break;
-		case 0x1605: i = 20;break;
-		case 0x1800: i = 21;*callbacks = SpirallingMaster_Index1800_callbacks; break;
-		case 0x1801: i = 22;*callbacks = SpirallingMaster_Index1801_callbacks; break;
-		case 0x1802: i = 23;*callbacks = SpirallingMaster_Index1802_callbacks; break;
-		case 0x1803: i = 24;*callbacks = SpirallingMaster_Index1803_callbacks; break;
-		case 0x1A00: i = 25;break;
-		case 0x1A01: i = 26;break;
-		case 0x1A02: i = 27;break;
-		case 0x1A03: i = 28;break;
-		case 0x1F22: i = 29;break;
-		case 0x2000: i = 30;*callbacks = StatusWord_V_callbacks; break;
-		case 0x2001: i = 31;break;
-		case 0x2002: i = 32;break;
-		case 0x2003: i = 33;break;
-		case 0x2004: i = 34;*callbacks = StatusWord_Vaux_callbacks; break;
-		case 0x2005: i = 35;break;
-		case 0x2006: i = 36;break;
-		case 0x2007: i = 37;break;
-		case 0x2008: i = 38;break;
-		case 0x2009: i = 39;break;
-		case 0x200A: i = 40;break;
-		case 0x200B: i = 41;break;
+		case 0x1282: i = 9;break;
+		case 0x1283: i = 10;break;
+		case 0x1400: i = 11;break;
+		case 0x1401: i = 12;break;
+		case 0x1402: i = 13;break;
+		case 0x1403: i = 14;break;
+		case 0x1404: i = 15;break;
+		case 0x1405: i = 16;break;
+		case 0x1406: i = 17;break;
+		case 0x1407: i = 18;break;
+		case 0x1408: i = 19;break;
+		case 0x1409: i = 20;break;
+		case 0x140A: i = 21;break;
+		case 0x140B: i = 22;break;
+		case 0x140C: i = 23;break;
+		case 0x140D: i = 24;break;
+		case 0x140E: i = 25;break;
+		case 0x140F: i = 26;break;
+		case 0x1600: i = 27;break;
+		case 0x1601: i = 28;break;
+		case 0x1602: i = 29;break;
+		case 0x1603: i = 30;break;
+		case 0x1604: i = 31;break;
+		case 0x1605: i = 32;break;
+		case 0x1606: i = 33;break;
+		case 0x1607: i = 34;break;
+		case 0x1608: i = 35;break;
+		case 0x1609: i = 36;break;
+		case 0x160A: i = 37;break;
+		case 0x160B: i = 38;break;
+		case 0x160C: i = 39;break;
+		case 0x160D: i = 40;break;
+		case 0x160E: i = 41;break;
+		case 0x160F: i = 42;break;
+		case 0x1800: i = 43;*callbacks = SpirallingMaster_Index1800_callbacks; break;
+		case 0x1801: i = 44;*callbacks = SpirallingMaster_Index1801_callbacks; break;
+		case 0x1802: i = 45;*callbacks = SpirallingMaster_Index1802_callbacks; break;
+		case 0x1803: i = 46;*callbacks = SpirallingMaster_Index1803_callbacks; break;
+		case 0x1804: i = 47;*callbacks = SpirallingMaster_Index1804_callbacks; break;
+		case 0x1805: i = 48;*callbacks = SpirallingMaster_Index1805_callbacks; break;
+		case 0x1806: i = 49;*callbacks = SpirallingMaster_Index1806_callbacks; break;
+		case 0x1807: i = 50;*callbacks = SpirallingMaster_Index1807_callbacks; break;
+		case 0x1808: i = 51;*callbacks = SpirallingMaster_Index1808_callbacks; break;
+		case 0x1809: i = 52;*callbacks = SpirallingMaster_Index1809_callbacks; break;
+		case 0x180A: i = 53;*callbacks = SpirallingMaster_Index180A_callbacks; break;
+		case 0x180B: i = 54;*callbacks = SpirallingMaster_Index180B_callbacks; break;
+		case 0x180C: i = 55;*callbacks = SpirallingMaster_Index180C_callbacks; break;
+		case 0x180D: i = 56;*callbacks = SpirallingMaster_Index180D_callbacks; break;
+		case 0x180E: i = 57;*callbacks = SpirallingMaster_Index180E_callbacks; break;
+		case 0x180F: i = 58;*callbacks = SpirallingMaster_Index180F_callbacks; break;
+		case 0x1A00: i = 59;break;
+		case 0x1A01: i = 60;break;
+		case 0x1A02: i = 61;break;
+		case 0x1A03: i = 62;break;
+		case 0x1A04: i = 63;break;
+		case 0x1A05: i = 64;break;
+		case 0x1A06: i = 65;break;
+		case 0x1A07: i = 66;break;
+		case 0x1A08: i = 67;break;
+		case 0x1A09: i = 68;break;
+		case 0x1A0A: i = 69;break;
+		case 0x1A0B: i = 70;break;
+		case 0x1A0C: i = 71;break;
+		case 0x1A0D: i = 72;break;
+		case 0x1A0E: i = 73;break;
+		case 0x1A0F: i = 74;break;
+		case 0x1F22: i = 75;break;
+		case 0x2000: i = 76;*callbacks = StatusWord_1_callbacks; break;
+		case 0x2001: i = 77;break;
+		case 0x2002: i = 78;break;
+		case 0x2003: i = 79;break;
+		case 0x2004: i = 80;*callbacks = StatusWord_2_callbacks; break;
+		case 0x2005: i = 81;break;
+		case 0x2006: i = 82;break;
+		case 0x2007: i = 83;break;
+		case 0x2008: i = 84;break;
+		case 0x2009: i = 85;break;
+		case 0x200A: i = 86;break;
+		case 0x200B: i = 87;break;
+		case 0x200C: i = 88;break;
+		case 0x200D: i = 89;break;
+		case 0x200E: i = 90;break;
+		case 0x200F: i = 91;break;
+		case 0x2010: i = 92;break;
+		case 0x2011: i = 93;break;
+		case 0x2012: i = 94;break;
+		case 0x2013: i = 95;break;
+		case 0x2014: i = 96;break;
+		case 0x2015: i = 97;break;
+		case 0x2016: i = 98;break;
+		case 0x2017: i = 99;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;
@@ -767,24 +2115,24 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
  * Even if no pdoTransmit are defined, at least one entry is computed
  * for compilations issues.
  */
-s_PDO_status SpirallingMaster_PDO_status[4] = {s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer};
+s_PDO_status SpirallingMaster_PDO_status[16] = {s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer};
 
 const quick_index SpirallingMaster_firstIndex = {
   0, /* SDO_SVR */
   7, /* SDO_CLT */
-  9, /* PDO_RCV */
-  15, /* PDO_RCV_MAP */
-  21, /* PDO_TRS */
-  25 /* PDO_TRS_MAP */
+  11, /* PDO_RCV */
+  27, /* PDO_RCV_MAP */
+  43, /* PDO_TRS */
+  59 /* PDO_TRS_MAP */
 };
 
 const quick_index SpirallingMaster_lastIndex = {
   0, /* SDO_SVR */
-  8, /* SDO_CLT */
-  14, /* PDO_RCV */
-  20, /* PDO_RCV_MAP */
-  24, /* PDO_TRS */
-  28 /* PDO_TRS_MAP */
+  10, /* SDO_CLT */
+  26, /* PDO_RCV */
+  42, /* PDO_RCV_MAP */
+  58, /* PDO_TRS */
+  74 /* PDO_TRS_MAP */
 };
 
 const UNS16 SpirallingMaster_ObjdictSize = sizeof(SpirallingMaster_objdict)/sizeof(SpirallingMaster_objdict[0]);

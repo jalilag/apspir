@@ -12,17 +12,29 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 
 /* Master node data struct */
 extern CO_Data SpirallingMaster_Data;
-extern UNS16 StatusWord_V;		/* Mapped at index 0x2000, subindex 0x00*/
-extern INTEGER8 InternalTemp_V;		/* Mapped at index 0x2001, subindex 0x00*/
-extern UNS16 Voltage_V;		/* Mapped at index 0x2002, subindex 0x00*/
-extern UNS16 ErrorCode_V;		/* Mapped at index 0x2003, subindex 0x00*/
-extern UNS16 StatusWord_Vaux;		/* Mapped at index 0x2004, subindex 0x00*/
-extern INTEGER32 Velocity_V;		/* Mapped at index 0x2005, subindex 0x00*/
-extern INTEGER32 Vel2Send_V;		/* Mapped at index 0x2006, subindex 0x00*/
-extern INTEGER8 InternalTemp_Vaux;		/* Mapped at index 0x2007, subindex 0x00*/
-extern UNS16 Voltage_Vaux;		/* Mapped at index 0x2008, subindex 0x00*/
-extern UNS16 ErrorCode_Vaux;		/* Mapped at index 0x2009, subindex 0x00*/
-extern INTEGER32 Velocity_Vaux;		/* Mapped at index 0x200A, subindex 0x00*/
-extern INTEGER32 Vel2Send_Vaux;		/* Mapped at index 0x200B, subindex 0x00*/
+extern UNS16 StatusWord_1;		/* Mapped at index 0x2000, subindex 0x00*/
+extern INTEGER8 InternalTemp_1;		/* Mapped at index 0x2001, subindex 0x00*/
+extern UNS16 Voltage_1;		/* Mapped at index 0x2002, subindex 0x00*/
+extern UNS16 ErrorCode_1;		/* Mapped at index 0x2003, subindex 0x00*/
+extern UNS16 StatusWord_2;		/* Mapped at index 0x2004, subindex 0x00*/
+extern INTEGER32 Velocity_1;		/* Mapped at index 0x2005, subindex 0x00*/
+extern INTEGER32 Vel2Send_1;		/* Mapped at index 0x2006, subindex 0x00*/
+extern INTEGER8 InternalTemp_2;		/* Mapped at index 0x2007, subindex 0x00*/
+extern UNS16 Voltage_2;		/* Mapped at index 0x2008, subindex 0x00*/
+extern UNS16 ErrorCode_2;		/* Mapped at index 0x2009, subindex 0x00*/
+extern INTEGER32 Velocity_2;		/* Mapped at index 0x200A, subindex 0x00*/
+extern INTEGER32 Vel2Send_2;		/* Mapped at index 0x200B, subindex 0x00*/
+extern UNS16 StatusWord_3;		/* Mapped at index 0x200C, subindex 0x00*/
+extern INTEGER16 Voltage_3;		/* Mapped at index 0x200D, subindex 0x00*/
+extern INTEGER8 InternalTemp_3;		/* Mapped at index 0x200E, subindex 0x00*/
+extern UNS16 StatusWord_4;		/* Mapped at index 0x200F, subindex 0x00*/
+extern UNS16 Voltage_4;		/* Mapped at index 0x2010, subindex 0x00*/
+extern INTEGER8 InternalTemp_4;		/* Mapped at index 0x2011, subindex 0x00*/
+extern UNS16 ErrorCode_3;		/* Mapped at index 0x2012, subindex 0x00*/
+extern UNS16 ErrorCode_4;		/* Mapped at index 0x2013, subindex 0x00*/
+extern INTEGER32 Vel2Send_3;		/* Mapped at index 0x2014, subindex 0x00*/
+extern INTEGER32 Vel2Send_4;		/* Mapped at index 0x2015, subindex 0x00*/
+extern UNS8 Velocity_3;		/* Mapped at index 0x2016, subindex 0x00*/
+extern UNS8 Velocity_4;		/* Mapped at index 0x2017, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H

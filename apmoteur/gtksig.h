@@ -18,6 +18,19 @@ void on_butVelDown_clicked(GtkWidget* pEntry);
 void on_butParamReturn_clicked(GtkWidget* pEntry);
 void on_butParamSave_clicked(GtkWidget* pEntry);
 
+
 void on_butDialYes_clicked(GtkWidget* pEntry);
 void on_butDialNo_clicked(GtkWidget* pEntry);
+
+void on_butAddSlave_clicked (GtkWidget* pEntry);
+void on_butDelSlave_clicked(GtkWidget* pEntry);
+
+void on_butParamMotor_clicked(GtkWidget* pEntry);
+void on_butParamProfile_clicked(GtkWidget* pEntry);
+void on_listProfile_changed(GtkWidget* pEntry);
+void on_butAddField_clicked (GtkWidget* pEntry);
+void on_butDelField_clicked (GtkWidget* pEntry);
+
+void on_butActive_clicked (GtkWidget* pEntry,void* data);
+void on_butFree_clicked(GtkWidget* pEntry,void* data) ;
 #endif

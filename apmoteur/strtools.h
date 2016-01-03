@@ -3,6 +3,7 @@
 #include "canfestival.h"
 #include <gtk/gtk.h>
 
+
 char* strtools_concat(char* s1, char* s2, ...); // Concaténation de chaine
 char** strtools_split(char* chaine,const char* delim,int vide); // Split de chaine suivant un délimiteur
 int strtools_num_char_in_file(FILE* file, const char* delim); // Compte le nombre de caractere delim dans un fichier
@@ -11,4 +12,5 @@ void strtools_print_data(void* data,UNS8 type); // Show data on shell
 gchar* strtools_gnum2str(void *data,UNS8 type); // Convert to str for GTK
 char* strtools_hex2bin(UNS16* data,UNS8 type); // Hexa -> binaire
 void strtools_inv_str(char *chaine); // Inversion de chaine
+int strtools_build_file(char* fname, char* str2write);
 #endif // _STRING_FUNC_H

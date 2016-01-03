@@ -180,7 +180,7 @@ gchar* strtools_gnum2str(void *data,UNS8 type) {
     } else if (type == 0x07) {
         return g_strdup_printf ("%#.8X", (UNS32)*pdata);
     } else {
-        printf("num2str error : Type inconnu\n"); exit(1);
+        printf("num2str error : Type inconnu : %x \n",type); exit(1);
     }
 }
 
@@ -252,6 +252,19 @@ void strtools_inv_str(char* chaine) {
 char* strtools_pt2vs(void* data) {
     char* data_vs = data;
     return data_vs;
+}
+
+int strtools_build_file(char* fname, char* str2write) {
+    FILE* f = fopen(fname,"w+");
+    if (f != NULL) {
+        if (strlen(str2write) > 0) {
+            fputs(str2write,f);
+            fclose(f);
+            return 1;
+        } else
+            return 0;
+    } else
+        return 0;
 }
 
 

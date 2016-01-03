@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
-
 #include <gtk/gtk.h>
 #include <glib.h>
 #include "canfestival.h"
@@ -19,20 +18,74 @@
 #include "od_callback.h"
 #include "strtools.h"
 #include "errgen.h"
+#include "motor.h"
 
 // Plateforme MASTER
-s_BOARD MasterBoard = {"0", "1M"};
+s_BOARD MasterBoard = {"0","1M"};
 
 // Définition des esclaves
-volatile SLAVES_conf slaves[SLAVE_NUMBER] = {
-        {"vitesse",0x02,0x0800005A,0x00018E70,0x00000710,0x138F04FC,0,0,0x0000},
-        {"vitesse_aux",0x03,0x0800005A,0x00018E70,0x00000710,0x138F04FD,0,0,0x0000}
-};
+volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+int SLAVE_NUMBER, PROFILE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
 
-int run_init = 1; // Boucle d'initialisation
-// Incrémentation vitese
-INTEGER32 vel_inc_V = 1000;
+// Les paramètres
+volatile PROF slave_profile[PROFILE_NUMBER_LIMIT];
+INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
+// Récupération des variables numériques à traiter
+void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4};
+void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4};
+void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4};
+void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
+void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_4,&Velocity_4};
+void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
+INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
+
+// Structure d'acces aux variables defini dans le maitre
+volatile PARVAR vardata[VAR_NUMBER] = {
+    {"Active",0x00,NULL,ACTIVE},
+    {"SlaveTitle",0x00,NULL,NODE},
+    {"StateImg",0x00,NULL,NULL},
+    {"Vendor",0x07,NULL,VENDOR},
+    {"Product",0x07,NULL,PRODUCT},
+    {"Revision",0x07,NULL,REVISION},
+    {"Serial",0x07,NULL,SERIAL},
+    {"SlaveProfile",0x02,NULL,NODE_PROFILE},
+    {"State",0x02,NULL,STATUT_TITLE},
+    {"StateError",0x02,NULL,STATE_ERROR},
+    {"Power",0x06,power,POWER_STATE},
+    {"PowerError",0x06,power_error,POWER_STATE_ERROR},
+    {"Temp",0x02,temperature,TEMPERATURE},
+    {"Volt",0x04,voltage,VOLTAGE},
+    {"Velinc",0x04,(void*)velocity_inc,DEFAULT},
+    {"Velocity",0x04,velocity,DEFAULT},
+    {"Vel2send",0x04,vel2send,DEFAULT}
+};
+// Boucle d'initialisation
+int run_init = 1;
+int run_gui_loop = 0;
+// Liste des paramètres CANOPEN modifiables
+volatile PARAM pardata[PARAM_NUMBER] = {
+    {PDOR1,"Pdor1",0x1600,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {PDOR2,"Pdor2",0x1601,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {PDOR3,"Pdor3",0x1602,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {PDOR4,"Pdor4",0x1603,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {PDOT3,"Pdot3",0x1A02,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {PDOT4,"Pdot4",0x1A03,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
+    {CURRENT,"Current",0x2204,0x00,0x05,0,100,ERR_SET_CURRENT,ERR_READ_CURRENT,ERR_SAVE_CURRENT},
+    {PROFILE_MODE,"Profile",0x6060,0x00,0x02,0,10,ERR_SET_PROFILE,ERR_READ_PROFILE,ERR_SAVE_PROFILE},
+    {ACCELERATION,"Acc",0x6083,0x00,0x07,0,10000000,ERR_SET_ACCELERATION,ERR_READ_ACCELERATION,ERR_SAVE_ACCELERATION},
+    {DECELERATION,"Dcc",0x6084,0x00,0x07,0,10000000,ERR_SET_DECELERATION,ERR_READ_DECELERATION,ERR_SAVE_DECELERATION},
+    {VELOCITY_INC,"Velinc",0x0000,0x00,0x04,0,500000,ERR_SET_VELOCITY_INC,0x0000,0x0000},
+    {DECELERATION_QS,"Dccqs",0x6085,0x00,0x07,0,1000000,ERR_SET_DECELERATION_QS,ERR_READ_DECELERATION_QS,ERR_SAVE_DECELERATION_QS},
+    {TORQUE,"Torque",0x6071,0x00,0x03,0,1000,ERR_SET_TORQUE,ERR_READ_TORQUE,ERR_SAVE_TORQUE},
+    {TORQUE_RAMP,"TorqueSlope",0x6087,0x00,0x07,0,10000,ERR_SET_TORQUE_SLOPE,ERR_READ_TORQUE_SLOPE,ERR_SAVE_TORQUE_SLOPE},
+    {TORQUE_VELOCITY,"TorqueVel",0x2704,0x00,0x05,0,255,ERR_SET_TORQUE_VELOCITY,ERR_READ_TORQUE_VELOCITY,ERR_SAVE_TORQUE_VELOCITY},
+    {TORQUE_VELOCITY_MAKEUP,"TorqueVelMake",0x2703,0x00,0x07,0,10000000,ERR_SET_TORQUE_VELOCITY_MAKEUP,ERR_READ_TORQUE_VELOCITY_MAKEUP,ERR_SAVE_TORQUE_VELOCITY_MAKEUP},
+    {TORQUE_HMT_ACTIVATE,"TorqueHmtActive",0x2701,0x00,0x05,0,0x80,ERR_SET_HMT_ACTIVATE,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE},
+    {TORQUE_HMT_CONTROL,"TorqueHmtControl",0x2702,0x00,0x05,0,0xFF,ERR_SET_HMT_CONTROL,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE}
+};
+// Menu courant
+int current_menu = 0;
 
 // A définir mettre a jour
 void catch_signal(int sig) {
@@ -41,32 +94,48 @@ void catch_signal(int sig) {
   printf("Got Signal %d\n",sig);
 }
 
+UNS16 errgen_state = 0x0000;
+
 /**
 * Fermeture de l'application
+* 0 : Arret
+* 1 : Mise hors tension des moteurs
+* 2 : Arret de l'appli
 **/
-void Exit() {
+void Exit(int type) {
     int i = 0;
-    run_init = 0;
+    gtk_switch_set_active(gui_get_switch("butVelStart"),0);
     for (i=0; i<SLAVE_NUMBER; i++) {
-        motor_start(slave_get_id_with_index(i),0);
-        motor_switch_off(slave_get_id_with_index(i));
+        if (slave_get_param_in_num("Active",i)) {
+            motor_start(slave_get_node_with_index(i),0);
+            if (type > 0)
+                motor_switch_off(slave_get_node_with_index(i));
+        }
     }
-    masterSendNMTstateChange (&SpirallingMaster_Data, 0, NMT_Stop_Node);
-    setState(&SpirallingMaster_Data, Stopped);
-    gtk_main_quit();
-    canClose(&SpirallingMaster_Data);
-    TimerCleanup();
+    if (type > 1) {
+        run_init = 0;
+        masterSendNMTstateChange (&SpirallingMaster_Data, 0, NMT_Stop_Node);
+        if (getState(&SpirallingMaster_Data) != Unknown_state &&
+        getState(&SpirallingMaster_Data) != Stopped)
+            setState(&SpirallingMaster_Data, Stopped);
+        if (run_gui_loop) {
+            gtk_main_quit();
+        }
+        exit(EXIT_FAILURE);
+    }
 }
 
 int main(int argc,char **argv) {
-    // Initialisation de l'interface graphique
+// Initialisation de l'interface graphique
+    gui_init();
     gchar* thgui = "gui";
     GError * guierr;
-    GThread * guithread = g_thread_try_new (thgui, gui_init,NULL, &guierr);
-    if (guierr == NULL)
-        errgen_set(ERR_GUI_LOOP_RUN);
-    sleep(1);
-// Configuration du socket
+    GThread * guithread = g_thread_try_new (thgui, gui_main,NULL, &guierr);
+    if (guithread == NULL)
+        errgen_set(ERR_GUI_LOOP_RUN,NULL);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.25);
+
+    // Configuration du socket
     pid_t pid = fork();
 
     if (pid < 0) {
@@ -75,41 +144,46 @@ int main(int argc,char **argv) {
     } else {
         if (pid == 0) {
             execlp("./test.sh","test.sh",NULL);
-            errgen_set(ERR_DRIVER_UP); // Driver error
+            errgen_set(ERR_DRIVER_UP,NULL); // Driver error
         } else {
             wait(0);
         }
     }
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.50);
 
-// Control des fichiers de configuration
-    if(!slave_check_config_file("vitesse")) {
-        if(!slave_gen_config_file("vitesse","Acceleration 1000000","Deceleration 1000000","QS_Deceleration 1000000","Velocity_Inc 1000",NULL)) {
-            errgen_set(ERR_FILE_CONFIG_GEN);
-        }
-    }
-    if(!slave_check_config_file("couple")) {
-        if(!slave_gen_config_file("couple","Torque 50","Torque_Slope 1000",NULL)) {
-            errgen_set(ERR_FILE_CONFIG_GEN);
-        }
-    }
-    if(!slave_check_config_file("rotation")) {
-        if(!slave_gen_config_file("vitesse","Acceleration 1000000","Deceleration 1000000","QS_Deceleration 1000000",NULL)) {
-            errgen_set(ERR_FILE_CONFIG_GEN);
-        }
-    }
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
 	signal(SIGINT, catch_signal);
 
 // Chemin vers la librairie CANFESTIVAL
-    char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
+    char* LibraryPath="../../drivers/can_socket/libcanfestival_can_socket.so";
 
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)
-        errgen_set(ERR_DRIVER_LOAD);
+        errgen_set(ERR_DRIVER_LOAD,NULL);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.70);
+
+// Ouverture du port CAN
+    if(!canOpen(&MasterBoard,&SpirallingMaster_Data))
+        errgen_set(ERR_DRIVER_OPEN,NULL);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.80);
+
+
+// Definition des esclaves
+    if (!slave_read_definition()) {
+        run_init = -1;
+        errgen_set(ERR_FILE_SLAVE_DEF,FILE_SLAVE_CONFIG);
+    }
+// Control des fichiers de configuration
+    int i,res;
+    for (i=0; i < PROFILE_NUMBER; i++) {
+        if (!slave_check_profile_file(i))
+            errgen_set(ERR_FILE_PROFILE,slave_get_profile_filename(i));
+
+    }
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.90);
 
 	TimerInit();
-
 
     // Callback du maitre
     SpirallingMaster_Data.heartbeatError = SpirallingMaster_heartbeatError;
@@ -123,23 +197,18 @@ int main(int argc,char **argv) {
     SpirallingMaster_Data.post_SlaveBootup = SpirallingMaster_post_SlaveBootup;
     SpirallingMaster_Data.post_SlaveStateChange = SpirallingMaster_post_SlaveStateChange;
 
-    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)){
-        errgen_set(ERR_DRIVER_OPEN);
-	}
 
-    // Initialisation du maitre
-    master_init();
-
-    // Initialisation de l'interface graphique
+    // Initialisation de la boucle d'initialisation
     gchar* thinit = "init_loop";
     GError * initerr;
     GThread * initthread = g_thread_try_new (thinit, cantools_init_loop,NULL, &initerr);
-    if (initerr == NULL)
-        errgen_set(ERR_INIT_LOOP_RUN);
-
+    if (initthread == NULL)
+        errgen_set(ERR_INIT_LOOP_RUN,NULL);
     g_thread_join (initthread);
     g_thread_join (guithread);
 
+    canClose(&SpirallingMaster_Data);
+    TimerCleanup();
 	return 0;
 }
 

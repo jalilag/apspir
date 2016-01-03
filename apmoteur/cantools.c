@@ -12,13 +12,16 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
+// CONSTANTS
+#define MAX_SDO_ERROR 2
+#define SDO_TIMEOUT 3
 
 static int SDO_step_error = 0;
 
-extern SLAVES_conf slaves[SLAVE_NUMBER];
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern pthread_mutex_t lock_slave;
-extern int run_init;
-
+extern int run_init, SLAVE_NUMBER;
+extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
 /**
 * Lecture d'une SDO
 **/
@@ -52,7 +55,7 @@ int cantools_read_sdo(UNS8 nodeid,SDOR sdo, void* data) {
         time_t deb = time (NULL);
         time_t fin;
  		while (res == SDO_UPLOAD_IN_PROGRESS || res == SDO_DOWNLOAD_IN_PROGRESS) {
-            usleep(100);
+            usleep(10000);
             fin = time (NULL);
 			res = getReadResultNetworkDict(&SpirallingMaster_Data, nodeid, data, &size, &abortCode);
 			if (difftime(fin,deb) > SDO_TIMEOUT) {
@@ -63,7 +66,6 @@ int cantools_read_sdo(UNS8 nodeid,SDOR sdo, void* data) {
     }
     closeSDOtransfer(&SpirallingMaster_Data, nodeid, SDO_CLIENT);
     if (res == SDO_FINISHED) {
-        gui_push_state(strtools_concat(SDO_READING_SUCCESS, " (",strtools_gnum2str(&sdo.index,0x06)," | ",strtools_gnum2str(&sdo.subindex,0x05),")",NULL));
         SDO_step_error=0;
         return 1;
 	} else {
@@ -106,7 +108,7 @@ int cantools_write_sdo(UNS8 nodeid,SDOR sdo, void* data) {
         time_t deb = time (NULL);
         time_t fin;
 		while (res == SDO_DOWNLOAD_IN_PROGRESS || res == SDO_UPLOAD_IN_PROGRESS) {
-            usleep(100);
+            usleep(10000);
             fin = time (NULL);
  			res = getWriteResultNetworkDict(&SpirallingMaster_Data, nodeid, &abortCode);
 			if (difftime(fin,deb) > SDO_TIMEOUT) {
@@ -117,7 +119,6 @@ int cantools_write_sdo(UNS8 nodeid,SDOR sdo, void* data) {
     }
 	closeSDOtransfer(&SpirallingMaster_Data, nodeid, SDO_CLIENT);
     if (res == SDO_FINISHED) {
-        gui_push_state(strtools_concat(SDO_WRITING_SUCCESS, " (",strtools_gnum2str(&sdo.index,0x06)," | ",strtools_gnum2str(&sdo.subindex,0x05),")",NULL));
         SDO_step_error=0;
         return 1;
 	} else {
@@ -139,8 +140,6 @@ int cantools_write_local(UNS16 Mindex, UNS8 Msubindex, void* data, UNS32 datsize
 	UNS32 res;
 	res = writeLocalDict(&SpirallingMaster_Data, Mindex, Msubindex, data, &datsize,1);
     if (res == OD_SUCCESSFUL) {
-        gui_push_state(strtools_concat(LOCAL_WRITING_SUCCESS, " -> ",strtools_gnum2str(&Mindex,0x06)," (", " | ",
-        strtools_gnum2str(&Msubindex,0x05),")",NULL));
         return 1;
     } else {
         gui_push_state(strtools_concat(LOCAL_WRITING_ERROR, " -> ",strtools_gnum2str(&Mindex,0x06)," (", " | ",
@@ -152,8 +151,12 @@ int cantools_write_local(UNS16 Mindex, UNS8 Msubindex, void* data, UNS32 datsize
 /**
 * Configuration du type de transmission des PDOs
 **/
-int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans, UNS16 inhibit) {
+int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans, UNS16 inhibit, UNS16 event) {
     UNS16 cobID;
+    if (index == 0x1400) cobID = 0x0200;
+    if (index == 0x1401) cobID = 0x0300;
+    if (index == 0x1402) cobID = 0x0400;
+    if (index == 0x1403) cobID = 0x0500;
     if (index == 0x1800) cobID = 0x0180;
     if (index == 0x1801) cobID = 0x0280;
     if (index == 0x1802) cobID = 0x0380;
@@ -163,6 +166,7 @@ int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans, UNS16 inhibit) {
     SDOR SDO_trans = {index,0x02,0x05};
     SDOR SDO_cobid = {index,0x01,0x07};
     SDOR SDO_inhib = {index,0x03,0x06};
+    SDOR SDO_event = {index,0x05,0x06};
 
     // Désactivation pour modification
     if(!cantools_write_sdo(nodeID,SDO_cobid,&DisabledCobid)) {
@@ -175,11 +179,14 @@ int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans, UNS16 inhibit) {
         return 0;
     }
     // Modification de l'inhibit
-    if (inhibit != 0x0000) {
-        if(!cantools_write_sdo(nodeID,SDO_inhib,&inhibit)) {
-            printf("Erreur : inhib\n");
-            return 0;
-        }
+    if(!cantools_write_sdo(nodeID,SDO_inhib,&inhibit)) {
+        printf("Erreur : inhib\n");
+        return 0;
+    }
+    // Modification de l'event timer
+    if(!cantools_write_sdo(nodeID,SDO_event,&event)) {
+        printf("Erreur : event\n");
+        return 0;
     }
     // Activation transmission
     if (!cantools_write_sdo(nodeID,SDO_cobid,&EnabledCobid)) {
@@ -213,7 +220,6 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
 
 
     SDOR PDOMapAddress = {PDOMapIndex,0x00,0x05};
-
     // Désactivation de la transmission pour modification
     SDOR PDOParamAddress = {PDOMapIndex-0x0200,0x01,0x07};
     UNS32 PDOParamVal = 0x80000000 + PDOParamData + nodeID;
@@ -258,18 +264,27 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
 /**
 * INITIALISATION LOOP
 **/
-GThreadFunc cantools_init_loop() {
-    int i,k=0;
+gpointer cantools_init_loop(gpointer data) {
+    int i,MasterState = 0;
     INTEGER32 j = 0;
-    while (run_init) {
+    while (run_init == -1) sleep(1);
+    master_init();
+
+// Chargement de l'interface
+    g_idle_add(slave_gui_load_state,NULL);
+    g_timeout_add(500,keyword_maj,NULL);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),1);
+    gui_widget2hide("gui_level_bar",NULL);
+
+    while (run_init == 1) {
         j++;
-        k = 0;
+        MasterState = 0;
         for (i=0; i<SLAVE_NUMBER;i++) {
-            if (slave_get_state_with_index(i) <= STATE_LSS_CONFIG) {
-                k=1;
+            if (slave_get_param_in_num("State",i) == STATE_LSS_CONFIG) {
+                MasterState = 1;
             }
         }
-        if (k==1) {
+        if(MasterState) {
             if (getState(&SpirallingMaster_Data) == Operational)
                 setState(&SpirallingMaster_Data, Pre_operational);
         } else {
@@ -278,47 +293,63 @@ GThreadFunc cantools_init_loop() {
         }
         for (i=0; i<SLAVE_NUMBER;i++) {
             // Configuration LSS
-            if (slave_get_state_with_index(i) == STATE_LSS_CONFIG) {
-                printf("\n\nSLAVE STATE : %s \n\n",slave_get_state_title(slave_get_state_with_index(i)));
+            if (slave_get_param_in_num("State",i) == STATE_LSS_CONFIG) {
+                printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Stop_Node);
                 if (!lsstools_loop(slave_get_node_with_index(i),0)) {
-                    slave_set_state_error_with_index(i,ERROR_STATE_LSS);
-                    errgen_set(ERR_LSS_CONFIG);
+                    slave_set_param("StateError",i,ERROR_STATE_LSS);
+                    errgen_set(ERR_SLAVE_CONFIG_LSS,slave_get_title_with_index(i));
+                    slave_set_param("Active",i,STATE_DISCONNECTED);
+                    printf("State disc\n");
                 } else {
-                    slave_set_state_with_index(i,STATE_PREOP);
+                    slave_set_param("State",i,STATE_PREOP);
                 }
             }
             // Boot up
-            if (slave_get_state_with_index(i) == STATE_PREOP) {
+            if (MasterState == 0 && slave_get_param_in_num("State",i) == STATE_PREOP) {
+                printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Reset_Node);
             }
             // Configuration PreOp
-            if (slave_get_state_with_index(i) == STATE_CONFIG) {
-                printf("\n\nSLAVE STATE : %s \n\n",slave_get_state_title(slave_get_state_with_index(i)));
-                if(slave_config(slave_get_id_with_index(i))) { //preop a controler
-                    slave_set_state_with_index(i,STATE_OP);
+            if (slave_get_param_in_num("State",i) == STATE_CONFIG) {
+                printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
+                if(slave_config(slave_get_node_with_index(i))) {
+                    slave_set_param("State",i,STATE_OP);
                 } else {
-                    slave_set_state_error_with_index (i,ERROR_STATE_PREOP);
-                    errgen_set(ERR_SLAVE_CONFIG);
+                    slave_set_param("StateError",i,ERROR_STATE_CONFIG);
+                    errgen_set(ERR_SLAVE_CONFIG,slave_get_title_with_index(i));
+                    slave_set_param("Active",i,0);
                 }
             }
             // Passage en mode operational
-            if (slave_get_state_with_index(i) == STATE_OP) {
+            if (slave_get_param_in_num("State",i) == STATE_OP) {
+                printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Start_Node);
             }
             // Mise des moteurs en mode opérationnel
-            if (slave_get_state_with_index(i) == STATE_SON) {
-                printf("\n\nSLAVE STATE : %s \n\n",slave_get_state_title(slave_get_state_with_index(i)));
-                if(motor_switch_on(slave_get_id_with_index(i))) {
-                    slave_set_state_with_index(i,STATE_READY);
+            if (slave_get_param_in_num("State",i) == STATE_SON) {
+                printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
+                if(motor_switch_on(slave_get_node_with_index(i))) {
+                    slave_set_param("State",i,STATE_READY);
                 } else {
-                    slave_set_state_error_with_index (i,ERROR_STATE_SON);
-                    errgen_set(ERR_SLAVE_CONFIG_MOTOR_SON);
+                    slave_set_param("StateError",i,ERROR_STATE_SON);
+                    errgen_set(ERR_SLAVE_CONFIG_MOTOR_SON,slave_get_title_with_index(i));
+                    slave_set_param("Active",i,0);
+                }
+            }
+            // Détection d'une baisse de voltage
+            if (slave_get_param_in_num("Active",i) == 1) {
+                if (slave_get_param_in_num("Volt",i) > old_voltage[i])
+                    old_voltage[i] = slave_get_param_in_num("Volt",i);
+                if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.90*old_voltage[i]) {
+                    slave_set_param("Active",i,0);
+                    old_voltage[i] = 0;
+                    errgen_set(ERR_MOTOR_LOW_VOLTAGE,slave_get_param_in_char("SlaveTitle",i));
+                    slave_set_param("StateError",i,ERROR_STATE_VOLTAGE);
                 }
             }
         }
-        keyword_maj();
-        usleep(500000);
+        usleep(1000000);
     }
     return 0;
 }

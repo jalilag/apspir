@@ -35,7 +35,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 extern s_BOARD MasterBoard;
 char* baud_rate="1M";
-extern SLAVES_conf slaves[SLAVE_NUMBER];
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+extern int SLAVE_NUMBER;
 
 /*****************************************************************************/
 
@@ -70,58 +71,46 @@ static int master_config() {
     int i = 0;
     /** SYNC PERIOD **/
     if(!master_start_sync(0)) { // Arret de la synchro
-        errgen_set(ERR_MASTER_START_SYNC);
+        errgen_set(ERR_MASTER_START_SYNC,NULL);
         return 0;
     }
     dat = CYCLE_PERIOD; // Affectation de la periode de synchro
     if(!cantools_write_local(0x1006,0x00,&dat,sizeof(UNS32))) {
-        errgen_set(ERR_MASTER_SET_PERIOD);
+        errgen_set(ERR_MASTER_SET_PERIOD,NULL);
         return 0;
     }
     /** HEARTBEAT CONSUMER **/
     for (i=0; i < SLAVE_NUMBER; i++) {
         dat = HB_CONS_BASE + (slave_get_node_with_index(i)-1)*HB_CONS_BASE_OFFSET; // 500 + (n-1)*50
         if(!cantools_write_local(0x1016,slave_get_node_with_index(i)-1,&dat,sizeof(UNS32))) {
-            errgen_set(ERR_MASTER_SET_HB_CONS);
+            errgen_set(ERR_MASTER_SET_HB_CONS,NULL);
             return 0;
         }
     }
     /** PDOR CONFIGURATION **/
-    UNS8 j;
+    int j;
+    UNS8 trans =0xFF;
     for (i=0; i < SLAVE_NUMBER; i++) {
-        j = (slave_get_node_with_index(i) - 0x02)*3;
-        dat = 0x40000180 + slave_get_node_with_index(i);
-        if (!cantools_write_local(0x1400+j,0x01,&dat,sizeof(UNS32))) {
-            errgen_set(ERR_MASTER_CONFIG_PDOR1);
-            return 0;
+        for (j=0; j<4; j++){
+            dat = 0x40000180 + 0x100*j  + slave_get_node_with_index(i);
+            if (!cantools_write_local(0x1400+(4*i+j),0x01,&dat,sizeof(UNS32))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOR,NULL);
+                printf("dat %x\n",dat);
+                return 0;
+            }
+            dat = 0x40000200 + 0x100*j  + slave_get_node_with_index(i);
+            if (!cantools_write_local(0x1800+(4*i+j),0x01,&dat,sizeof(UNS32))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("dat %x\n",dat);
+                return 0;
+            }
+            if (!cantools_write_local(0x1800+(4*i+j),0x02,&trans,sizeof(UNS8))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("trans %x\n",trans);
+                return 0;
+            }
         }
-        j++;
-        dat = 0x40000280 + slave_get_node_with_index(i);
-        if (!cantools_write_local(0x1400+j,0x01,&dat,sizeof(UNS32))) {
-            errgen_set(ERR_MASTER_CONFIG_PDOR2);
-            return 0;
-        }
-        j++;
-        dat = 0x40000380 + slave_get_node_with_index(i);
-        if (!cantools_write_local(0x1400+j,0x01,&dat,sizeof(UNS32))) {
-            errgen_set(ERR_MASTER_CONFIG_PDOR3);
-            return 0;
-        }
-        j++;
     }
-    /** PDOT CONFIGURATION **/
-    for (i=0; i < SLAVE_NUMBER; i++) {
-        j = (slave_get_node_with_index(i) - 0x02)*1;
-        dat = 0x40000200 + slave_get_node_with_index(i);
-        if (!cantools_write_local(0x1800+j,0x01,&dat,sizeof(UNS32))) {
-            errgen_set(ERR_MASTER_CONFIG_PDOT1);
-            return 0;
-        }
-        j++;
-    }
-    /** CALLBACKS **/
-    RegisterSetODentryCallBack(&SpirallingMaster_Data, 0x2000, 0, &OnStatusWordVUpdate);
-    RegisterSetODentryCallBack(&SpirallingMaster_Data, 0x2004, 0, &OnStatusWordVauxUpdate);
     return 1;
 }
 
@@ -134,7 +123,7 @@ void SpirallingMaster_heartbeatError(CO_Data* d, UNS8 heartbeatID) {
 void SpirallingMaster_initialisation(CO_Data* d) {
 	printf("SpirallingMaster_initialisation\n");
     if(!master_config()) {     //configuration locale
-        errgen_set(ERR_MASTER_CONFIG);
+        errgen_set(ERR_MASTER_CONFIG,NULL);
     }
 }
 
@@ -142,10 +131,12 @@ void SpirallingMaster_preOperational(CO_Data* d) {
 	printf("SpirallingMaster_preOperational\n");
     int i;
     if (!master_start_sync(1)) { // Démarrage de la synchro
-        errgen_set(ERR_MASTER_START_SYNC);
+        errgen_set(ERR_MASTER_START_SYNC,NULL);
     }
     for (i=0; i<SLAVE_NUMBER; i++) {
-        slave_set_state_with_index(i,1);
+        printf("%d",i);
+        if (slave_get_param_in_num("Active",i))
+            slave_set_param("State",i,STATE_LSS_CONFIG);
     }
 }
 
@@ -157,16 +148,8 @@ void SpirallingMaster_stopped(CO_Data* d) {
 	printf("SpirallingMaster_stopped\n");
 }
 
-static int MasterSyncCount = 0, MasterControl = 0;
-
 void SpirallingMaster_post_sync(CO_Data* d) {
-    MasterControl++;
-	printf("SpirallingMaster_post_sync\n");
-//	printf("Status Word: %#.4x \n",StatusWord_C);
-//	printf("Internal Temp: %d \n",InternalTemp_C);
-//	printf("Voltage: %d \n",Voltage_C/10);
-//	printf("Error code: %#.4x \n",ErrorCode_C);
-
+     sendPDOevent(d);
 }
 
 void SpirallingMaster_post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg) {
@@ -177,6 +160,10 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
     switch(newNodeState) {
         case Initialisation:
             printf("Node %u state is now  : Initialisation\n", nodeId);
+        break;
+        case Pre_operational:
+            printf("Node %u state is now  : Preop\n", nodeId);
+
         break;
         case Disconnected:
             printf("\n\nNode %u state is now  : Disconnected\n\n", nodeId);
@@ -192,7 +179,8 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
         break;
         case Operational:
             printf("Node %u state is now  : Operational\n", nodeId);
-            slave_set_state_with_index(slave_get_index_with_node(nodeId),STATE_SON);
+            if (slave_get_param_in_num("Active",slave_get_index_with_node(nodeId)))
+                slave_set_param("State",slave_get_index_with_node(nodeId),STATE_SON);
         break;
         case Unknown_state:
             printf("Node %u state is now  : Unknown_state\n", nodeId);
@@ -204,12 +192,10 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
 }
 
 void SpirallingMaster_post_TPDO(CO_Data* d) {
-	printf("SpirallingMaster_post_TPDO MasterSyncCount = %d \n", MasterSyncCount);
-	printf("Mastersync : %d \n",MasterSyncCount);
-	MasterSyncCount++;
 }
 
 void SpirallingMaster_post_SlaveBootup(CO_Data* d, UNS8 nodeid) {
 	printf("SpirallingMaster_post_SlaveBootup %x\n", nodeid);
-    slave_set_state_with_index(slave_get_index_with_node(nodeid),STATE_CONFIG);
+    if (slave_get_param_in_num("Active",slave_get_index_with_node(nodeid)))
+        slave_set_param("State",slave_get_index_with_node(nodeid),STATE_CONFIG);
 }

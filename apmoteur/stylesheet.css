@@ -3,7 +3,7 @@ GtkWindow {
     -GtkWindow-resize-grip-height: 0;
     -GtkWindow-resize-grip-width: 0;
     background-color: #ccc;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 * {
@@ -21,6 +21,12 @@ GtkWindow {
     border: 0;
     font-weight: bold;
 }
+.stdButton2 {
+    border: 0;
+    font-weight: bold;
+}
+.stdButton2 GtkImage {padding-right:0em;}
+
 .lonelyButton {
     border: 0;
     font-weight: bold;
@@ -32,16 +38,27 @@ GtkWindow {
 }
 .butGreen:hover {background: #32CF2D;}
 .butRed {
-    background: #D4614D;
-    box-shadow: inset 0em 0em 1em #D1361B;
+    background: #BC2F16;
+    box-shadow: inset 0em 0em 1em #9F2610;
 }
-.butRed:hover{background: #FF9E98;}
+.butRed:hover{background: #D52305;}
 .butBlack{
     background: #3A3A3A;
     box-shadow: inset 0em 0em 1em #000;
 }
-.butBlack:hover{background: #777777;}
+.butBlack:hover{background: #505050;}
 .butBlack GtkLabel {color:#C3C3C3;}
+.butGrey {
+    background: #736F6F;
+    box-shadow: inset 0em 0em 1em #424242;
+}
+.butGrey:hover{background: #A7A7A7;}
+.butBlue{
+    background: #0D739F;
+    box-shadow: inset 0em 0em 1em #10516D;
+}
+.butBlue:hover{background: #399EC9;}
+
 
 
 .fontBig{font-size: 1.1em;}
@@ -69,12 +86,16 @@ GtkWindow {
     border-right: 3px solid #B08B49;
     border-bottom: 3px solid #B08B49;
 }
-
+.blueBox {
+    border-left: 3px solid #0D739F;
+    border-right: 3px solid #0D739F;
+    border-bottom: 3px solid #0D739F;
+}
 
 
 .cell {
     border-radius:0;
-    padding:0.5em 1em 0.5em 1em;
+    padding:0.1em 1em 0.1em 1em;
     border-left: #000 1px solid;
     border-top: #000 1px solid;
     background:transparent;
@@ -95,7 +116,7 @@ GtkWindow {
     padding:0.5em 1em 0.5em 1em;
     background:transparent;
 }
-
+.small {font-size:0.8em;}
 
 .botTop { border-top: 1px solid #000;}
 .botBottom { border-bottom: 1px solid #000;}
@@ -113,10 +134,6 @@ GtkWindow {
 
 .toolbar GtkLabel {color:#C3C3C3;}
 .toolbar:hover {background:-gtk-gradient(linear,left top, left bottom, from(#54689D), to(#7995D3));}
-
-
-
-
 
 .h1 {
 
@@ -139,18 +156,19 @@ GtkWindow {
     color:#fff;
     font-weight:bold;
     font-size:1.5em;
-/*    background:-gtk-gradient(linear,left top, left bottom, from(#C93636), to(#F56060));*/
-background:-gtk-gradient(linear,left top, left bottom, from(#525252), to(#000));
+    background:-gtk-gradient(linear,left top, left bottom, from(#10516D), to(#0D739F));
 }
 
 .gridTitle1 {
 /*    background: -gtk-gradient(linear,left top, left bottom, from(#000), to(#525252));;*/
-    background:#36325C;
-    color:#fff;
+    background:#4C4C4C;
+    color:#F1F1F1;
+    font-size:1.1em;
     border-top:#000 solid 1px;
-    border-left:#000 solid 3px;
+/*    border-left:#000 solid 3px;*/
     font-weight: bold;
     padding:0.5em 1em 0.5em 1em;
+
 }
 .gridTitle2 {
     background:#246F20;
