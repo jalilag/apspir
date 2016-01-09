@@ -8,7 +8,6 @@
 extern UNS16 errgen_state;
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
-azeza
 
 void errgen_set(UNS16 dat, char* op) {
     if (dat == 0) dat = errgen_state;
@@ -52,7 +51,6 @@ void errgen_set(UNS16 dat, char* op) {
         gui_info_box(title,content,NULL);
         free(content); free(title);
         if (run_init != 0)
-            g_mutex_lock(&lock_gui_box);
             on_butParams_clicked(NULL);
         else
             Exit(2);

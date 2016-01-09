@@ -23,6 +23,7 @@ extern int run_init, SLAVE_NUMBER, PROFILE_NUMBER, current_menu;
 extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
+extern GMutex lock_gui_box;
 
 void gtksig_init () {
     // SIGNALS MAIN
@@ -62,6 +63,7 @@ void on_butQuit_clicked (GtkWidget* pEntry) {
     Exit(2);
 }
 void on_butParams_clicked(GtkWidget* pEntry) {
+    g_mutex_lock(&lock_gui_box);
     Exit(0);
     slave_gui_param_gen(current_menu);
     gui_widget2show("windowParams",NULL);
@@ -135,6 +137,7 @@ void on_butParamReturn_clicked(GtkWidget* pEntry) {
     if (current_menu == 0) gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor"));
     else if (current_menu == 1) gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
     gui_widget2hide("windowParams",NULL);
+    g_mutex_unlock(&lock_gui_box);
 }
 void on_butParamSave_clicked(GtkWidget* pEntry) {
     slave_save_param (current_menu);
