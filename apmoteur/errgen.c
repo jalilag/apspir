@@ -8,6 +8,7 @@
 extern UNS16 errgen_state;
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
+azeza
 
 void errgen_set(UNS16 dat, char* op) {
     if (dat == 0) dat = errgen_state;
