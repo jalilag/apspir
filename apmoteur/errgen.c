@@ -7,6 +7,7 @@
 
 extern UNS16 errgen_state;
 extern int current_menu, run_init;
+extern GMutex lock_gui_box;
 
 void errgen_set(UNS16 dat, char* op) {
     if (dat == 0) dat = errgen_state;
@@ -30,25 +31,32 @@ void errgen_set(UNS16 dat, char* op) {
         dat == ERR_FILE_PROFILE
     ) {
         content = strtools_concat(content,"\n\n",APPLICATION_SHUTDOWN,NULL);
+        g_mutex_lock(&lock_gui_box);
         gui_info_box(title,content,NULL);
         free(content); free(title);
+        g_mutex_lock(&lock_gui_box);
         Exit(2);
+        g_mutex_unlock(&lock_gui_box);
     } else if (
         dat == ERR_SLAVE_CONFIG ||
         dat == ERR_SLAVE_CONFIG_LSS ||
         dat == ERR_SLAVE_CONFIG_MOTOR_SON
     ) {
         content = strtools_concat(content,"\n\n",SLAVE_INACTIVE,NULL);
+        g_mutex_lock(&lock_gui_box);
         gui_info_box(title,content,NULL);
     } else if (dat == ERR_FILE_SLAVE_DEF) {
         content = strtools_concat(content,"\n\n",MOTOR_ID,NULL);
+        g_mutex_lock(&lock_gui_box);
         gui_info_box(title,content,NULL);
         free(content); free(title);
         if (run_init != 0)
+            g_mutex_lock(&lock_gui_box);
             on_butParams_clicked(NULL);
         else
             Exit(2);
     } else{
+        g_mutex_lock(&lock_gui_box);
         gui_info_box(title,content,NULL);
         free(content); free(title);
     }

@@ -27,7 +27,7 @@ s_BOARD MasterBoard = {"0","1M"};
 volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 int SLAVE_NUMBER, PROFILE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
-
+GMutex lock_gui_box;
 // Les paramètres
 volatile PROF slave_profile[PROFILE_NUMBER_LIMIT];
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};

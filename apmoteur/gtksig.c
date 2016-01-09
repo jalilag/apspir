@@ -54,6 +54,7 @@ void on_butStop_clicked (GtkWidget* pEntry) {
 // Fermeture de la boite de dialogue
 void on_butInitDialClose_clicked (GtkWidget* pEntry) {
     gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object (builder, "windowDialInit")));
+    g_mutex_unlock(&lock_gui_box);
 }
 
 // Fermeture de la window
