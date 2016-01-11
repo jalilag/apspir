@@ -157,7 +157,6 @@ int main(int argc,char **argv) {
 
 // Chemin vers la librairie CANFESTIVAL
     char* LibraryPath="../../drivers/can_socket/libcanfestival_can_socket.so";
-    azezaez;
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)
         errgen_set(ERR_DRIVER_LOAD,NULL);
