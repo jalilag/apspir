@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cantools.h"
+#include "serialtools.h"
 #include "strtools.h"
 #include "canfestival.h"
 #include "gui.h"
@@ -12,15 +13,15 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
+
 // CONSTANTS
 #define MAX_SDO_ERROR 2
 #define SDO_TIMEOUT 3
 
 static int SDO_step_error = 0;
 
-extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern pthread_mutex_t lock_slave;
-extern int run_init, SLAVE_NUMBER;
+extern int run_init;
 extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
 /**
 * Lecture d'une SDO
@@ -99,7 +100,7 @@ int cantools_write_sdo(UNS8 nodeid,SDOR sdo, void* data) {
 		size = 8;
         datatype = visible_string;
 	} else {
-        printf("Type error"); exit(EXIT_FAILURE);
+        printf("Type error"); return 0;//exit(EXIT_FAILURE);
 	}
 
 	writeNetworkDict(&SpirallingMaster_Data, nodeid, sdo.index, sdo.subindex, size, datatype, data, 0);
@@ -261,14 +262,127 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
     return 1;
 }
 
+
+int motor_index;
+gpointer cantools_waitStop_Thread (gpointer arg)
+{
+    INTEGER32 data;
+    int apply0 = 1;
+    while (abs(slave_get_param_in_num("Velocity", *(int*)arg)) > 3){
+        usleep(100);
+        if(abs(slave_get_param_in_num("Vel2send", *(int*)arg)) > 1){
+            apply0 = 0;
+            break;
+        }
+    }
+    if(apply0){
+        data = 0;
+        slave_set_param("Vel2send", *(int*)arg, data);
+        printf("pdonum = %d\n\n\n\n\n", slave_get_param_in_num("Vel2SendPDONum", *(int*)arg));
+        EnterMutex();
+        PDOEventTimerAlarm(&SpirallingMaster_Data, slave_get_param_in_num("Vel2SendPDONum", *(int*)arg));
+        LeaveMutex();
+
+    }
+
+    g_thread_exit(NULL);
+}
+
+//title = "Rotation" ou "Translation"
+void cantools_ApplyVelocity(INTEGER32 vit, char* Title)
+{
+    int i;
+    UNS32 pdonum;
+    INTEGER32 vtm, vtc;
+    INTEGER32 data;
+    //printf("7\n");
+    int typeVitesse, typeCouple;
+    if(!strcmp(Title, "Rotation")){
+        typeVitesse = SLAVE_PROFILE_ROTATION_VITESSE;
+        typeCouple = SLAVE_PROFILE_ROTATION_COUPLE;
+    } else if (!strcmp(Title, "Translation")){
+        typeVitesse = SLAVE_PROFILE_TRANSLATION_VITESSE;
+        typeCouple = SLAVE_PROFILE_TRANSLATION_COUPLE;
+    } else return; //NA
+
+    for (i=0;i<SLAVE_NUMBER; i++){
+        if(slave_get_profile_with_index(i) == typeVitesse){
+            //printf("8\n");
+
+            EnterMutex();
+            vtm = slave_get_param_in_num("Velocity",i);
+            vtc = slave_get_param_in_num("Vel2send",i);
+            LeaveMutex();
+            if(vtc!=vit){
+                vtc = vit;
+                slave_set_param("Vel2send", i, vit);
+            }
+
+            pdonum = slave_get_param_in_num("Vel2sendPDONum",i);
+            //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
+            if(vtm == 0 || vtc == 0){
+                if((vtm == 0) && (vtc != 0)){
+                    data = vtc/abs(vtc);
+
+                    EnterMutex();
+                    slave_set_param("Vel2send",i,data);
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    slave_set_param("Vel2send", i, vtc);
+                    LeaveMutex();
+
+                    usleep(1000);
+                } else if ((vtc == 0) && (vtm != 0)) {
+                    data = vtm/abs(vtm);
+
+                    EnterMutex();
+                    slave_set_param("Vel2send",i,data);
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    LeaveMutex();
+                    motor_index = i;
+                    if(g_thread_try_new(NULL, cantools_waitStop_Thread, &motor_index, NULL) == NULL){
+                        //bloquer le moteur direct
+                        EnterMutex();
+                        slave_set_param("Vel2send",i,vtc);
+                        PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                        LeaveMutex();
+                    }
+
+                    return;
+                } else return;//la vitesse de 0 est déjà appliquée.
+
+            }
+            EnterMutex();
+            PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+            LeaveMutex();
+        }
+        else if(slave_get_profile_with_index(i) == typeCouple){}
+        //ajouter mt couple
+
+    }
+}
+
+
 /**
 * INITIALISATION LOOP
 **/
 gpointer cantools_init_loop(gpointer data) {
     int i,MasterState = 0;
     INTEGER32 j = 0;
+
+    //Init Laser
+    if(serialtools_init_laser()); //return;
+
     while (run_init == -1) sleep(1);
     master_init();
+
+    //autodetect slaves on the network
+    /*
+    if(slave_get_LSS_data(&SpirallingMaster_Data)) {
+        printf("ERROR in getting slave data\n");
+        printf("runinit = %d\n", run_init);
+        return;
+    }
+    */
 
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
@@ -277,6 +391,12 @@ gpointer cantools_init_loop(gpointer data) {
     gui_widget2hide("gui_level_bar",NULL);
 
     while (run_init == 1) {
+        //check laser state
+        if(!serialtools_in_reinit_laser) serialtools_checkPlotState_laser();
+
+        //Affichage erreur position cables estimée
+        //gui_label_set("labEstimErrPosCabl", "NA");
+        printf("In init loop\n");
         j++;
         MasterState = 0;
         for (i=0; i<SLAVE_NUMBER;i++) {

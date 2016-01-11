@@ -34,7 +34,27 @@ extern UNS16 ErrorCode_3;		/* Mapped at index 0x2012, subindex 0x00*/
 extern UNS16 ErrorCode_4;		/* Mapped at index 0x2013, subindex 0x00*/
 extern INTEGER32 Vel2Send_3;		/* Mapped at index 0x2014, subindex 0x00*/
 extern INTEGER32 Vel2Send_4;		/* Mapped at index 0x2015, subindex 0x00*/
-extern UNS8 Velocity_3;		/* Mapped at index 0x2016, subindex 0x00*/
-extern UNS8 Velocity_4;		/* Mapped at index 0x2017, subindex 0x00*/
+extern INTEGER32 Velocity_3;		/* Mapped at index 0x2016, subindex 0x00*/
+extern INTEGER32 Velocity_4;		/* Mapped at index 0x2017, subindex 0x00*/
+extern INTEGER32 Position_1;		/* Mapped at index 0x2018, subindex 0x00*/
+extern INTEGER32 Position_2;		/* Mapped at index 0x2019, subindex 0x00*/
+extern INTEGER32 Position_3;		/* Mapped at index 0x201A, subindex 0x00*/
+extern INTEGER32 Position_4;		/* Mapped at index 0x201B, subindex 0x00*/
+extern UNS32 Acceleration_1;		/* Mapped at index 0x201C, subindex 0x00*/
+extern UNS32 Acceleration_2;		/* Mapped at index 0x201D, subindex 0x00*/
+extern UNS32 Acceleration_3;		/* Mapped at index 0x201E, subindex 0x00*/
+extern UNS32 Acceleration_4;		/* Mapped at index 0x201F, subindex 0x00*/
+extern UNS32 Deceleration_1;		/* Mapped at index 0x2020, subindex 0x00*/
+extern UNS32 Deceleration_2;		/* Mapped at index 0x2021, subindex 0x00*/
+extern UNS32 Deceleration_3;		/* Mapped at index 0x2022, subindex 0x00*/
+extern UNS8 Deceleration_4;		/* Mapped at index 0x2023, subindex 0x00*/
+extern UNS32 Accel2send_1;		/* Mapped at index 0x2024, subindex 0x00*/
+extern UNS32 Accel2send_2;		/* Mapped at index 0x2025, subindex 0x00*/
+extern UNS32 Accel2send_3;		/* Mapped at index 0x2026, subindex 0x00*/
+extern UNS32 Accel2send_4;		/* Mapped at index 0x2027, subindex 0x00*/
+extern UNS32 Decel2send_1;		/* Mapped at index 0x2028, subindex 0x00*/
+extern UNS32 Decel2send_2;		/* Mapped at index 0x2029, subindex 0x00*/
+extern UNS32 Decel2send_3;		/* Mapped at index 0x202A, subindex 0x00*/
+extern UNS8 Decel2send_4;		/* Mapped at index 0x202B, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H

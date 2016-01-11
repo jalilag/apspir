@@ -11,6 +11,11 @@
 #include "master.h"
 #include "canfestival.h"
 #include "cantools.h"
+#include "errgen.h"
+#include "slave.h"
+
+#include "laser_asserv.h"
+#include "laser_simulation.h"
 
 int motor_switch_step = 0;
 const int motor_switch_step_max = 10;
@@ -356,4 +361,74 @@ UNS8 motor_get_param_type(char* id) {
     }
     printf("id : %s non trouvé\n",id);
     exit(1);
+}
+
+extern UNS32 CaptureAccel_MotTrans,CaptureDecel_MotTrans;
+extern UNS32 ConsigneAccel_MotRot, ConsigneDecel_MotRot;
+void motor_set_MotRot_Accel(void)
+{
+    int index_rot, index_trans;
+    if(slave_get_indexList_with_ProfileName_with_Title("vitesse","Rotation", &index_rot))
+        return;
+
+    UNS32 accel_T, decel_T;
+    UNS32 accel_R, decel_R;
+    SDOR Accel = {0x6083, 0x00, 0x07};
+    SDOR Decel = {0x6084, 0x00, 0x07};
+
+    slave_get_indexList_from_Title("Translation", &index_trans);
+    if(index_trans >=0)
+    {
+        //lecture des accelerations
+        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Accel,&accel_T)) {
+            errgen_set(ERR_ROT_GET_ACCEL, NULL);
+            return;
+        }
+        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Decel,&decel_T)) {
+            errgen_set(ERR_ROT_GET_DECEL, NULL);
+            return;
+        }
+    }
+    else {//aucun moteurs translation
+        accel_T = 64000;
+        decel_T = 64000;
+    }
+    slave_set_param("Acceleration",index_trans, accel_T);
+    slave_set_param("Deceleration", index_trans, decel_T);
+    //calcul des acceleration rotation correspondante
+    if(!laser_simu){
+        if(laser_asserv_CalcRotAccel(&ml, &sl, &accel_T, &accel_R)){
+            errgen_set(ERR_ROT_CALC_ACCEL, NULL);
+            return;
+        }
+        if(laser_asserv_CalcRotAccel(&ml, &sl, &decel_T, &decel_R)){
+            errgen_set(ERR_ROT_CALC_ACCEL, NULL);
+            return;
+        }
+    } else {
+        if(laser_asserv_CalcRotAccel(&lsim, NULL, &accel_T, &accel_R)){
+            errgen_set(ERR_ROT_CALC_ACCEL, NULL);
+            return;
+        }
+        if(laser_asserv_CalcRotAccel(&lsim, NULL, &decel_T, &decel_R)){
+            errgen_set(ERR_ROT_CALC_ACCEL, NULL);
+            return;
+        }
+
+    }
+    //ecriture des accelerations
+    if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Accel, &accel_R)){
+        errgen_set(ERR_ROT_WRITE_ACCEL, NULL);
+        return;
+    }
+    if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Decel, &decel_R)){
+        errgen_set(ERR_ROT_WRITE_ACCEL, NULL);
+        return;
+    }
+    slave_set_param("Accel2send", index_rot, accel_R);
+    slave_set_param("Decel2send", index_rot, decel_R);
+    slave_set_param("Acceleration", index_rot, accel_R);
+    slave_set_param("Deceleration", index_rot, decel_R);
+    //printf("A1 = %u, A2 = %u, D1 = %u, D2 = %u\n", accel_T, decel_T, accel_R, decel_R);
+
 }

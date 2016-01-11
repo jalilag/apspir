@@ -7,8 +7,6 @@
 
 
 extern char baud_rate;
-extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-extern int SLAVE_NUMBER;
 static int LSS_step = 1;
 static int LSS_step_error = 0;
 static int LSS_step_error_max = 2;

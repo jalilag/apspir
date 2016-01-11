@@ -20,12 +20,23 @@
 #include "errgen.h"
 #include "motor.h"
 
+#include "laser_asserv.h"
+#include "serialtools.h"
+
+//lasers
+laser ml, sl, lsim;
+//definition de l'hélice
+struct Helix_User_Data HelixUserData;
+
 // Plateforme MASTER
-s_BOARD MasterBoard = {"0","1M"};
+s_BOARD MasterBoard = {"0","500k"};
 
 // Définition des esclaves
-volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-int SLAVE_NUMBER, PROFILE_NUMBER;
+int SLAVE_NUMBER = 0;
+SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+//volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+//int SLAVE_NUMBER, PROFILE_NUMBER;
+int PROFILE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
 
 // Les paramètres
@@ -38,6 +49,11 @@ void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&Interna
 void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
 void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_4,&Velocity_4};
 void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
+void* position[SLAVE_NUMBER_LIMIT] = {&Position_1, &Position_2, &Position_3, &Position_4};
+void* accel[SLAVE_NUMBER_LIMIT] = {&Acceleration_1, &Acceleration_2, &Acceleration_3, &Acceleration_4};
+void* decel[SLAVE_NUMBER_LIMIT] = {&Deceleration_1, &Deceleration_2, &Deceleration_3, &Deceleration_4};
+void* accel2send[SLAVE_NUMBER_LIMIT] = {&Accel2send_1, &Accel2send_2, &Accel2send_3, &Accel2send_4};
+void* decel2send[SLAVE_NUMBER_LIMIT] = {&Decel2send_1, &Decel2send_2, &Decel2send_3, &Decel2send_4};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
 
 // Structure d'acces aux variables defini dans le maitre
@@ -58,7 +74,13 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"Volt",0x04,voltage,VOLTAGE},
     {"Velinc",0x04,(void*)velocity_inc,DEFAULT},
     {"Velocity",0x04,velocity,DEFAULT},
-    {"Vel2send",0x04,vel2send,DEFAULT}
+    {"Vel2send",0x04,vel2send,DEFAULT},
+    {"Vel2sendPDONum",uint8,NULL,DEFAULT},
+    {"Position", int32, position, DEFAULT},
+    {"Acceleration", uint32, accel, DEFAULT},
+    {"Deceleration", uint32, decel, DEFAULT},
+    {"Accel2send", uint32, accel2send, DEFAULT},
+    {"Decel2send", uint32, decel2send, DEFAULT}
 };
 // Boucle d'initialisation
 int run_init = 1;
@@ -94,8 +116,6 @@ void catch_signal(int sig) {
   printf("Got Signal %d\n",sig);
 }
 
-UNS16 errgen_state = 0x0000;
-
 /**
 * Fermeture de l'application
 * 0 : Arret
@@ -113,7 +133,24 @@ void Exit(int type) {
         }
     }
     if (type > 1) {
+		unsigned int err_l;
         run_init = 0;
+		//exit asserv
+		if(run_asserv){
+		    printf("EXIT ASSERV\n");
+		    if(laser_asserv_stop()){
+		        errgen_set(ERR_LASER_ASSERV_STOP, NULL);
+		    }
+		}
+
+		//fermeture laser
+		serialtools_exit_laser();
+
+		//fermeture moteurs
+		for (i=0; i<SLAVE_NUMBER; i++) {
+		    motor_start(slave_get_node_with_index(i),0);
+		    motor_switch_off(slave_get_node_with_index(i));
+		}
         masterSendNMTstateChange (&SpirallingMaster_Data, 0, NMT_Stop_Node);
         if (getState(&SpirallingMaster_Data) != Unknown_state &&
         getState(&SpirallingMaster_Data) != Stopped)
@@ -121,6 +158,8 @@ void Exit(int type) {
         if (run_gui_loop) {
             gtk_main_quit();
         }
+		canClose(&SpirallingMaster_Data);
+	    TimerCleanup();
         exit(EXIT_FAILURE);
     }
 }
@@ -151,12 +190,25 @@ int main(int argc,char **argv) {
     }
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.50);
 
+	//DEFINITION DE LA CONSIGNE HELICE UTILISATEUR
+
+   	//a faire : interface
+  unsigned long d[1];
+  long int p[1];
+  d[0] = 30000;
+  p[0] = 4000;
+
+  HelixUserData.dmax = d[0];
+  HelixUserData.NbrOfEntries = 1;
+  HelixUserData.d = d;
+  HelixUserData.p = p;
+
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
 	signal(SIGINT, catch_signal);
 
 // Chemin vers la librairie CANFESTIVAL
-    char* LibraryPath="../../drivers/can_socket/libcanfestival_can_socket.so";
+    char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
 
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)

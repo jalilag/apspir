@@ -17,6 +17,10 @@
 #include "errgen.h"
 #include "slave.h"
 
+#include "laser_asserv.h"
+#include "laser_simulation.h"
+#include "serialtools.h"
+
 GtkBuilder *builder;
 
 extern int run_init, SLAVE_NUMBER, PROFILE_NUMBER, current_menu;
@@ -42,8 +46,35 @@ void gtksig_init () {
     //SIGNALS PARAMS
     g_signal_connect (gtk_builder_get_object (builder, "butParamReturn"), "clicked", G_CALLBACK (on_butParamReturn_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamSave"), "clicked", G_CALLBACK (on_butParamSave_clicked),NULL);
-    g_signal_connect (gtk_builder_get_object (builder, "butParamMotor"), "clicked", G_CALLBACK (on_butParamMotor_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_explore_network"), "clicked", G_CALLBACK (on_but_explore_network_clicked), NULL);
+
+	g_signal_connect (gtk_builder_get_object (builder, "butParamMotor"), "clicked", G_CALLBACK (on_butParamMotor_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamProfile"), "clicked", G_CALLBACK (on_butParamProfile_clicked),NULL);
+
+
+	//EXTRA BUTTON
+    g_signal_connect (gtk_builder_get_object (builder, "but_clear_locked_rotor"), "clicked", G_CALLBACK (on_but_clear_locked_rotor_clicked),NULL);
+
+	//SIGNAL LASER
+    g_signal_connect (gtk_builder_get_object (builder, "butReinitLaser"), "clicked", G_CALLBACK (on_butReinitLaser_clicked), NULL);
+
+    // SIGNALS ROTATION
+    g_signal_connect (gtk_builder_get_object (builder, "but_Start_R"), "notify", G_CALLBACK (on_but_StartRot_notify), NULL);
+
+    //SIGNAL SIMU LASER
+    g_signal_connect (gtk_builder_get_object (builder, "but_LaserSimuOpt"), "clicked", G_CALLBACK (on_LaserSimuOpt_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_LaserSimu_CloseWindow"), "clicked", G_CALLBACK (on_LaserSimuClose_clicked), NULL);
+
+    g_signal_connect (gtk_builder_get_object (builder, "but_LaserSimuStart"), "clicked", G_CALLBACK (on_LASERSTARTSIMU_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_LaserSimuStop"), "clicked", G_CALLBACK (on_LASERSTOPSIMU_clicked), NULL);
+
+    g_signal_connect (gtk_builder_get_object (builder, "but_sim_inc_pos"), "clicked", G_CALLBACK (on_sim_inc_pos_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_sim_dec_pos"), "clicked", G_CALLBACK (on_sim_dec_pos_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_sim_inc_vel"), "clicked", G_CALLBACK (on_sim_inc_vel_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "but_sim_dec_vel"), "clicked", G_CALLBACK (on_sim_dec_vel_clicked), NULL);
+
+
+
 }
 
 // Bouton arret
@@ -66,6 +97,7 @@ void on_butParams_clicked(GtkWidget* pEntry) {
     gui_widget2show("windowParams",NULL);
 }
 
+//a modifier pour faire fonctionner l'asservissement
 void on_butVelStart_active_notify(GtkWidget* pEntry) {
     int i, j = gui_switch_is_active("butVelStart");
     for (i=0; i<SLAVE_NUMBER; i++) {
@@ -81,6 +113,157 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
             slave_set_param("Vel2send",i,0);
         }
     }
+}
+void on_LaserSimuOpt_clicked(GtkWidget* pEntry)
+{
+    gui_widget2show("window_laser_sim",NULL);
+}
+void on_LaserSimuClose_clicked(GtkWidget* pEntry)
+{
+    gui_widget2hide("window_laser_sim", NULL);
+}
+void on_but_StartRot_notify(GtkWidget* pEntry)
+{
+    struct laser_data d;
+    UNS8 pdonum;
+    int index_rot;
+    if (slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_rot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+        return;
+    }
+    if(gtk_switch_get_active(gui_get_switch("but_Start_R")) == TRUE && motor_get_state(slave_get_state_with_index(index_rot)) == SON){
+        if(!run_asserv){
+            /**Start Motor**/
+            if (!motor_start(slave_get_node_with_index(index_rot), 1)){
+                errgen_set(ERR_MOTOR_RUN, NULL);
+                return;
+            }
+            //cantools_ApplyVelocity(0, "Rotation");
+            /**Get Laser Start Position**/
+            if(laser_asserv_GetStartPosition(&ml, &sl)) return;
+
+            /**Get_Ref_Position MotRot**/
+            SDOR RefPos_R = {0x6064, 0x00, int32};
+            if (!cantools_read_sdo(slave_get_node_with_index(index_rot),RefPos_R,&MotRot_Ref_Position)) {
+                errgen_set(ERR_SLAVE_CONFIG_ROT_REFPOS, NULL);
+                return;
+            }
+            /**Set MotRot Acceleration**/
+            motor_set_MotRot_Accel();
+            /**A faire: Set MotRot Quick Stop Accel**/
+
+            /**LANCE ASSERVISSEMENT**/
+            if(laser_asserv_lance()){
+                errgen_set(ERR_LASER_ASSERV_START, NULL);
+            }
+        }
+    }
+    if(gtk_switch_get_active(gui_get_switch("but_Start_R")) == FALSE && motor_get_state(slave_get_state_with_index(index_rot)) == OENABLED){
+        if (!motor_start(slave_get_node_with_index(index_rot), 0)) errgen_set(ERR_MOTOR_PAUSE, NULL);
+        cantools_ApplyVelocity(0, "Rotation");
+        if(run_asserv){
+            printf("EXIT ASSERV\n");
+            /**STOPPE ASSERV**/
+            if(laser_asserv_stop()){
+                errgen_set(ERR_LASER_ASSERV_STOP, NULL);
+            }
+        }
+    }//endif switch 2
+}
+
+void on_butReinitLaser_clicked(GtkWidget* pEntry)
+{
+    if(serialtools_reinit_laser())
+        errgen_set(ERR_LASER_REINIT, NULL);
+}
+
+void on_LASERSTARTSIMU_clicked(GtkWidget* pEntry)
+{
+    UNS32 accel_T, decel_T;
+    UNS32 accel_R, decel_R;
+    int index_rot;
+    if(slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_rot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+        return;
+    }
+    if(!laser_simu){
+        //si exist asserv l'arreter
+        if(run_asserv){
+            if(laser_asserv_stop()){
+                errgen_set(ERR_LASER_ASSERV_STOP, NULL);
+                return;
+            }
+        }
+
+        /**Get_Ref_Position MotRot**/
+        SDOR RefPos_R = {0x6064, 0x00, int32};
+        if (!cantools_read_sdo(slave_get_node_with_index(index_rot),RefPos_R,&MotRot_Ref_Position)) {
+            errgen_set(ERR_SLAVE_CONFIG_ROT_REFPOS, NULL);
+            return;
+        }
+
+        printf("MOTROT REF POS  = %d\n\n", MotRot_Ref_Position);
+
+        /**Lancement du thread simu laser**/
+
+        laser_simu = 1;
+        if(pthread_create(&(lsim.recv_thread), NULL, laser_simulation_SimuThread_func, NULL)){
+            printf("ERROR IN LASERTHREAD simu CREATE\n");
+            errgen_set(ERR_LASER_SIMU_START, NULL);
+            return;
+        }
+
+        /**Set MotRot Acceleration**/
+        motor_set_MotRot_Accel();
+        /**A faire: Set MotRot Quick Stop Accel**/
+
+
+        /**Lancement du thread asserv**/
+        if(laser_asserv_lance_simu()){
+            errgen_set(ERR_LASER_SIMU_START, NULL);
+        }
+    }
+}
+
+void on_LASERSTOPSIMU_clicked(GtkWidget* pEntry)
+{
+    if(laser_simu && run_asserv){
+        //stopper l'asservissement
+        if(laser_asserv_stop()){
+            errgen_set(ERR_LASER_ASSERV_STOP, NULL);
+        }
+        //mettre la vitesse des moteurs a 0
+        cantools_ApplyVelocity(0, "Rotation");
+        //stopper le thread simu laser
+        laser_simu = 0;
+        if(pthread_join(lsim.recv_thread, NULL)){
+            printf("ERROR in LASERTHREAD simu STOP\n");
+            errgen_set(ERR_LASER_SIMU_STOP, NULL);
+        }
+        //relancer l'asserv réel si les laser sont ok
+        struct laser_data d;
+        if((Laser_GetData(&ml, &sl, &d) & ERR_LASER_FATAL) != ERR_LASER_FATAL){
+            if(laser_asserv_lance()){
+                errgen_set(ERR_LASER_ASSERV_START, NULL);
+            }
+        }
+    }
+}
+void on_sim_inc_pos_clicked(GtkWidget* pEntry)
+{
+    laser_simulation_inc_const_err((int)gui_str2num(gui_entry_get("entry_sim_inc_pos")));
+}
+void on_sim_dec_pos_clicked(GtkWidget* pEntry)
+{
+    laser_simulation_dec_const_err((int)gui_str2num(gui_entry_get("entry_sim_inc_pos")));
+}
+void on_sim_inc_vel_clicked(GtkWidget* pEntry)
+{
+    laser_simulation_inc_vel_err((int)gui_str2num(gui_entry_get("entry_sim_inc_vel")));
+}
+void on_sim_dec_vel_clicked(GtkWidget* pEntry)
+{
+    laser_simulation_dec_vel_err((int)gui_str2num(gui_entry_get("entry_sim_inc_vel")));
 }
 
 void on_radBackward_toggled(GtkWidget* pEntry) {
@@ -108,24 +291,78 @@ void on_radForward_toggled(GtkWidget* pEntry) {
         }
     }
 }
-
+INTEGER32 vel_inc_Trans;//a gerer!!
 void on_butVelUp_clicked(GtkWidget* pEntry) {
-    int i,j;
-    for (i=0;i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("SlaveProfile",i) == 0 && slave_get_param_in_num("Active",i)) {
-            slave_set_param("Vel2send",i,slave_get_param_in_num("Vel2send",i) + slave_get_param_in_num("Velinc",i));
-        }
+
+    int index_mottrans, index_motrot;
+
+    if(slave_get_indexList_with_ProfileName_with_Title("vitesse", "Translation", &index_mottrans) && slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_motrot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+        return;
     }
+    if (slave_get_param_in_num("SlaveProfile",index_mottrans) == 0 && slave_get_param_in_num("Active",index_mottrans)) {
+        slave_set_param("Vel2send",index_mottrans,slave_get_param_in_num("Vel2send",index_mottrans) + slave_get_param_in_num("Velinc",index_mottrans));
+    }
+    //ConsigneVitesse_MotTrans += 51200;
+    printf("1\n");
+    //rotation pas active
+    if(!run_asserv) {
+        printf("2\n");
+        cantools_ApplyVelocity(slave_get_param_in_num("Vel2send",index_mottrans), "Translation");
+        return;
+    }
+    //rotation active
+    //fonctionnement complet
+    if(!laser_simu){
+        printf("3\n");
+        laser_asserv_User_Velocity_Change(&ml, &sl, slave_get_param_in_num("Vel2send",index_mottrans));
+   //fonctionnement avec moteur translation et rotation sans laser
+   } else if (laser_simu && (slave_get_indexList_with_ProfileName_with_Title("vitesse", "Translation", &index_mottrans))){
+        printf("4\n");
+        laser_asserv_User_Velocity_Change(&lsim, NULL, slave_get_param_in_num("Vel2send",index_mottrans));
+    //fonctionnement de la rotation uniquement
+    } else {
+        printf("5\n");
+        laser_simulation_on_ACCELERER_clicked();
+    }
+
 }
 void on_butVelDown_clicked(GtkWidget* pEntry) {
-    int i,j;
-    for (i=0;i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("SlaveProfile",i) == 0 && slave_get_param_in_num("Active",i)) {
-            if (slave_get_param_in_num("Vel2send",i) - slave_get_param_in_num("Velinc",i) > 0)
-                slave_set_param("Vel2send",i,slave_get_param_in_num("Vel2send",i) - slave_get_param_in_num("Velinc",i));
-            else
-                slave_set_param("Vel2send",i,0);
+
+    int index_mottrans, index_motrot;
+
+    if(slave_get_indexList_with_ProfileName_with_Title("vitesse", "Translation", &index_mottrans) && slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_motrot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+        return;
+    }
+
+    if (slave_get_param_in_num("SlaveProfile",index_mottrans) == 0 && slave_get_param_in_num("Active",index_mottrans)) {
+        if(slave_get_param_in_num("Vel2send",index_mottrans) - slave_get_param_in_num("Velinc",index_mottrans) > 0){
+            slave_set_param("Vel2send",index_mottrans,slave_get_param_in_num("Vel2send",index_mottrans) - slave_get_param_in_num("Velinc",index_mottrans));
         }
+        else
+            slave_set_param("Vel2send", index_mottrans, 0);
+    }
+
+   //rotation pas active
+    if(!run_asserv) {
+        printf("2\n");
+        cantools_ApplyVelocity(slave_get_param_in_num("Vel2send",index_mottrans), "Translation");
+        return;
+    }
+    //rotation active
+    //fonctionnement complet
+    if(!laser_simu){
+        printf("3\n");
+        laser_asserv_User_Velocity_Change(&ml, &sl, slave_get_param_in_num("Vel2send",index_mottrans));
+    //fonctionnement avec moteur translation et rotation sans laser
+    } else if (laser_simu && (slave_get_indexList_with_ProfileName_with_Title("vitesse", "Translation", &index_mottrans))){
+        printf("4\n");
+        laser_asserv_User_Velocity_Change(&lsim, NULL, slave_get_param_in_num("Vel2send",index_mottrans));
+    //fonctionnement de la rotation uniquement
+    } else {
+        printf("5\n");
+        laser_simulation_on_RALENTIR_clicked();
     }
 }
 
@@ -137,6 +374,9 @@ void on_butParamReturn_clicked(GtkWidget* pEntry) {
 }
 void on_butParamSave_clicked(GtkWidget* pEntry) {
     slave_save_param (current_menu);
+}
+void on_but_explore_network_clicked(GtkWidget* pEntry) {
+    slave_get_LSS_data(&SpirallingMaster_Data);
 }
 /**
 * Bouton ajout champs paramètre moteur
@@ -344,6 +584,18 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) {
                     gui_info_box(NODE_PROFILE,PROFILE_NOT_FOUND,NULL);
                 }
             } else errgen_set(ERR_FILE_OPEN,FILE_SLAVE_CONFIG);
+        }
+    }
+}
+
+//débloquage du mode couple
+void on_but_clear_locked_rotor_clicked(GtkWidget* pEntry){
+    int i;
+    UNS8 clear_cmd = 0x04;
+    SDOR sdo_clr = {0x2740, 0x00, uint8};
+    for (i=0; i<SLAVE_NUMBER; i++){
+        if(!cantools_write_sdo(slave_get_node_with_index(i), sdo_clr, &clear_cmd)){
+            errgen_set(ERR_CLEAR_LOCKED_ROTOR, NULL);
         }
     }
 }

@@ -17,6 +17,12 @@ int cantools_write_local(UNS16 Mindex, UNS8 Msubindex, void* data, UNS32 datsize
 int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans,UNS16 inhibit,UNS16 event);
 int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...);
 int cantools_sync(int start);
+
+void cantools_ApplyVelocity(INTEGER32 vit, char* Title);
+
+
+
+
 gpointer cantools_init_loop(gpointer data);
 
 #endif

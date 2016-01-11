@@ -1,4 +1,6 @@
 Profile ; 4
 Current ; 100
 Pdot3 ; 0X606C0020
-Torque ; 333
+Torque ; 800
+TorqueHmtActive ; 00
+TorqueVel ; 22

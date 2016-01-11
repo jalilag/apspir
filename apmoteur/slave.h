@@ -4,10 +4,11 @@
 #include "data.h"
 #include <gtk/gtk.h>
 
+
 typedef struct SLAVES_conf SLAVES_conf;
 struct SLAVES_conf {
     int profile;
-    char* title;
+    char* title;    // affichage uniquement
 	UNS8 node;      // NodeId
 	UNS32 vendor;   // Vendor ID
 	UNS32 product;  // Product Code
@@ -25,11 +26,17 @@ struct PARVAR {
     void** tab;
     char* title;
 };
+
+extern int SLAVE_NUMBER;
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+
+int slave_get_LSS_data(CO_Data * d);
+
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
 int slave_get_index_with_node(UNS8 nodeID);
 
-static int slave_get_state_with_index(int i);
+int slave_get_state_with_index(int i);
 static void slave_set_state_with_index(int i, int dat);
 static int slave_get_state_error_with_index(int i);
 static void slave_set_state_error_with_index (int i, int dat);
@@ -65,4 +72,8 @@ char* slave_get_param_in_char(char* parid, int index);
 INTEGER32 slave_get_param_in_num(char* parid, int index);
 void slave_set_param(char* parid, int index,INTEGER32);
 char* slave_get_param_title (char* parid);
+
+int slave_get_indexList_from_ProfileName(char* ProfileName, int * indexList);
+
+
 #endif // _SLAVE_H

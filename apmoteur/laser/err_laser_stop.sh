@@ -1,0 +1,15 @@
+#!/bin/bash
+## a mettre dans /bin/bash comme socket_conf
+##remplacer evlt les chemins absolue
+echo "cript started"
+gcc main_test.c -o run
+./run
+echo "toto generated"
+gcc toto.c -o laser_stop
+echo "compile done"
+sudo ./laser_stop
+sudo ./laser_stop
+echo "exec compiled code done"
+rm laser_stop run
+rm toto.c
+echo "files deleted"

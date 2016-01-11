@@ -157,12 +157,12 @@ gboolean keyword_active_maj(gpointer data);
 #define TARGET_VELOCITY "Vitesse"
 #define TEMPERATURE "Température"
 #define TIME "Durée"
-#define TORQUE_RAMP "Torque ramp"
-#define TORQUE_VELOCITY "Ratio Vitesse (couple)"
-#define TORQUE_VELOCITY_MAKEUP "Vitesse max (couple)"
-#define TORQUE_HMT_ACTIVATE "Activation HMT"
-#define TORQUE_HMT_CONTROL "Control HMT"
-#define TORQUE "Couple"
+#define TORQUE_RAMP "Torque slope (0x6087)"
+#define TORQUE_VELOCITY "Torque velocity (0x2704)"
+#define TORQUE_VELOCITY_MAKEUP "Make up velocity (0x2703)"
+#define TORQUE_HMT_ACTIVATE "hMTechnology enable (0x2701)"
+#define TORQUE_HMT_CONTROL "hMTechnologie configuration (0x2702)"
+#define TORQUE "Target Torque (0x6071)"
 #define VALUE "Valeur"
 #define VENDOR "Vendeur ID"
 #define VOLTAGE "Tension"
@@ -175,6 +175,22 @@ gboolean keyword_active_maj(gpointer data);
 #define VITESSE_UNIT "m/s"
 #define YES "Oui"
 #define WARNING "Attention"
+
+//LASER LABEL SET
+
+#define LASER_STATUS_OK_LABEL "Laser Status OK"
+#define MASTER_FAILED_TIMEOUT_LABEL "ERREUR TIMEOUT"
+#define SLAVE_FAILED_TIMEOUT_LABEL "ERREUR TIMEOUT"
+#define MASTER_FAILED_DATCONSISTENCY_LABEL "INCOHERENCE DES DONNEES"
+#define SLAVE_FAILED_DATCONSISTENCY_LABEL "INCOHERENCE DES DONNEES"
+#define MASTER_NOT_STARTED_LABEL "PAS CONNECTE"
+#define SLAVE_NOT_STARTED_LABEL "PAS CONNECTE"
+
+//ROTATION LABEL
+
+#define LAB_R_TITLE "control rotation"
+#define LAB_R_START "rotation"
+#define LAB_LASER_SIMU "simulation laser"
 
 // Motor powor state
 #define NR2SON 0x01
@@ -337,6 +353,31 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MOTOR_FORWARD_TITLE "Changement de sens"
 #define ERR_MOTOR_BACKWARD_TITLE "Changement de sens"
 #define ERR_MOTOR_LOW_VOLTAGE_TITLE "Baisse de tension"
+#define ERR_CLEAR_LOCKED_ROTOR_TITLE "Rotor lock"
+
+//laser
+#define ERR_LASER_FATAL_TITLE "Laser en fonctionnement"
+#define ERR_LASER_INIT_FATAL_TITLE "Laser demarrage"
+#define ERR_LASER_MASTER_INIT_TITLE "Laser 1 Initialisation"
+#define ERR_LASER_MASTER_INIT2_TITLE "Laser 1 Initialisation"
+#define ERR_LASER_SLAVE_INIT_TITLE "Laser 2 Initialisation"
+#define ERR_LASER_SLAVE_INIT2_TITLE "Laser 2 Initialisation"
+#define ERR_MASTER_NOT_STARTED_TITLE "Laser 1 fonctionnement"
+#define ERR_SLAVE_NOT_STARTED_TITLE "Laser 2 fonctionnement"
+#define ERR_LASER_MASTER_START_ERROR_TITLE "laser 1 start"
+#define ERR_LASER_SLAVE_START_ERROR_TITLE "laser 2 start"
+#define ERR_LASER_GETPOSOFFSET_ERROR_TITLE "Delta laser 1 laser 2"
+#define ERR_LASER_MASTER_EXIT_TITLE "Laser 1 exit"
+#define ERR_LASER_SLAVE_EXIT_TITLE "Laser 2 exit"
+#define ERR_LASER_REINIT_TITLE "Laser Reinit"
+#define ERR_LASER_SERIAL_CONFIG_TITLE "Serial configuration"
+
+
+#define ERR_LASER_ASSERV_TITLE "Asservissement rotation"
+#define ERR_LASER_SIMU_TITLE "Erreur simulation laser"
+#define ERR_ROT_TITLE "Erreur moteur rotation"
+
+#define ERR_LOAD_ID_DATA_TITLE "ERROR in find LSS params"
 
 // ERROR CONTENT
 #define ERR_DRIVER_UP_CONTENT "Le chargement du driver SOCKET CAN a échoué"
@@ -426,4 +467,38 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MOTOR_BACKWARD_CONTENT "Le changement de sens du moteur vers l'arrière a échoué"
 #define ERR_MOTOR_LOW_VOLTAGE_CONTENT "Un moteur a subi une baisse de tension ou a été débranché. Le moteur a été désactivé."
 
+//laser
+#define ERR_LASER_FATAL_CONTENT "Aucuns des lasers ne fournit plus de mesure viable"
+#define ERR_MASTER_NOT_STARTED_CONTENT "Laser 1 Erreur Fatale. Laser pas démarré"
+#define ERR_SLAVE_NOT_STARTED_CONTENT "Laser 2 Erreur Fatale. Laser pas démarré"
+#define ERR_LASER_INIT_FATAL_CONTENT "Aucuns des lasers n'a pu être initialisé correctement"
+#define ERR_LASER_MASTER_INIT_CONTENT "Le laser 1 n'a pas pu être initialisé correctement"
+#define ERR_LASER_MASTER_INIT2_CONTENT "Le laser 1 n'est pas branché correctement"
+#define ERR_LASER_SLAVE_INIT_CONTENT "Le laser 2 n'a pas pu être initialisé correctement"
+#define ERR_LASER_SLAVE_INIT2_CONTENT "Le laser 2 n'est pas branché correctement"
+#define ERR_LASER_MASTER_START_ERROR_CONTENT "Le laser 1 n'a pas demarré la mesure"
+#define ERR_LASER_SLAVE_START_ERROR_CONTENT "Le laser 2 n'a pas demarré la mesure"
+#define ERR_LASER_GETPOSOFFSET_ERROR_CONTENT "Le delta entre les mesures laser n'a pas pu être obtenu"
+#define ERR_LASER_MASTER_EXIT_CONTENT "Erreur lors de la fermeture laser 1. Lors du redémarrage débrancher puis rebrancher le laser"
+#define ERR_LASER_SLAVE_EXIT_CONTENT "Erreur lors de la fermeture laser 2. Lors du redémarrage débrancher puis rebrancher le laser"
+#define ERR_LASER_REINIT_CONTENT "La reinitialisation des laser a échoué. Verifier les branchements: alim et usb"
+#define ERR_LASER_SERIAL_CONFIG_CONTENT "Serial acces permission problem. Try running the code with sudo"
+
+
+#define ERR_LASER_ASSERV_START_CONTENT "Erreur au démarrage de l'asservissement"
+#define ERR_LASER_ASSERV_STOP_CONTENT "Erreur à l'arrêt de l'asservissement"
+#define ERR_LASER_SIMU_START_CONTENT "le démarrage de la simulation laser a échoué"
+#define ERR_LASER_SIMU_STOP_CONTENT "l'arrêt de la simulation laser a échoué"
+#define ERR_ROT_CALC_ACCEL_CONTENT "L'acceleration de consigne du moteur rotation n'a pas été calculé correctement"
+#define ERR_ROT_WRITE_ACCEL_CONTENT "L'acceleration de consigne du moteur rotation n'a pas été transmise au moteur"
+#define ERR_ROT_GET_ACCEL_CONTENT "L'accéleration du moteur rotation n'a pas pu être obtenue"
+#define ERR_ROT_GET_DECEL_CONTENT "La déceleration du moteur rotation n'a pas pu être obtenue"
+
+#define ERR_LOAD_ID_DATA_CONTENT "Impossible to read configuration data of on of the CAN devices: product Code, serial number, Vendor id or revision number"
+
+#define ERR_CLEAR_LOCKED_ROTOR_CONTENT "locked motor is impossible to unblock"
+
+#define ERR_LASER_ASSERV_NOTRANSMOTDEFINED_CONTENT "Vous avez défini deux moteurs vitesse pour la rotation ou pour la translation. C'est impossible. Définir un moteur vitesse et des moteurs couple'"
+#define ERR_LASER_ASSERV_NOVELMOTROTDEFINED_CONTENT "erreurs possibles: Il n'y a pas de moteur vitesse pour la rotation. Ou alors aucun moteur translation n'est défini."
+#define ERR_LASER_ASSERV_READMOTROTDATA_CONTENT "Erreur de lecture. Cherche à lire une variable mapper qui n'existe pas"
 #endif // _SIGNAUX_H

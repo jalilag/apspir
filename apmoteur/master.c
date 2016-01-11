@@ -35,8 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 extern s_BOARD MasterBoard;
 char* baud_rate="1M";
-extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-extern int SLAVE_NUMBER;
 
 /*****************************************************************************/
 

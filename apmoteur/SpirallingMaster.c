@@ -28,8 +28,28 @@ UNS16 ErrorCode_3 = 0x0;		/* Mapped at index 0x2012, subindex 0x00 */
 UNS16 ErrorCode_4 = 0x0;		/* Mapped at index 0x2013, subindex 0x00 */
 INTEGER32 Vel2Send_3 = 0x0;		/* Mapped at index 0x2014, subindex 0x00 */
 INTEGER32 Vel2Send_4 = 0x0;		/* Mapped at index 0x2015, subindex 0x00 */
-UNS8 Velocity_3 = 0x0;		/* Mapped at index 0x2016, subindex 0x00 */
-UNS8 Velocity_4 = 0x0;		/* Mapped at index 0x2017, subindex 0x00 */
+INTEGER32 Velocity_3 = 0x0;		/* Mapped at index 0x2016, subindex 0x00 */
+INTEGER32 Velocity_4 = 0x0;		/* Mapped at index 0x2017, subindex 0x00 */
+INTEGER32 Position_1 = 0x0;		/* Mapped at index 0x2018, subindex 0x00 */
+INTEGER32 Position_2 = 0x0;		/* Mapped at index 0x2019, subindex 0x00 */
+INTEGER32 Position_3 = 0x0;		/* Mapped at index 0x201A, subindex 0x00 */
+INTEGER32 Position_4 = 0x0;		/* Mapped at index 0x201B, subindex 0x00 */
+UNS32 Acceleration_1 = 0x0;		/* Mapped at index 0x201C, subindex 0x00 */
+UNS32 Acceleration_2 = 0x0;		/* Mapped at index 0x201D, subindex 0x00 */
+UNS32 Acceleration_3 = 0x0;		/* Mapped at index 0x201E, subindex 0x00 */
+UNS32 Acceleration_4 = 0x0;		/* Mapped at index 0x201F, subindex 0x00 */
+UNS32 Deceleration_1 = 0x0;		/* Mapped at index 0x2020, subindex 0x00 */
+UNS32 Deceleration_2 = 0x0;		/* Mapped at index 0x2021, subindex 0x00 */
+UNS32 Deceleration_3 = 0x0;		/* Mapped at index 0x2022, subindex 0x00 */
+UNS8 Deceleration_4 = 0x0;		/* Mapped at index 0x2023, subindex 0x00 */
+UNS32 Accel2send_1 = 0x0;		/* Mapped at index 0x2024, subindex 0x00 */
+UNS32 Accel2send_2 = 0x0;		/* Mapped at index 0x2025, subindex 0x00 */
+UNS32 Accel2send_3 = 0x0;		/* Mapped at index 0x2026, subindex 0x00 */
+UNS32 Accel2send_4 = 0x0;		/* Mapped at index 0x2027, subindex 0x00 */
+UNS32 Decel2send_1 = 0x0;		/* Mapped at index 0x2028, subindex 0x00 */
+UNS32 Decel2send_2 = 0x0;		/* Mapped at index 0x2029, subindex 0x00 */
+UNS32 Decel2send_3 = 0x0;		/* Mapped at index 0x202A, subindex 0x00 */
+UNS8 Decel2send_4 = 0x0;		/* Mapped at index 0x202B, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -1880,13 +1900,133 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 /* index 0x2016 :   Mapped variable Velocity_3 */
                     subindex SpirallingMaster_Index2016[] =
                      {
-                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_3 }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_3 }
                      };
 
 /* index 0x2017 :   Mapped variable Velocity_4 */
                     subindex SpirallingMaster_Index2017[] =
                      {
-                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_4 }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_4 }
+                     };
+
+/* index 0x2018 :   Mapped variable Position_1 */
+                    subindex SpirallingMaster_Index2018[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Position_1 }
+                     };
+
+/* index 0x2019 :   Mapped variable Position_2 */
+                    subindex SpirallingMaster_Index2019[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Position_2 }
+                     };
+
+/* index 0x201A :   Mapped variable Position_3 */
+                    subindex SpirallingMaster_Index201A[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Position_3 }
+                     };
+
+/* index 0x201B :   Mapped variable Position_4 */
+                    subindex SpirallingMaster_Index201B[] =
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&Position_4 }
+                     };
+
+/* index 0x201C :   Mapped variable Acceleration_1 */
+                    subindex SpirallingMaster_Index201C[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Acceleration_1 }
+                     };
+
+/* index 0x201D :   Mapped variable Acceleration_2 */
+                    subindex SpirallingMaster_Index201D[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Acceleration_2 }
+                     };
+
+/* index 0x201E :   Mapped variable Acceleration_3 */
+                    subindex SpirallingMaster_Index201E[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Acceleration_3 }
+                     };
+
+/* index 0x201F :   Mapped variable Acceleration_4 */
+                    subindex SpirallingMaster_Index201F[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Acceleration_4 }
+                     };
+
+/* index 0x2020 :   Mapped variable Deceleration_1 */
+                    subindex SpirallingMaster_Index2020[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Deceleration_1 }
+                     };
+
+/* index 0x2021 :   Mapped variable Deceleration_2 */
+                    subindex SpirallingMaster_Index2021[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Deceleration_2 }
+                     };
+
+/* index 0x2022 :   Mapped variable Deceleration_3 */
+                    subindex SpirallingMaster_Index2022[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Deceleration_3 }
+                     };
+
+/* index 0x2023 :   Mapped variable Deceleration_4 */
+                    subindex SpirallingMaster_Index2023[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&Deceleration_4 }
+                     };
+
+/* index 0x2024 :   Mapped variable Accel2send_1 */
+                    subindex SpirallingMaster_Index2024[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Accel2send_1 }
+                     };
+
+/* index 0x2025 :   Mapped variable Accel2send_2 */
+                    subindex SpirallingMaster_Index2025[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Accel2send_2 }
+                     };
+
+/* index 0x2026 :   Mapped variable Accel2send_3 */
+                    subindex SpirallingMaster_Index2026[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Accel2send_3 }
+                     };
+
+/* index 0x2027 :   Mapped variable Accel2send_4 */
+                    subindex SpirallingMaster_Index2027[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Accel2send_4 }
+                     };
+
+/* index 0x2028 :   Mapped variable Decel2send_1 */
+                    subindex SpirallingMaster_Index2028[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Decel2send_1 }
+                     };
+
+/* index 0x2029 :   Mapped variable Decel2send_2 */
+                    subindex SpirallingMaster_Index2029[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Decel2send_2 }
+                     };
+
+/* index 0x202A :   Mapped variable Decel2send_3 */
+                    subindex SpirallingMaster_Index202A[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&Decel2send_3 }
+                     };
+
+/* index 0x202B :   Mapped variable Decel2send_4 */
+                    subindex SpirallingMaster_Index202B[] =
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&Decel2send_4 }
                      };
 
 /**************************************************************************/
@@ -1995,6 +2135,26 @@ const indextable SpirallingMaster_objdict[] =
   { (subindex*)SpirallingMaster_Index2015,sizeof(SpirallingMaster_Index2015)/sizeof(SpirallingMaster_Index2015[0]), 0x2015},
   { (subindex*)SpirallingMaster_Index2016,sizeof(SpirallingMaster_Index2016)/sizeof(SpirallingMaster_Index2016[0]), 0x2016},
   { (subindex*)SpirallingMaster_Index2017,sizeof(SpirallingMaster_Index2017)/sizeof(SpirallingMaster_Index2017[0]), 0x2017},
+  { (subindex*)SpirallingMaster_Index2018,sizeof(SpirallingMaster_Index2018)/sizeof(SpirallingMaster_Index2018[0]), 0x2018},
+  { (subindex*)SpirallingMaster_Index2019,sizeof(SpirallingMaster_Index2019)/sizeof(SpirallingMaster_Index2019[0]), 0x2019},
+  { (subindex*)SpirallingMaster_Index201A,sizeof(SpirallingMaster_Index201A)/sizeof(SpirallingMaster_Index201A[0]), 0x201A},
+  { (subindex*)SpirallingMaster_Index201B,sizeof(SpirallingMaster_Index201B)/sizeof(SpirallingMaster_Index201B[0]), 0x201B},
+  { (subindex*)SpirallingMaster_Index201C,sizeof(SpirallingMaster_Index201C)/sizeof(SpirallingMaster_Index201C[0]), 0x201C},
+  { (subindex*)SpirallingMaster_Index201D,sizeof(SpirallingMaster_Index201D)/sizeof(SpirallingMaster_Index201D[0]), 0x201D},
+  { (subindex*)SpirallingMaster_Index201E,sizeof(SpirallingMaster_Index201E)/sizeof(SpirallingMaster_Index201E[0]), 0x201E},
+  { (subindex*)SpirallingMaster_Index201F,sizeof(SpirallingMaster_Index201F)/sizeof(SpirallingMaster_Index201F[0]), 0x201F},
+  { (subindex*)SpirallingMaster_Index2020,sizeof(SpirallingMaster_Index2020)/sizeof(SpirallingMaster_Index2020[0]), 0x2020},
+  { (subindex*)SpirallingMaster_Index2021,sizeof(SpirallingMaster_Index2021)/sizeof(SpirallingMaster_Index2021[0]), 0x2021},
+  { (subindex*)SpirallingMaster_Index2022,sizeof(SpirallingMaster_Index2022)/sizeof(SpirallingMaster_Index2022[0]), 0x2022},
+  { (subindex*)SpirallingMaster_Index2023,sizeof(SpirallingMaster_Index2023)/sizeof(SpirallingMaster_Index2023[0]), 0x2023},
+  { (subindex*)SpirallingMaster_Index2024,sizeof(SpirallingMaster_Index2024)/sizeof(SpirallingMaster_Index2024[0]), 0x2024},
+  { (subindex*)SpirallingMaster_Index2025,sizeof(SpirallingMaster_Index2025)/sizeof(SpirallingMaster_Index2025[0]), 0x2025},
+  { (subindex*)SpirallingMaster_Index2026,sizeof(SpirallingMaster_Index2026)/sizeof(SpirallingMaster_Index2026[0]), 0x2026},
+  { (subindex*)SpirallingMaster_Index2027,sizeof(SpirallingMaster_Index2027)/sizeof(SpirallingMaster_Index2027[0]), 0x2027},
+  { (subindex*)SpirallingMaster_Index2028,sizeof(SpirallingMaster_Index2028)/sizeof(SpirallingMaster_Index2028[0]), 0x2028},
+  { (subindex*)SpirallingMaster_Index2029,sizeof(SpirallingMaster_Index2029)/sizeof(SpirallingMaster_Index2029[0]), 0x2029},
+  { (subindex*)SpirallingMaster_Index202A,sizeof(SpirallingMaster_Index202A)/sizeof(SpirallingMaster_Index202A[0]), 0x202A},
+  { (subindex*)SpirallingMaster_Index202B,sizeof(SpirallingMaster_Index202B)/sizeof(SpirallingMaster_Index202B[0]), 0x202B},
 };
 
 const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -2102,6 +2262,26 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 		case 0x2015: i = 97;break;
 		case 0x2016: i = 98;break;
 		case 0x2017: i = 99;break;
+		case 0x2018: i = 100;break;
+		case 0x2019: i = 101;break;
+		case 0x201A: i = 102;break;
+		case 0x201B: i = 103;break;
+		case 0x201C: i = 104;break;
+		case 0x201D: i = 105;break;
+		case 0x201E: i = 106;break;
+		case 0x201F: i = 107;break;
+		case 0x2020: i = 108;break;
+		case 0x2021: i = 109;break;
+		case 0x2022: i = 110;break;
+		case 0x2023: i = 111;break;
+		case 0x2024: i = 112;break;
+		case 0x2025: i = 113;break;
+		case 0x2026: i = 114;break;
+		case 0x2027: i = 115;break;
+		case 0x2028: i = 116;break;
+		case 0x2029: i = 117;break;
+		case 0x202A: i = 118;break;
+		case 0x202B: i = 119;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

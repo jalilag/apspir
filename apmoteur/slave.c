@@ -12,14 +12,78 @@
 #include "gtksig.h"
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
-extern int SLAVE_NUMBER, PROFILE_NUMBER, run_init;
+extern int PROFILE_NUMBER, run_init;
 
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 
-extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
+
+int slave_get_LSS_data(CO_Data * d){
+    int i, count=0;
+    //masterSendNMTstateChange(d, 0x00, NMT_Stop_Node);
+    //masterRequestNodeState(d, 0x00);//broadcast
+    //sleep(1);
+    //detecter le nombre d'esclaves:
+    masterRequestNodeState(d, 0x00);
+    masterSendNMTstateChange(d, 0x00, NMT_Reset_Node);
+    sleep(1);
+    for (i=0; i<NMT_MAX_NODE_ID; i++){
+        printf("%d\n",d->NMTable[i]);
+        if(d->NMTable[i] != Unknown_state){
+            count++;
+        }
+    }
+    SLAVE_NUMBER = count-1;
+    printf("SLAVE_NUMBER = %d", SLAVE_NUMBER);
+    if(SLAVE_NUMBER<=0){
+        //a ajouter: errgen_set()
+        return 1;
+    }
+
+    count=2;
+    for (i=1; i<NMT_MAX_NODE_ID; i++){
+        if(d->NMTable[i] != Unknown_state){//le noeud est présent sur le réseau
+            //obtenir les données de configuration
+            UNS32 Vendor_id;
+            UNS32 Product_code;
+            UNS32 Revision_number;
+            UNS32 Serial_number;
+
+            SDOR sdo_info = {0x1018,0x01,uint32};
+            if(!cantools_read_sdo(i,sdo_info,&Vendor_id)){
+                errgen_set(ERR_LOAD_ID_DATA, NULL);
+                return 1;
+            }
+            sdo_info = (SDOR){0x1018,0x02,uint32};
+            if(!cantools_read_sdo(i,sdo_info,&Product_code)){
+                errgen_set(ERR_LOAD_ID_DATA, NULL);
+                return 1;
+            }
+            sdo_info = (SDOR){0x1018,0x03,uint32};
+            if(!cantools_read_sdo(i,sdo_info,&Revision_number)){
+                errgen_set(ERR_LOAD_ID_DATA, NULL);
+                return 1;
+            }
+            sdo_info = (SDOR){0x1018,0x04,uint32};
+            if(!cantools_read_sdo(i,sdo_info,&Serial_number)){
+                errgen_set(ERR_LOAD_ID_DATA, NULL);
+                return 1;
+            }
+            pthread_mutex_lock(&lock_slave);
+            slaves[count-2] = (SLAVES_conf){ 3, "Translation",count, Vendor_id, Product_code, Revision_number, Serial_number,STATE_LSS_CONFIG,0,0x0000};
+            pthread_mutex_unlock(&lock_slave);
+            count++;
+        }
+    }
+    masterSendNMTstateChange(d, 0x00, NMT_Stop_Node);
+    setState(d, Initialisation);
+
+    return 0;
+
+}
+
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -463,7 +527,7 @@ UNS8 slave_get_node_with_profile(int profInd) {
 /**
 * Retourne state en fonction index
 **/
-static int slave_get_state_with_index(int i) {
+int slave_get_state_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state;
@@ -711,29 +775,31 @@ INTEGER32 slave_get_param_in_num(char* parid, int index) {
     int i;
     for (i=0;i<VAR_NUMBER;i++) {
         if (parid == vardata[i].id) {
-            if (parid == "Volt") {
+            if (!strcmp(parid, "Volt")) {
                 UNS16 *data = *(vardata[i].tab+index);
                 INTEGER32 data2= (INTEGER32)*data;
                 data2 = data2/10;
                 return data2;
-            } else if (parid == "Velinc") {
+            } else if (!strcmp(parid, "Velinc")) {
                 INTEGER32* data = (INTEGER32*)vardata[i].tab;
                 return (INTEGER32)data[index];
-            } else if (parid == "State") {
+            } else if (!strcmp(parid, "Vel2sendPDONum")){
+                return index;
+            } else if (!strcmp(parid, "State")) {
                 return (INTEGER32)slave_get_state_with_index(index);
-            } else if (parid == "StateError") {
+            } else if (!strcmp(parid,"StateError")) {
                 return (INTEGER32)slave_get_state_with_index(index);
-            } else if (parid == "SlaveProfile") {
+            } else if (!strcmp(parid, "SlaveProfile")) {
                 return (INTEGER32)slave_get_profile_with_index(index);
-            } else if (parid == "Vendor") {
+            } else if (!strcmp(parid, "Vendor")) {
                 return (INTEGER32)slave_get_vendor_with_index(index);
-            } else if (parid == "Product") {
+            } else if (!strcmp(parid, "Product")) {
                 return (INTEGER32)slave_get_product_with_index(index);
-            } else if (parid == "Revision") {
+            } else if (!strcmp(parid, "Revision")) {
                 return (INTEGER32)slave_get_revision_with_index(index);
-            } else if (parid == "Serial") {
+            } else if (!strcmp(parid, "Serial")) {
                 return (INTEGER32)slave_get_serial_with_index(index);
-            } else if (parid == "Active") {
+            } else if (!strcmp(parid, "Active")) {
                 return (INTEGER32)slave_get_active_with_index(index);
             } else {
                 if (vardata[i].type == 0x02) {
@@ -870,3 +936,25 @@ char* slave_get_param_title (char* parid) {
     exit(1);
 }
 
+/**retourne la liste des index de profile Profile correspondent**/
+//retourne 0 si pas d'erreur
+//retourne 1 si le nombre d'index vérifiant le truc est > à sizeof(indexlist) ou si aucun index à été trouvé
+int slave_get_indexList_from_ProfileName(char* ProfileName, int* indexList){
+    int i;
+    for (i=0; i<sizeof(indexList)/sizeof(int); i++){
+        indexList[i] = -1;
+    }
+    int maxcount = sizeof(indexList)/sizeof(int);
+    int count=0;
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if(!strcmp(slave_get_profile_name(i),Profile)){
+            if(count < maxcount) {
+                indexList[count] = i;
+                count++;
+            }
+            else return 1;//indexList too small to contain all data
+        }
+    }
+    if (count == 0) return 1;// aucun moteur défini
+    return 0;
+}

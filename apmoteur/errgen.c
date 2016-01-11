@@ -5,8 +5,9 @@
 #include "strtools.h"
 #include "gtksig.h"
 
-extern UNS16 errgen_state;
-extern int current_menu, run_init;
+UNS16 errgen_state = 0x0000;
+UNS8 errgen_laserState = 0x00;
+int current_menu, run_init;
 
 void errgen_set(UNS16 dat, char* op) {
     if (dat == 0) dat = errgen_state;
@@ -142,6 +143,12 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_MOTOR_BACKWARD) return ERR_MOTOR_BACKWARD_TITLE;
     else if (dat == ERR_MOTOR_LOW_VOLTAGE) return ERR_MOTOR_LOW_VOLTAGE_TITLE;
 
+    else if (dat == ERR_CLEAR_LOCKED_ROTOR) return ERR_CLEAR_LOCKED_ROTOR_TITLE;
+
+    else if (dat == ERR_LASER_ASSERV_NOTRANSMOTDEFINED) return ERR_LASER_ASSERV_TITLE;
+    else if (dat == ERR_LASER_ASSERV_NOVELMOTROTDEFINED) return ERR_LASER_ASSERV_TITLE;
+    else if (dat == ERR_LASER_ASSERV_READMOTROTDATA) return ERR_LASER_ASSERV_TITLE;
+
     else return DEFAULT;
 }
 
@@ -229,6 +236,12 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_MOTOR_FORWARD) return ERR_MOTOR_FORWARD_CONTENT;
     else if (dat == ERR_MOTOR_BACKWARD) return ERR_MOTOR_BACKWARD_CONTENT;
     else if (dat == ERR_MOTOR_LOW_VOLTAGE) return ERR_MOTOR_LOW_VOLTAGE_CONTENT;
+
+    else if (dat == ERR_CLEAR_LOCKED_ROTOR) return ERR_CLEAR_LOCKED_ROTOR_CONTENT;
+
+    else if (dat == ERR_LASER_ASSERV_NOTRANSMOTDEFINED) return ERR_LASER_ASSERV_NOTRANSMOTDEFINED_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_NOVELMOTROTDEFINED) return ERR_LASER_ASSERV_NOVELMOTDEFINED_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_READMOTROTDATA) return ERR_LASER_ASSERV_READMOTROTDATA_CONTENT;
 
     else return DEFAULT;
 }

@@ -38,9 +38,9 @@ TARGET = unix
 CAN_DRIVER = can_virtual
 TIMERS_DRIVER = timers_unix
 APMOTEUR = "SpirallingControl"
-FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o lsstools.o od_callback.o keyword.o motor.o errgen.o
+FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o serialtools.o lsstools.o od_callback.o keyword.o motor.o errgen.o laser/laser.o laser/laser_asserv.o laser/laser_simulation.o
 
-INCLUDES = -I../include -I../include/$(TARGET) -I../include/$(CAN_DRIVER) -I../include/$(TIMERS_DRIVER)
+INCLUDES = -I. -I./laser -I../include -I../include/$(TARGET) -I../include/$(CAN_DRIVER) -I../include/$(TIMERS_DRIVER)
 
 MASTER_OBJS = SpirallingMaster.o SpirallingControl.o $(FUNCVAR)
 
@@ -58,8 +58,8 @@ $(APMOTEUR): $(OBJS)
 
 
 SpirallingMaster.c: SpirallingMaster.od
-	$(MAKE) -C /home/jalil/Documents/programmation/python/objedit/ gnosis
-	python /home/jalil/Documents/programmation/python/objedit/objdictgen.py SpirallingMaster.od SpirallingMaster.c
+	$(MAKE) -C ../objedit/ gnosis
+	python ../objedit/objdictgen.py SpirallingMaster.od SpirallingMaster.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES)  -o $@ -c $<
@@ -67,7 +67,6 @@ SpirallingMaster.c: SpirallingMaster.od
 clean:
 	rm -f $(MASTER_OBJS)
 	rm -f $(APMOTEUR)
-	rm -f SpirallingMaster.c
 
 mrproper: clean
 	rm -f SpirallingMaster.c
