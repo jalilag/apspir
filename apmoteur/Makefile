@@ -38,7 +38,7 @@ TARGET = unix
 CAN_DRIVER = can_virtual
 TIMERS_DRIVER = timers_unix
 APMOTEUR = "SpirallingControl"
-FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o lsstools.o od_callback.o keyword.o motor.o errgen.o
+FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o lsstools.o od_callback.o keyword.o motor.o errgen.o profile.o
 
 INCLUDES = -I../include -I../include/$(TARGET) -I../include/$(CAN_DRIVER) -I../include/$(TIMERS_DRIVER)
 
