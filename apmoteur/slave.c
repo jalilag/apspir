@@ -12,14 +12,15 @@
 #include "gtksig.h"
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
-extern int SLAVE_NUMBER, PROFILE_NUMBER, run_init;
+extern int SLAVE_NUMBER, run_init;
 
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
+extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
+
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -257,7 +258,7 @@ int slave_gui_param_gen(int ind) {
             }
             GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
             for (l=0; l<PROFILE_NUMBER;l++) {
-                gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),slave_profile[l].title);
+                gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
             }
             gtk_grid_attach(grid,comb,5,i+3,1,1);
             gtk_combo_box_set_active (GTK_COMBO_BOX(comb), slave_get_profile_with_index(i));
@@ -270,7 +271,7 @@ int slave_gui_param_gen(int ind) {
         gtk_grid_attach(grid,comb,0,1,1,1);
         int i;
         for (i=0; i<PROFILE_NUMBER; i++) {
-            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),slave_profile[i].title);
+            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),profiles[i].title);
         }
         g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
     }
@@ -300,15 +301,15 @@ int slave_read_definition() {
                 slaves[i1].state_error = 0;
                 i1++;
             }
-            if (sscanf(chaine,"##%19s",title2) == 1){
-                slave_profile[i2].title = g_strdup(title2);
-                i2++;
-            }
+//            if (sscanf(chaine,"##%19s",title2) == 1){
+//                slave_profile[i2].title = g_strdup(title2);
+//                i2++;
+//            }
         }
+
         SLAVE_NUMBER = i1;
-        PROFILE_NUMBER = i2;
         fclose(fslave);
-        if (i1 == 0 || i2 == 0) return 0;
+        if (i1 == 0) return 0;
     } else {
         errgen_set(ERR_FILE_OPEN,FILE_SLAVE_CONFIG);
         return 0;
@@ -340,11 +341,11 @@ int slave_save_param (int index) {
             str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
             i++;
         }
-        if (PROFILE_NUMBER > 0)
-            for (i=0; i<PROFILE_NUMBER; i++)
-                str2build = strtools_concat(str2build,"##",slave_profile[i].title, "\n",NULL);
-        else
-            str2build = strtools_concat(str2build,"##Translation\n##Rotation\n##Libre",NULL);
+//        if (PROFILE_NUMBER > 0)
+//            for (i=0; i<PROFILE_NUMBER; i++)
+//                str2build = strtools_concat(str2build,"##",slave_profile[i].title, "\n",NULL);
+//        else
+//            str2build = strtools_concat(str2build,"##Translation\n##Rotation\n##Libre",NULL);
         if (!strtools_build_file(FILE_SLAVE_CONFIG,str2build)) {
             if (str2build != "") free(str2build);
             return 0;
@@ -698,11 +699,10 @@ static char* slave_get_state_error_title(int state) {
 * Renvoi le nom du fichier correspondant au profil
 **/
 char* slave_get_profile_filename(int index) {
-    printf("%s",slave_profile[index].title);
-    return g_strconcat("profile_",g_utf8_strdown(slave_profile[index].title,-1),"_config.txt",NULL);
+    return g_strconcat("profile_",g_utf8_strdown(profiles[index].id,-1),"_config.txt",NULL);
 }
 char* slave_get_profile_name(int index) {
-    return slave_profile[index].title;
+    return profiles[index].title;
 }
 /**
 * Retourne en INTEGER32 le paramètre
@@ -826,7 +826,7 @@ char* slave_get_param_in_char(char* parid, int index) {
             } else if (parid == "StateImg") {
                 return slave_get_state_img(slave_get_param_in_num("State",index));
             } else if (parid == "SlaveProfile") {
-                return slave_profile[slave_get_profile_with_index(index)].title;
+                return profiles[slave_get_profile_with_index(index)].title;
             } else if (parid == "Vendor") {
                 UNS32 dat = slave_get_vendor_with_index(index);
                 return strtools_gnum2str(&dat,0x07);

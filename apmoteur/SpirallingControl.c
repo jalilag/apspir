@@ -25,11 +25,18 @@ s_BOARD MasterBoard = {"0","1M"};
 
 // Définition des esclaves
 volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-int SLAVE_NUMBER, PROFILE_NUMBER;
+
+volatile PROF profiles[PROFILE_NUMBER] = {
+    {0,"TransVit","Translation (vitesse)"},
+    {1,"TransCouple","Translation (couple)"},
+    {2,"RotVit","Rotation (vitesse)"},
+    {3,"RotCouple","Rotation (couple)"},
+    {4,"Libre","Libre"}
+};
+int SLAVE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
 GMutex lock_gui_box;
 // Les paramètres
-volatile PROF slave_profile[PROFILE_NUMBER_LIMIT];
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 // Récupération des variables numériques à traiter
 void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4};

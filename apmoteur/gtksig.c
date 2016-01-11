@@ -19,8 +19,8 @@
 
 GtkBuilder *builder;
 
-extern int run_init, SLAVE_NUMBER, PROFILE_NUMBER, current_menu;
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
+extern int run_init, SLAVE_NUMBER, current_menu;
+extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
@@ -164,7 +164,7 @@ void on_butAddSlave_clicked (GtkWidget* pEntry) {
     }
     GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
     for (l=0; l<PROFILE_NUMBER;l++) {
-        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),slave_profile[l].title);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
     }
     gtk_grid_attach(GTK_GRID(grid),comb,5,i,1,1);
     gtk_widget_show_all(gui_get_widget("boxParam"));

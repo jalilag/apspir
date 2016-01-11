@@ -3,7 +3,7 @@
 #include "canfestival.h"
 // DONNEE PROGRAMME
 #define SLAVE_NUMBER_LIMIT 10 // Nombre d'esclave
-#define PROFILE_NUMBER_LIMIT 10 // Nombre max de profile
+#define PROFILE_NUMBER 5 // Nombre de profile
 #define PARAM_NUMBER 18 // Nombre max de profile
 #define VAR_NUMBER 18
 #define CYCLE_PERIOD 0x0007A120 // Sync tou les 50000us = 50ms
@@ -12,7 +12,7 @@
 #define HB_PROD 0x01F4 // Hearbeat esclave envoyé tout les 500ms
 #define FILE_SLAVE_CONFIG "slave_config.txt"
 
-
+// PROFILE
 void catch_signal(int sig);
 void Exit(int type);
 

@@ -218,7 +218,6 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
     va_start(ap,PDOMapIndex);
     UNS32 arg = va_arg(ap,UNS32);
 
-
     SDOR PDOMapAddress = {PDOMapIndex,0x00,0x05};
     // Désactivation de la transmission pour modification
     SDOR PDOParamAddress = {PDOMapIndex-0x0200,0x01,0x07};
