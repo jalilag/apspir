@@ -134,8 +134,8 @@ void on_but_StartRot_notify(GtkWidget* pEntry)
     struct laser_data d;
     UNS8 pdonum;
     int index_rot;
-    if (slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_rot)){
-        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+    if (slave_get_indexList_from_ProfileName("RotVit", &index_rot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTROTDEFINED, NULL);
         return;
     }
     if(gtk_switch_get_active(gui_get_switch("but_Start_R")) == TRUE && motor_get_state(slave_get_state_with_index(index_rot)) == SON){
@@ -189,8 +189,8 @@ void on_LASERSTARTSIMU_clicked(GtkWidget* pEntry)
     UNS32 accel_T, decel_T;
     UNS32 accel_R, decel_R;
     int index_rot;
-    if(slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_rot)){
-        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+    if(slave_get_indexList_from_ProfileName("RotVit", &index_rot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTROTDEFINED, NULL);
         return;
     }
     if(!laser_simu){
@@ -298,13 +298,13 @@ void on_radForward_toggled(GtkWidget* pEntry) {
         }
     }
 }
-INTEGER32 vel_inc_Trans;//a gerer!!
+
 void on_butVelUp_clicked(GtkWidget* pEntry) {
 
     int index_mottrans, index_motrot;
 
-    if(slave_get_indexList_with_ProfileName_with_Title("vitesse", "Translation", &index_mottrans) && slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_motrot)){
-        errgen_set(ERR_LASER_ASSERV_NOVELMOTDEFINED, NULL);
+    if(slave_get_indexList_with_ProfileName_with_Title("", &index_mottrans) && slave_get_indexList_with_ProfileName_with_Title("vitesse", "Rotation", &index_motrot)){
+        errgen_set(ERR_LASER_ASSERV_NOVELMOTROTDEFINED, NULL);
         return;
     }
     if (slave_get_param_in_num("SlaveProfile",index_mottrans) == 0 && slave_get_param_in_num("Active",index_mottrans)) {

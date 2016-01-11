@@ -2,7 +2,6 @@
 #define _ERRGEN_H
 #include "data.h"
 
-extern UNS16 errgen_state;
 extern UNS8 errgen_laserState;
 
 void errgen_set(UNS16 dat,char* op);

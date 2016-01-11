@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "gui.h"
 #include "od_callback.h"
 #include "errgen.h"
-
+extern int SLAVE_NUMBER;
 extern s_BOARD MasterBoard;
 char* baud_rate="1M";
 

@@ -12,80 +12,7 @@
 #include "gtksig.h"
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
-<<<<<<< HEAD
-extern int PROFILE_NUMBER, run_init;
 
-extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
-
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
-extern PARAM pardata[PARAM_NUMBER];
-extern PARVAR vardata[VAR_NUMBER];
-
-int slave_get_LSS_data(CO_Data * d){
-    int i, count=0;
-    //masterSendNMTstateChange(d, 0x00, NMT_Stop_Node);
-    //masterRequestNodeState(d, 0x00);//broadcast
-    //sleep(1);
-    //detecter le nombre d'esclaves:
-    masterRequestNodeState(d, 0x00);
-    masterSendNMTstateChange(d, 0x00, NMT_Reset_Node);
-    sleep(1);
-    for (i=0; i<NMT_MAX_NODE_ID; i++){
-        printf("%d\n",d->NMTable[i]);
-        if(d->NMTable[i] != Unknown_state){
-            count++;
-        }
-    }
-    SLAVE_NUMBER = count-1;
-    printf("SLAVE_NUMBER = %d", SLAVE_NUMBER);
-    if(SLAVE_NUMBER<=0){
-        //a ajouter: errgen_set()
-        return 1;
-    }
-
-    count=2;
-    for (i=1; i<NMT_MAX_NODE_ID; i++){
-        if(d->NMTable[i] != Unknown_state){//le noeud est présent sur le réseau
-            //obtenir les données de configuration
-            UNS32 Vendor_id;
-            UNS32 Product_code;
-            UNS32 Revision_number;
-            UNS32 Serial_number;
-
-            SDOR sdo_info = {0x1018,0x01,uint32};
-            if(!cantools_read_sdo(i,sdo_info,&Vendor_id)){
-                errgen_set(ERR_LOAD_ID_DATA, NULL);
-                return 1;
-            }
-            sdo_info = (SDOR){0x1018,0x02,uint32};
-            if(!cantools_read_sdo(i,sdo_info,&Product_code)){
-                errgen_set(ERR_LOAD_ID_DATA, NULL);
-                return 1;
-            }
-            sdo_info = (SDOR){0x1018,0x03,uint32};
-            if(!cantools_read_sdo(i,sdo_info,&Revision_number)){
-                errgen_set(ERR_LOAD_ID_DATA, NULL);
-                return 1;
-            }
-            sdo_info = (SDOR){0x1018,0x04,uint32};
-            if(!cantools_read_sdo(i,sdo_info,&Serial_number)){
-                errgen_set(ERR_LOAD_ID_DATA, NULL);
-                return 1;
-            }
-            pthread_mutex_lock(&lock_slave);
-            slaves[count-2] = (SLAVES_conf){ 3, "Translation",count, Vendor_id, Product_code, Revision_number, Serial_number,STATE_LSS_CONFIG,0,0x0000};
-            pthread_mutex_unlock(&lock_slave);
-            count++;
-        }
-    }
-    masterSendNMTstateChange(d, 0x00, NMT_Stop_Node);
-    setState(d, Initialisation);
-
-    return 0;
-
-}
-
-=======
 extern int SLAVE_NUMBER, run_init;
 
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
@@ -95,7 +22,6 @@ extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
 
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -958,7 +884,7 @@ int slave_get_indexList_from_ProfileName(char* ProfileName, int* indexList){
     int maxcount = sizeof(indexList)/sizeof(int);
     int count=0;
     for (i=0;i<SLAVE_NUMBER;i++){
-        if(!strcmp(slave_get_profile_name(i),Profile)){
+        if(!strcmp(slave_get_profile_name(i),)){
             if(count < maxcount) {
                 indexList[count] = i;
                 count++;

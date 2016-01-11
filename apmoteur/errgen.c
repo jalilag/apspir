@@ -5,15 +5,9 @@
 #include "strtools.h"
 #include "gtksig.h"
 
-<<<<<<< HEAD
-UNS16 errgen_state = 0x0000;
 UNS8 errgen_laserState = 0x00;
-int current_menu, run_init;
-=======
-extern UNS16 errgen_state;
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 
 void errgen_set(UNS16 dat, char* op) {
     if (dat == 0) dat = errgen_state;

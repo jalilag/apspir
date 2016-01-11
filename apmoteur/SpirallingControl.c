@@ -32,16 +32,8 @@ struct Helix_User_Data HelixUserData;
 s_BOARD MasterBoard = {"0","500k"};
 
 // Définition des esclaves
-<<<<<<< HEAD
-int SLAVE_NUMBER = 0;
-SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-//volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-//int SLAVE_NUMBER, PROFILE_NUMBER;
-int PROFILE_NUMBER;
-pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
-=======
+
 volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 
 volatile PROF profiles[PROFILE_NUMBER] = {
     {0,"TransVit","Translation (vitesse)"},
@@ -222,10 +214,7 @@ int main(int argc,char **argv) {
 
 // Chemin vers la librairie CANFESTIVAL
     char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
-<<<<<<< HEAD
 
-=======
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)
         errgen_set(ERR_DRIVER_LOAD,NULL);
