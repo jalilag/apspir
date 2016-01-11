@@ -5,12 +5,10 @@
 #include "strtools.h"
 #include "gtksig.h"
 
-extern UNS16 errgen_state;
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
 
 void errgen_set(UNS16 dat, char* op) {
-    if (dat == 0) dat = errgen_state;
     char* title = strtools_concat(ERROR, " : ", strtools_gnum2str(&dat,0x06)," ",errgen_get_title(dat), NULL);
     char* content = strtools_concat(errgen_get_content(dat),"\n",ERROR, " : ", strtools_gnum2str(&dat,0x06),NULL);
     if (op != NULL) content = strtools_concat(content,"\n",ELEM_KEY,op,NULL);

@@ -19,6 +19,8 @@
 #include "strtools.h"
 #include "errgen.h"
 #include "motor.h"
+#include "profile.h"
+
 
 // Plateforme MASTER
 s_BOARD MasterBoard = {"0","1M"};

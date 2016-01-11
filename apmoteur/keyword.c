@@ -7,10 +7,11 @@
 #include "slave.h"
 #include "motor.h"
 #include "SpirallingControl.h"
+#include "profile.h"
 
 extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
+extern PROF profiles[PROFILE_NUMBER];
 void keyword_init () {
 
 /** TITRE DES WINDOWS **/
