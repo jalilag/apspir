@@ -16,6 +16,7 @@
 #include "motor.h"
 #include "errgen.h"
 #include "slave.h"
+#include "profile.h"
 
 #include "laser_asserv.h"
 #include "laser_simulation.h"

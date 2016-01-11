@@ -19,6 +19,8 @@
 #include "strtools.h"
 #include "errgen.h"
 #include "motor.h"
+#include "profile.h"
+
 
 #include "laser_asserv.h"
 #include "serialtools.h"

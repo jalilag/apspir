@@ -10,6 +10,7 @@
 #include <glib.h>
 #include "master.h"
 #include "gtksig.h"
+#include "profile.h"
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
 
@@ -637,6 +638,7 @@ int slave_get_profile_with_node(UNS8 node) {
     pthread_mutex_unlock (&lock_slave);
     return dat;
 }
+
 /**
 * Retourne le titre en fonction de i
 **/
@@ -700,10 +702,10 @@ static char* slave_get_state_error_title(int state) {
 * Renvoi le nom du fichier correspondant au profil
 **/
 char* slave_get_profile_filename(int index) {
-    return g_strconcat("profile_",g_utf8_strdown(profiles[index].id,-1),"_config.txt",NULL);
+    return g_strconcat("profile_",g_utf8_strdown(profiles[slaves[index].profile].id,-1),"_config.txt",NULL);
 }
 char* slave_get_profile_name(int index) {
-    return profiles[index].title;
+    return profiles[slaves[index].profile].title;
 }
 /**
 * Retourne en INTEGER32 le paramètre

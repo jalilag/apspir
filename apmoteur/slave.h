@@ -27,6 +27,7 @@ struct PARVAR {
     char* title;
 };
 
+<<<<<<< HEAD
 
 typedef struct PROF PROF;
 struct PROF {
@@ -34,6 +35,8 @@ struct PROF {
     char* id;
     char* title;
 };
+=======
+>>>>>>> a98d4c1ff52dd73fb72293e86aef0d41f18e057a
 
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
