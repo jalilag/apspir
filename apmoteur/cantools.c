@@ -219,7 +219,6 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
     va_start(ap,PDOMapIndex);
     UNS32 arg = va_arg(ap,UNS32);
 
-
     SDOR PDOMapAddress = {PDOMapIndex,0x00,0x05};
     // Désactivation de la transmission pour modification
     SDOR PDOParamAddress = {PDOMapIndex-0x0200,0x01,0x07};
@@ -433,6 +432,7 @@ gpointer cantools_init_loop(gpointer data) {
             // Configuration PreOp
             if (slave_get_param_in_num("State",i) == STATE_CONFIG) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
+                printf("TEST %x\n",slave_get_node_with_index(i));
                 if(slave_config(slave_get_node_with_index(i))) {
                     slave_set_param("State",i,STATE_OP);
                 } else {

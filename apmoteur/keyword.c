@@ -96,7 +96,10 @@ gboolean keyword_maj(gpointer data) {
             gui_local_label_set(strtools_concat("labM",key,"State",NULL),slave_get_param_in_char("State",i),"mainWindow");
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
-        printf("Vitesse %s %s\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_char("Velocity",i));
+        printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
+        INTEGER32 dat;
+        motor_get_param(0x02,"Velocity",&dat);
+        printf("Vitesse %x",dat);
     }
     // Vérification du switch translation
     int switch_but = gui_switch_is_active("butVelStart");

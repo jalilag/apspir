@@ -32,22 +32,35 @@ struct Helix_User_Data HelixUserData;
 s_BOARD MasterBoard = {"0","500k"};
 
 // Définition des esclaves
+<<<<<<< HEAD
 int SLAVE_NUMBER = 0;
 SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 //volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 //int SLAVE_NUMBER, PROFILE_NUMBER;
 int PROFILE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
+=======
+volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+>>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 
+volatile PROF profiles[PROFILE_NUMBER] = {
+    {0,"TransVit","Translation (vitesse)"},
+    {1,"TransCouple","Translation (couple)"},
+    {2,"RotVit","Rotation (vitesse)"},
+    {3,"RotCouple","Rotation (couple)"},
+    {4,"Libre","Libre"}
+};
+int SLAVE_NUMBER;
+pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
+GMutex lock_gui_box;
 // Les paramètres
-volatile PROF slave_profile[PROFILE_NUMBER_LIMIT];
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 // Récupération des variables numériques à traiter
 void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4};
 void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4};
 void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4};
 void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
-void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_4,&Velocity_4};
+void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_3,&Velocity_4};
 void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
 void* position[SLAVE_NUMBER_LIMIT] = {&Position_1, &Position_2, &Position_3, &Position_4};
 void* accel[SLAVE_NUMBER_LIMIT] = {&Acceleration_1, &Acceleration_2, &Acceleration_3, &Acceleration_4};
@@ -209,7 +222,10 @@ int main(int argc,char **argv) {
 
 // Chemin vers la librairie CANFESTIVAL
     char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
+<<<<<<< HEAD
 
+=======
+>>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)
         errgen_set(ERR_DRIVER_LOAD,NULL);
@@ -263,5 +279,3 @@ int main(int argc,char **argv) {
     TimerCleanup();
 	return 0;
 }
-
-

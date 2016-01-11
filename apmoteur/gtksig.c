@@ -23,10 +23,11 @@
 
 GtkBuilder *builder;
 
-extern int run_init, SLAVE_NUMBER, PROFILE_NUMBER, current_menu;
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
+extern int run_init, SLAVE_NUMBER, current_menu;
+extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
+extern GMutex lock_gui_box;
 
 void gtksig_init () {
     // SIGNALS MAIN
@@ -85,6 +86,7 @@ void on_butStop_clicked (GtkWidget* pEntry) {
 // Fermeture de la boite de dialogue
 void on_butInitDialClose_clicked (GtkWidget* pEntry) {
     gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object (builder, "windowDialInit")));
+    g_mutex_unlock(&lock_gui_box);
 }
 
 // Fermeture de la window
@@ -92,6 +94,7 @@ void on_butQuit_clicked (GtkWidget* pEntry) {
     Exit(2);
 }
 void on_butParams_clicked(GtkWidget* pEntry) {
+    g_mutex_lock(&lock_gui_box);
     Exit(0);
     slave_gui_param_gen(current_menu);
     gui_widget2show("windowParams",NULL);
@@ -100,8 +103,13 @@ void on_butParams_clicked(GtkWidget* pEntry) {
 //a modifier pour faire fonctionner l'asservissement
 void on_butVelStart_active_notify(GtkWidget* pEntry) {
     int i, j = gui_switch_is_active("butVelStart");
+//    SDOR test = {0x60FF,0x00,0x04};
+//    INTEGER32 datTest = 0;
+//    cantools_write_sdo(0x02,test,&datTest);
+
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("SlaveProfile",i) == 0 && slave_get_param_in_num("Active",i)) {
+            slave_set_param("Vel2send",i,0);
             if (j == 1) {
                 if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON)
                     motor_start(slave_get_node_with_index(i),1);
@@ -110,7 +118,6 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
                     motor_start(slave_get_node_with_index(i),0);
                 }
             }
-            slave_set_param("Vel2send",i,0);
         }
     }
 }
@@ -371,6 +378,7 @@ void on_butParamReturn_clicked(GtkWidget* pEntry) {
     if (current_menu == 0) gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor"));
     else if (current_menu == 1) gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
     gui_widget2hide("windowParams",NULL);
+    g_mutex_unlock(&lock_gui_box);
 }
 void on_butParamSave_clicked(GtkWidget* pEntry) {
     slave_save_param (current_menu);
@@ -396,7 +404,7 @@ void on_butAddSlave_clicked (GtkWidget* pEntry) {
     }
     GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
     for (l=0; l<PROFILE_NUMBER;l++) {
-        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),slave_profile[l].title);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
     }
     gtk_grid_attach(GTK_GRID(grid),comb,5,i,1,1);
     gtk_widget_show_all(gui_get_widget("boxParam"));

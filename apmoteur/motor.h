@@ -17,14 +17,6 @@ struct PARAM {
 };
 
 
-
-
-typedef struct PROF PROF;
-struct PROF {
-    char* title;
-};
-
-
 UNS8 motor_get_state(UNS16 state);
 char* motor_get_state_title(UNS8 key);
 char* motor_get_error_title(UNS16 data);

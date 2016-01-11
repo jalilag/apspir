@@ -27,10 +27,19 @@ struct PARVAR {
     char* title;
 };
 
+<<<<<<< HEAD
 extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 
 int slave_get_LSS_data(CO_Data * d);
+=======
+typedef struct PROF PROF;
+struct PROF {
+    int index;
+    char* id;
+    char* title;
+};
+>>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
 
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
