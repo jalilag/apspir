@@ -313,6 +313,7 @@ gpointer cantools_init_loop(gpointer data) {
             // Configuration PreOp
             if (slave_get_param_in_num("State",i) == STATE_CONFIG) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
+                printf("TEST %x\n",slave_get_node_with_index(i));
                 if(slave_config(slave_get_node_with_index(i))) {
                     slave_set_param("State",i,STATE_OP);
                 } else {

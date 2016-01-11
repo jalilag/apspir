@@ -390,7 +390,7 @@ int slave_save_param (int index) {
         gui_widget2hide("windowParams",NULL);
         gui_info_box(SAVE,SAVE_SUCCESS,NULL);
         for (i=0; i<SLAVE_NUMBER;i++) {
-            if (slave_get_param_in_num("SlaveProfile",i) == ind)
+            if (slave_get_param_in_num("SlaveProfile",i) == ind && slave_get_param_in_num("Active",i) == 1)
                 slave_set_param("State",i,STATE_PREOP);
         }
         return 1;

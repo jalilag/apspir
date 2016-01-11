@@ -71,8 +71,13 @@ void on_butParams_clicked(GtkWidget* pEntry) {
 
 void on_butVelStart_active_notify(GtkWidget* pEntry) {
     int i, j = gui_switch_is_active("butVelStart");
+//    SDOR test = {0x60FF,0x00,0x04};
+//    INTEGER32 datTest = 0;
+//    cantools_write_sdo(0x02,test,&datTest);
+
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("SlaveProfile",i) == 0 && slave_get_param_in_num("Active",i)) {
+            slave_set_param("Vel2send",i,0);
             if (j == 1) {
                 if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON)
                     motor_start(slave_get_node_with_index(i),1);
@@ -81,7 +86,6 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
                     motor_start(slave_get_node_with_index(i),0);
                 }
             }
-            slave_set_param("Vel2send",i,0);
         }
     }
 }

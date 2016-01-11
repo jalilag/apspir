@@ -36,7 +36,7 @@ void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&Sta
 void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4};
 void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4};
 void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
-void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_4,&Velocity_4};
+void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_3,&Velocity_4};
 void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
 
@@ -156,7 +156,7 @@ int main(int argc,char **argv) {
 	signal(SIGINT, catch_signal);
 
 // Chemin vers la librairie CANFESTIVAL
-    char* LibraryPath="../../drivers/can_socket/libcanfestival_can_socket.so";
+    char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
 // Chargement de la libraire
 	if (LoadCanDriver(LibraryPath) == NULL)
         errgen_set(ERR_DRIVER_LOAD,NULL);
@@ -210,5 +210,3 @@ int main(int argc,char **argv) {
     TimerCleanup();
 	return 0;
 }
-
-
