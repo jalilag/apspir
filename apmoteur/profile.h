@@ -11,5 +11,6 @@ struct PROF {
 char* profile_get_id_with_index(int index);
 char* profile_get_title_with_index(int index);
 int profile_get_index_with_id(char* id);
+char* profile_get_filename_with_index(int index);
 
 #endif

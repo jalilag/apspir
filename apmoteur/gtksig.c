@@ -220,7 +220,7 @@ void on_listProfile_changed(GtkWidget* pEntry) {
             gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),2,2));
             gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),3,2));
         }
-        FILE* motor_fn = fopen(slave_get_profile_filename(ind),"r");
+        FILE* motor_fn = fopen(profile_get_filename_with_index(ind),"r");
         if (motor_fn != NULL) {
             GtkWidget* butAdd = gui_create_widget("but","butAddField",ADD,NULL);
             g_signal_connect (G_OBJECT(butAdd), "clicked", G_CALLBACK (on_butAddField_clicked),NULL);

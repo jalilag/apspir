@@ -1,4 +1,5 @@
 #include "SpirallingControl.h"
+#include "profile.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,5 +35,14 @@ int profile_get_index_with_id(char* id) {
         if (profiles[i].id == id) return i;
     printf("Erreur pas de profile trouvé, id inconnu : %s",id);
     exit(EXIT_FAILURE);
+}
+/**
+* Renvoi le nom du fichier correspondant au profil
+**/
+char* profile_get_filename_with_index(int index) {
+    if (index>=PROFILE_NUMBER) {
+        printf("Erreur pas de profile trouvé, index trop grand : %d",index);
+        exit(EXIT_FAILURE);
     }
+    return g_strconcat("profile_",g_utf8_strdown(profile_get_id_with_index(index),-1),"_config.txt",NULL);
 }

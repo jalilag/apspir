@@ -81,7 +81,7 @@ static int slave_config_com(UNS8 nodeID) {
 * 0: Echec; 1 Reussite
 **/
 int slave_config_with_file(UNS8 nodeID) {
-    FILE* motor_fn = fopen(slave_get_profile_filename(slave_get_profile_with_node(nodeID)),"r");
+    FILE* motor_fn = fopen(profile_get_filename_with_index(slave_get_profile_with_node(nodeID)),"r");
     if (motor_fn != NULL) {
         UNS32 datu32;
         INTEGER32 dati32;
@@ -154,7 +154,7 @@ int slave_config_with_file(UNS8 nodeID) {
         }
         fclose(motor_fn);
     } else {
-        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(slave_get_profile_with_node(nodeID)));
+        errgen_set(ERR_FILE_OPEN,profile_get_filename_with_index(slave_get_profile_with_node(nodeID)));
         return 0;
     }
     return 1;
@@ -356,7 +356,7 @@ int slave_save_param (int index) {
         if (run_init == -1) {
             if (!slave_read_definition()) {
                 run_init = 0;
-                errgen_set(ERR_FILE_PROFILE,slave_get_profile_filename(i));
+                errgen_set(ERR_FILE_PROFILE,profile_get_filename_with_index(i));
             }
             run_init = 1;
         } else {
@@ -384,7 +384,7 @@ int slave_save_param (int index) {
             i++;
         }
         int ind = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(gui_get_widget("boxParam"),"listProfile")));
-        if(!strtools_build_file(slave_get_profile_filename(ind),str2build)) {
+        if(!strtools_build_file(profile_get_filename_with_index(ind),str2build)) {
             if (str2build != "") free(str2build);
             return 0;
         }
@@ -403,7 +403,7 @@ int slave_save_param (int index) {
 **/
 int slave_check_profile_file(int profId) {
     int i,j=0,res;
-    FILE *f = fopen(slave_get_profile_filename(profId),"r");
+    FILE *f = fopen(profile_get_filename_with_index(profId),"r");
     if (f != NULL) {
         char title[20];
         int data;
@@ -415,19 +415,19 @@ int slave_check_profile_file(int profId) {
                     if (strcmp(pardata[i].gui_code,title) == 0 ) res = 1;
                 if (res == 0) {
                     j = 0;
-                    errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,slave_get_profile_filename(profId));
+                    errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,profile_get_filename_with_index(profId));
                 }
         }
         fclose(f);
         if (j > 0) return 1;
         else {
-            strtools_build_file(slave_get_profile_filename(profId)," ");
-            errgen_set(ERR_FILE_EMPTY,slave_get_profile_filename(profId));
+            strtools_build_file(profile_get_filename_with_index(profId)," ");
+            errgen_set(ERR_FILE_EMPTY,profile_get_filename_with_index(profId));
         }
     } else {
-        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(profId));
-        if (!strtools_build_file(slave_get_profile_filename(profId)," ")) {
-            errgen_set(ERR_FILE_GEN,slave_get_profile_filename(profId));
+        errgen_set(ERR_FILE_OPEN,profile_get_filename_with_index(profId));
+        if (!strtools_build_file(profile_get_filename_with_index(profId)," ")) {
+            errgen_set(ERR_FILE_GEN,profile_get_filename_with_index(profId));
             return 0;
         }
     }
@@ -697,14 +697,8 @@ static char* slave_get_state_error_title(int state) {
     else if(state == ERROR_STATE_VOLTAGE) return ERROR_STATE_VOLTAGE_TXT;
     else return DEFAULT;
 }
-/**
-* Renvoi le nom du fichier correspondant au profil
-**/
-char* slave_get_profile_filename(int index) {
-    return g_strconcat("profile_",g_utf8_strdown(profiles[slaves[index].profile].id,-1),"_config.txt",NULL);
-}
 char* slave_get_profile_name(int index) {
-    return profiles[slaves[index].profile].title;
+    return profile_get_title_with_index(slave_get_profile_with_index(index));
 }
 /**
 * Retourne en INTEGER32 le paramètre

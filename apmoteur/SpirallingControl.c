@@ -186,7 +186,7 @@ int main(int argc,char **argv) {
     int i,res;
     for (i=0; i < PROFILE_NUMBER; i++) {
         if (!slave_check_profile_file(i))
-            errgen_set(ERR_FILE_PROFILE,slave_get_profile_filename(i));
+            errgen_set(ERR_FILE_PROFILE,profile_get_filename_with_index(i));
 
     }
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.90);
