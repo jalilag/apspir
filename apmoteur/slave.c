@@ -229,13 +229,15 @@ int slave_gui_param_gen(int ind) {
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         // but add
-        GtkWidget* lab = gui_create_widget("but","butAddSlave",ADD);
+        GtkWidget* lab = gui_create_widget("but","butAddSlave",ADD,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_right (lab,10);
         gtk_grid_attach(grid,lab,5,1,1,1);
         g_signal_connect (G_OBJECT(lab), "clicked", G_CALLBACK (on_butAddSlave_clicked),NULL);
         // but del
-        GtkWidget* lab2 = gui_create_widget("but","butDelSlave",REMOVE);
+        GtkWidget* lab2 = gui_create_widget("but","butDelSlave",REMOVE,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_left (lab2,10);
         gtk_grid_attach(grid,lab2,0,1,1,1);
         g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butDelSlave_clicked),NULL);
         //list to del
@@ -247,6 +249,10 @@ int slave_gui_param_gen(int ind) {
             GtkWidget* lab = gui_create_widget("lab",strtools_concat("labParamM",labtxt[i],NULL),
                 slave_get_param_title(labtxt[i]),"bold",NULL);
             gtk_grid_attach(grid,lab,i,2,1,1);
+            gtk_widget_set_margin_left (lab,13);
+            if (i==0) gtk_widget_set_margin_left (lab,18);
+            gtk_widget_set_halign(lab,GTK_ALIGN_START);
+
         }
         int j,k,l;
         for (i=0;i<SLAVE_NUMBER;i++) {
@@ -256,16 +262,18 @@ int slave_gui_param_gen(int ind) {
                 GtkWidget* lab = gui_create_widget("ent",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),
                     labtxt[k],NULL),slave_get_param_in_char(labtxt[k],i),NULL);
                 gtk_grid_attach(grid,lab,k,i+3,1,1);
+                if (k==0) gtk_widget_set_margin_left (lab,10);
             }
             GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
             for (l=0; l<PROFILE_NUMBER;l++) {
                 gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
             }
             gtk_grid_attach(grid,comb,5,i+3,1,1);
+            gtk_widget_set_margin_right (comb,10);
             gtk_combo_box_set_active (GTK_COMBO_BOX(comb), slave_get_profile_with_index(i));
         }
-    } else if (ind == 1){
-        GtkGrid* grid = gui_local_grid_set("gridProfile",MOTOR_PARAM_TITLE,4,"black");
+    } else if (ind == 1) {
+        GtkGrid* grid = gui_local_grid_set("gridProfile",PROFIL_PARAM_TITLE,4,"black");
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         GtkWidget* comb = gui_create_widget("combo","listProfile",NULL,NULL);

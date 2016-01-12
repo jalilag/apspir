@@ -145,19 +145,19 @@ int main(int argc,char **argv) {
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.25);
 
     // Configuration du socket
-    pid_t pid = fork();
-
-    if (pid < 0) {
-        printf("A fork error has occurred.\n");
-        exit(-1);
-    } else {
-        if (pid == 0) {
-            execlp("./test.sh","test.sh",NULL);
-            errgen_set(ERR_DRIVER_UP,NULL); // Driver error
-        } else {
-            wait(0);
-        }
-    }
+//    pid_t pid = fork();
+//
+//    if (pid < 0) {
+//        printf("A fork error has occurred.\n");
+//        exit(-1);
+//    } else {
+//        if (pid == 0) {
+//            execlp("./test.sh","test.sh",NULL);
+//            errgen_set(ERR_DRIVER_UP,NULL); // Driver error
+//        } else {
+//            wait(0);
+//        }
+//    }
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.50);
 
 // Handler pour arret manuel
@@ -167,13 +167,13 @@ int main(int argc,char **argv) {
 // Chemin vers la librairie CANFESTIVAL
     char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
 // Chargement de la libraire
-	if (LoadCanDriver(LibraryPath) == NULL)
-        errgen_set(ERR_DRIVER_LOAD,NULL);
+//	if (LoadCanDriver(LibraryPath) == NULL)
+//        errgen_set(ERR_DRIVER_LOAD,NULL);
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.70);
 
 // Ouverture du port CAN
-    if(!canOpen(&MasterBoard,&SpirallingMaster_Data))
-        errgen_set(ERR_DRIVER_OPEN,NULL);
+//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data))
+//        errgen_set(ERR_DRIVER_OPEN,NULL);
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.80);
 
 

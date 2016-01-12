@@ -222,11 +222,11 @@ void on_listProfile_changed(GtkWidget* pEntry) {
         }
         FILE* motor_fn = fopen(profile_get_filename_with_index(ind),"r");
         if (motor_fn != NULL) {
-            GtkWidget* butAdd = gui_create_widget("but","butAddField",ADD,NULL);
+            GtkWidget* butAdd = gui_create_widget("but","butAddField",ADD,"stdButton","butBlue",NULL);
             g_signal_connect (G_OBJECT(butAdd), "clicked", G_CALLBACK (on_butAddField_clicked),NULL);
             gtk_button_set_image(GTK_BUTTON(butAdd),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
             GtkWidget* combAdd = gui_create_widget("combo","listAddField",NULL,NULL);
-            GtkWidget* butDel = gui_create_widget("but","butDelField",REMOVE,NULL);
+            GtkWidget* butDel = gui_create_widget("but","butDelField",REMOVE,"stdButton","butBlue",NULL);
             g_signal_connect (G_OBJECT(butDel), "clicked", G_CALLBACK (on_butDelField_clicked),NULL);
             gtk_button_set_image(GTK_BUTTON(butDel),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
             GtkWidget* combDel = gui_create_widget("combo","listDelField",NULL,NULL);

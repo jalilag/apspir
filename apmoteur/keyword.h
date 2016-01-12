@@ -87,6 +87,7 @@ gboolean keyword_active_maj(gpointer data);
 #define POWER_STATE "Etat de marche"
 #define POWER_STATE_ERROR "Erreur de mise en marche"
 #define PRODUCT "Product code"
+#define PROFIL_PARAM_TITLE "Définition des Profils"
 #define PROFILE_MODE "Mode"
 #define PROFILE_NOT_FOUND "Profil moteur introuvable dans le fichier de définition des esclaves"
 #define READ_ABORT_ERROR "Lecture impossible"

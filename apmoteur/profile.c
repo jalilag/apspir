@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <glib.h>
 
 extern PROF profiles[PROFILE_NUMBER];
 /**
@@ -40,9 +41,11 @@ int profile_get_index_with_id(char* id) {
 * Renvoi le nom du fichier correspondant au profil
 **/
 char* profile_get_filename_with_index(int index) {
-    if (index>=PROFILE_NUMBER) {
+    printf("index %d",index);
+    if (index >= PROFILE_NUMBER) {
         printf("Erreur pas de profile trouvé, index trop grand : %d",index);
         exit(EXIT_FAILURE);
     }
+    printf("index %d",index);
     return g_strconcat("profile_",g_utf8_strdown(profile_get_id_with_index(index),-1),"_config.txt",NULL);
 }

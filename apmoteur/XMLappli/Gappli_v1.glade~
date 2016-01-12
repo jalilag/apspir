@@ -807,7 +807,7 @@
     <property name="can_focus">False</property>
     <property name="type">popup</property>
     <property name="modal">True</property>
-    <property name="window_position">center</property>
+    <property name="window_position">center-always</property>
     <property name="type_hint">utility</property>
     <property name="gravity">center</property>
     <child>
@@ -846,6 +846,8 @@
                 <signal name="clicked" handler="on_butParamMotor_clicked" swapped="no"/>
                 <style>
                   <class name="stdButton"/>
+                  <class name="butBlack2"/>
+                  <class name="fontBBig"/>
                 </style>
               </object>
               <packing>
@@ -863,6 +865,8 @@
                 <signal name="clicked" handler="on_butParamProfile_clicked" swapped="no"/>
                 <style>
                   <class name="stdButton"/>
+                  <class name="fontBBig"/>
+                  <class name="butBlack2"/>
                 </style>
               </object>
               <packing>
@@ -881,6 +885,8 @@
                 <property name="yalign">0.49000000953674316</property>
                 <style>
                   <class name="stdButton"/>
+                  <class name="butBlack2"/>
+                  <class name="fontBBig"/>
                 </style>
               </object>
               <packing>
@@ -899,6 +905,8 @@
                 <property name="xalign">0.49000000953674316</property>
                 <style>
                   <class name="stdButton"/>
+                  <class name="butBlack2"/>
+                  <class name="fontBBig"/>
                 </style>
               </object>
               <packing>

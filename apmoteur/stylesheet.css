@@ -58,12 +58,14 @@ GtkWindow {
     box-shadow: inset 0em 0em 1em #10516D;
 }
 .butBlue:hover{background: #399EC9;}
-
-
-
+.butBlack2 {
+    background: #2E2E2E;
+    box-shadow: inset 0em 0em 1em #212121;
+}
+.butBlack2:hover{background: #3C3C3C;}
+.butBlack2 GtkLabel {color:#fff;}
 .fontBig{font-size: 1.1em;}
-
-
+.fontBBig{font-size: 1.2em;}
 
 .box{border-radius:1em 1em 0 0;}
 .blackBox {
