@@ -214,8 +214,8 @@ gboolean slave_gui_load_state(gpointer data) {
         g_signal_connect (G_OBJECT(but), "clicked", G_CALLBACK (on_butActive_clicked),&slaves[i].node);
         g_signal_connect (G_OBJECT(but2), "clicked", G_CALLBACK (on_butFree_clicked),&slaves[i].node);
     }
-
     gtk_widget_show_all (gui_get_widget("mainWindow"));
+    return FALSE;
 }
 /** Generation de la page param **/
 int slave_gui_param_gen(int ind) {
@@ -288,21 +288,35 @@ int slave_gui_param_gen(int ind) {
         g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
     } else if (ind == 3) {
         // grid
-        GtkGrid* grid = gui_local_grid_set("gridHelix",MOTOR_PARAM_TITLE,6,"black");
+        GtkGrid* grid = gui_local_grid_set("gridHelix",HELIX_PARAM_TITLE,10,"black");
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         // Labs
-//        GtkWidget* lab = gui_create_widget("lab","labTimeSet",TIME_2_END,NULL),"fontBig","bold","cell2",NULL);
-//        gtk_grid_attach(grid,lab,0,1,1,1);
-//        gtk_grid_attach(grid,lab2,0,2,1,1);
-//        gtk_widget_set_halign(lab,GTK_ALIGN_START);
-//        gtk_widget_set_halign(lab2,GTK_ALIGN_START);
+        GtkWidget* lab = gui_create_widget("lab","labTimeSet",strtools_concat(TIME_2_SET," : ",NULL),"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(grid,lab,0,1,1,1);
+        GtkWidget* ent = gui_create_widget("ent","entTimeSet",NULL,NULL);
+        gtk_grid_attach(grid,ent,1,1,1,1);
+        gtk_widget_set_halign(lab,GTK_ALIGN_START);
+        gtk_widget_set_halign(ent,GTK_ALIGN_START);
+
 //        // but add
-//        GtkWidget* lab = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
-//        gtk_button_set_image(GTK_BUTTON(lab),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
-//        gtk_widget_set_margin_right (lab,10);
-//        gtk_grid_attach(grid,lab,2,1,1,1);
-//        g_signal_connect (G_OBJECT(lab), "clicked", G_CALLBACK (on_butAddSlave_clicked),NULL);
+        GtkWidget* lab2 = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+//        gtk_widget_set_margin_right (lab2,10);
+        gtk_grid_attach(grid,lab2,8,1,1,1);
+        gtk_widget_set_margin_right (lab2,10);
+        gtk_widget_set_halign(lab2,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butAddStep_clicked),NULL);
+        // but del
+        GtkWidget* lab3 = gui_create_widget("but","butDelStep",REMOVE,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab3),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_left (lab3,10);
+        gtk_grid_attach(grid,lab3,9,2,1,1);
+        gtk_widget_set_margin_right (lab3,10);
+        gtk_widget_set_halign(lab3,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab3), "clicked", G_CALLBACK (on_butDelStep_clicked),NULL);
+        GtkWidget* comb = gui_create_widget("combo","listStep",NULL,NULL);
+        gtk_grid_attach(grid,comb,8,2,1,1);
     }
 
     gtk_widget_show_all(gui_get_widget("boxParam"));
@@ -371,11 +385,6 @@ int slave_save_param (int index) {
             str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
             i++;
         }
-//        if (PROFILE_NUMBER > 0)
-//            for (i=0; i<PROFILE_NUMBER; i++)
-//                str2build = strtools_concat(str2build,"##",slave_profile[i].title, "\n",NULL);
-//        else
-//            str2build = strtools_concat(str2build,"##Translation\n##Rotation\n##Libre",NULL);
         if (!strtools_build_file(FILE_SLAVE_CONFIG,str2build)) {
             if (str2build != "") free(str2build);
             return 0;
@@ -425,6 +434,48 @@ int slave_save_param (int index) {
                 slave_set_param("State",i,STATE_PREOP);
         }
         return 1;
+    } else if (index == 3) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
+        GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
+        int error = 0;
+        char *errortxt="";
+        char* str2build ="";
+
+        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))) == 0 ) {
+            gui_info_popup(TIME_ERROR,NULL);
+            return 0;
+        }
+        const char* timetxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
+        int time = gui_str2num(timetxt);
+        if (time > TIME_SET_LIMIT)
+            str2build = strtools_concat(str2build,"Time ",timetxt,"\n",NULL);
+        else {
+            gui_info_popup(TIME_ERROR,NULL);
+            return 0;
+        }
+        int ii=0,i = 3, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        while(ii < N-1) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0 ) {
+                    gui_info_popup(STEP_ERROR,NULL);
+                    return 0;
+                }
+                if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))) == 0 ) {
+                    gui_info_popup(LENGTH_ERROR,NULL);
+                    return 0;
+                }
+                const char* ent1 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+                const char* ent2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i)));
+                if (gui_str2num(ent1) < STEP_LIMIT ) {
+                    gui_info_popup(STEP_ERROR,NULL);
+                    return 0;
+                }
+                str2build = strtools_concat(str2build,ent1," ",ent2,"\n",NULL);
+            }
+            i++;
+        }
+        printf("%s\n",str2build);
     }
 }
 /**

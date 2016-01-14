@@ -11,7 +11,8 @@
 #define HB_CONS_BASE_OFFSET 0x00000032 // Décalage de vérification 50ms
 #define HB_PROD 0x01F4 // Hearbeat esclave envoyé tout les 500ms
 #define FILE_SLAVE_CONFIG "slave_config.txt"
-
+#define TIME_SET_LIMIT 300
+#define STEP_LIMIT 6
 // PROFILE
 void catch_signal(int sig);
 void Exit(int type);

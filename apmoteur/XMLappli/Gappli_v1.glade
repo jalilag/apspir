@@ -1002,4 +1002,102 @@
       <class name="blueBox"/>
     </style>
   </object>
+  <object class="GtkDialog" id="windowPopup">
+    <property name="can_focus">False</property>
+    <property name="valign">start</property>
+    <property name="type">popup</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-always</property>
+    <property name="type_hint">normal</property>
+    <property name="gravity">center</property>
+    <property name="has_resize_grip">False</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dialog-vbox3">
+        <property name="can_focus">False</property>
+        <property name="valign">start</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area3">
+            <property name="can_focus">False</property>
+            <property name="valign">start</property>
+            <property name="baseline_position">bottom</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="butPopupClose">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="valign">start</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="grid2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">start</property>
+            <property name="margin_left">15</property>
+            <property name="margin_right">15</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <child>
+              <object class="GtkImage" id="labPopupImg1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-info</property>
+                <property name="icon_size">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labPopupContent">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <property name="label" translatable="yes">label</property>
+                <property name="wrap">True</property>
+                <property name="width_chars">50</property>
+                <style>
+                  <class name="labDial"/>
+                </style>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

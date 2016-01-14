@@ -243,6 +243,15 @@ void gui_info_box(char* boxTitle, char* boxContent, char* icon) {
     }
     gtk_dialog_run(gui_get_dialog("windowDialInit"));
 }
+void gui_info_popup(char* boxContent, char* icon) {
+    gui_label_set("labPopupContent",boxContent);
+    if (icon != NULL) {
+        gui_image_set("labPopupImg",icon,3);
+    } else {
+        gui_image_set("labPopupImg","gtk-info",3);
+    }
+    gtk_dialog_run(gui_get_dialog("windowPopup"));
+}
 gpointer gui_main(gpointer data) {
     run_gui_loop =1;
     gtk_main();

@@ -26,6 +26,7 @@ gint64 gui_str2num(const gchar *txtdata); // Convertit str en double
 void gui_widget2show(char* s1,...); // Affiche les widget en arg
 void gui_widget2hide(char* s1,...);
 void gui_info_box(char* boxTitle, char* boxContent, char* icon);
+void gui_info_popup(char* boxContent, char* icon);
 void gui_init();
 gpointer gui_main(gpointer data);
 void gui_gen_param (gchar* labID, gchar* entID, gchar* labtxt,GtkGrid* grid, int gridLine);
