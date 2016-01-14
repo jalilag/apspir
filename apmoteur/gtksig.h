@@ -27,6 +27,7 @@ void on_butDelSlave_clicked(GtkWidget* pEntry);
 
 void on_butParamMotor_clicked(GtkWidget* pEntry);
 void on_butParamProfile_clicked(GtkWidget* pEntry);
+void on_butParamHelix_clicked(GtkWidget* pEntry);
 void on_listProfile_changed(GtkWidget* pEntry);
 void on_butAddField_clicked (GtkWidget* pEntry);
 void on_butDelField_clicked (GtkWidget* pEntry);

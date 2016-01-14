@@ -12,7 +12,7 @@ extern PROF profiles[PROFILE_NUMBER];
 **/
 char* profile_get_id_with_index(int index) {
     if (index>=PROFILE_NUMBER) {
-        printf("Erreur pas de profile trouvé, index trop grand : %d",index);
+        printf("Erreur pas de profile trouvé, index trop grand : %d %d",index,PROFILE_NUMBER);
         exit(EXIT_FAILURE);
     }
     return profiles[index].id;
@@ -21,8 +21,8 @@ char* profile_get_id_with_index(int index) {
 * title profile en fonction index
 **/
 char* profile_get_title_with_index(int index) {
-    if (index>=PROFILE_NUMBER) {
-        printf("Erreur pas de profile trouvé, index trop grand : %d",index);
+    if (index >= PROFILE_NUMBER) {
+        printf("Erreur pas de profile trouvé, index trop grand : %d %d",index,PROFILE_NUMBER);
         exit(EXIT_FAILURE);
     }
     return profiles[index].title;
@@ -43,7 +43,7 @@ int profile_get_index_with_id(char* id) {
 char* profile_get_filename_with_index(int index) {
     printf("index %d",index);
     if (index >= PROFILE_NUMBER) {
-        printf("Erreur pas de profile trouvé, index trop grand : %d",index);
+        printf("Erreur pas de profile trouvé, index trop grand : %d %d",index,PROFILE_NUMBER);
         exit(EXIT_FAILURE);
     }
     printf("index %d",index);

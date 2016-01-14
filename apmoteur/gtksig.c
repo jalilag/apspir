@@ -46,6 +46,7 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "butParamSave"), "clicked", G_CALLBACK (on_butParamSave_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamMotor"), "clicked", G_CALLBACK (on_butParamMotor_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamProfile"), "clicked", G_CALLBACK (on_butParamProfile_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butParamHelix"), "clicked", G_CALLBACK (on_butParamHelix_clicked),NULL);
 }
 
 // Bouton arret
@@ -72,12 +73,10 @@ void on_butParams_clicked(GtkWidget* pEntry) {
 
 void on_butVelStart_active_notify(GtkWidget* pEntry) {
     int i, j = gui_switch_is_active("butVelStart");
-//    SDOR test = {0x60FF,0x00,0x04};
-//    INTEGER32 datTest = 0;
-//    cantools_write_sdo(0x02,test,&datTest);
-
     for (i=0; i<SLAVE_NUMBER; i++) {
-        if (slave_get_param_in_num("SlaveProfile",i) == 0 && slave_get_param_in_num("Active",i)) {
+        if ((slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransVit") ||
+        slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransCouple")) &&
+        slave_get_param_in_num("Active",i)) {
             slave_set_param("Vel2send",i,0);
             if (j == 1) {
                 if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON)
@@ -202,6 +201,13 @@ void on_butParamProfile_clicked(GtkWidget* pEntry) {
     slave_gui_param_gen(current_menu);
 }
 /**
+* Bouton Header paramètre Helix
+**/
+void on_butParamHelix_clicked(GtkWidget* pEntry) {
+    current_menu = 3;
+    slave_gui_param_gen(current_menu);
+}
+/**
 * Code exécuté lors du choix d'un élément de la liste profil
 **/
 void on_listProfile_changed(GtkWidget* pEntry) {
@@ -320,15 +326,16 @@ void on_butActive_clicked (GtkWidget* pEntry,void* data) {
 void on_butFree_clicked(GtkWidget* pEntry,void* data) {
     UNS8* dat = data;
     int i = slave_get_index_with_node(*dat);
+    printf("dat %d et i %d\n",*dat,i);
     int pold = slave_get_param_in_num("SlaveProfile",i);
     if (slave_get_param_in_num("State",i) == STATE_READY) {
-        if (pold != 2 && motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON) {
-            slave_set_param("SlaveProfile",i,2);
+        if (pold != profile_get_index_with_id("Libre") && motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON) {
+            slave_set_param("SlaveProfile",i,profile_get_index_with_id("Libre"));
             if (!slave_config_with_file(*dat))
                 errgen_set(ERR_SLAVE_CONFIG,NULL);
             motor_start(*dat,1);
             gtk_button_set_image(GTK_BUTTON(pEntry),GTK_WIDGET(gtk_image_new_from_file("images/unlock.png")));
-        } else if (pold == 2) {
+        } else if (pold == profile_get_index_with_id("Libre")) {
             motor_start(*dat,0);
             FILE* fslave = fopen(FILE_SLAVE_CONFIG,"r");
             if (fslave != NULL) {

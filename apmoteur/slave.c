@@ -223,6 +223,8 @@ int slave_gui_param_gen(int ind) {
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor"));
     if (gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix"));
     if (ind == 0) {
         // grid
         GtkGrid* grid = gui_local_grid_set("gridMotor",MOTOR_PARAM_TITLE,6,"black");
@@ -273,6 +275,7 @@ int slave_gui_param_gen(int ind) {
             gtk_combo_box_set_active (GTK_COMBO_BOX(comb), slave_get_profile_with_index(i));
         }
     } else if (ind == 1) {
+        // Grid
         GtkGrid* grid = gui_local_grid_set("gridProfile",PROFIL_PARAM_TITLE,4,"black");
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
@@ -283,7 +286,25 @@ int slave_gui_param_gen(int ind) {
             gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),profiles[i].title);
         }
         g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
+    } else if (ind == 3) {
+        // grid
+        GtkGrid* grid = gui_local_grid_set("gridHelix",MOTOR_PARAM_TITLE,6,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        // Labs
+//        GtkWidget* lab = gui_create_widget("lab","labTimeSet",TIME_2_END,NULL),"fontBig","bold","cell2",NULL);
+//        gtk_grid_attach(grid,lab,0,1,1,1);
+//        gtk_grid_attach(grid,lab2,0,2,1,1);
+//        gtk_widget_set_halign(lab,GTK_ALIGN_START);
+//        gtk_widget_set_halign(lab2,GTK_ALIGN_START);
+//        // but add
+//        GtkWidget* lab = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
+//        gtk_button_set_image(GTK_BUTTON(lab),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+//        gtk_widget_set_margin_right (lab,10);
+//        gtk_grid_attach(grid,lab,2,1,1,1);
+//        g_signal_connect (G_OBJECT(lab), "clicked", G_CALLBACK (on_butAddSlave_clicked),NULL);
     }
+
     gtk_widget_show_all(gui_get_widget("boxParam"));
 }
 /**
@@ -452,7 +473,7 @@ UNS8 slave_get_node_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("1Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 /**
@@ -480,7 +501,7 @@ static int slave_get_state_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("2Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 
@@ -493,7 +514,7 @@ static void slave_set_state_with_index(int i, int dat) {
         slaves[i].state = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("3Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 /**
@@ -506,7 +527,7 @@ static int slave_get_state_error_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d",i);
+        printf("4Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -519,7 +540,7 @@ static void slave_set_state_error_with_index (int i, int dat) {
         slaves[i].state_error = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d",i);
+        printf("5Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -531,7 +552,7 @@ static void slave_set_active_with_index(int i, int var) {
         slaves[i].active = var;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("6Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 static int slave_get_active_with_index(int i) {
@@ -541,7 +562,7 @@ static int slave_get_active_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return var;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("7Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 
@@ -574,7 +595,7 @@ int slave_get_profile_with_index(int i) {
         return dat;
     } else {
         printf("Index trop grand : %d",i);
-        exit(EXIT_FAILURE);
+       // exit(EXIT_FAILURE);
     }
 }
 void slave_set_profile_with_index(int i, int dat) {

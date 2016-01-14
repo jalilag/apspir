@@ -717,7 +717,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 SpirallingMaster_highestSubIndex_obj160A = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj160A[] =
                     {
-                      0x0,	/* 0 */
+                      0x20160008,	/* 538312712 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -797,7 +797,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 SpirallingMaster_highestSubIndex_obj160E = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj160E[] =
                     {
-                      0x0,	/* 0 */
+                      0x20170008,	/* 538378248 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */

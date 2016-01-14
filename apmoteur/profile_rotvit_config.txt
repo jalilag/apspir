@@ -1,1 +1,4 @@
- 
+Profile ; 3
+Current ; 100
+Pdot3 ; 0X606C0020
+Pdor1 ; 0X60FF0020

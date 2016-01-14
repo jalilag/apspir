@@ -57,6 +57,12 @@ void keyword_init () {
     gui_label_set("labParamTitle",PARAMETERS);
     gui_button_set("butParamReturn",RETURN,"gtk-close");
     gui_button_set("butParamSave",SAVE,"gtk-save");
+    gui_button_set("butParamMotor",MOTOR_PARAM_TITLE,"gtk-save");
+    gui_button_set("butParamProfile",PROFIL_PARAM_TITLE,"gtk-save");
+    gui_button_set("butParamHelix",HELIX_PARAM_TITLE,"gtk-save");
+    gtk_button_set_image(gui_get_button("butParamMotor"),GTK_WIDGET(gtk_image_new_from_file("images/moteur.png")));
+    gtk_button_set_image(gui_get_button("butParamProfile"),GTK_WIDGET(gtk_image_new_from_file("images/profil.png")));
+    gtk_button_set_image(gui_get_button("butParamHelix"),GTK_WIDGET(gtk_image_new_from_file("images/spiral.png")));
 }
 gboolean keyword_maj(gpointer data) {
     int i = 0,j,k;
@@ -77,8 +83,12 @@ gboolean keyword_maj(gpointer data) {
             if (slave_get_param_in_num("SlaveProfile",i) == 0)
                 gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "green");
             else if (slave_get_param_in_num("SlaveProfile",i) == 1)
-                gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "purple");
+                gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "greenLight");
             else if (slave_get_param_in_num("SlaveProfile",i) == 2)
+                gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "purple");
+            else if (slave_get_param_in_num("SlaveProfile",i) == 3)
+                gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "purpleLight");
+            else if (slave_get_param_in_num("SlaveProfile",i) == 4)
                 gtk_style_context_add_class (gtk_widget_get_style_context(labtitle), "brown");
 
             while (item2show[k] != NULL) {
@@ -86,7 +96,7 @@ gboolean keyword_maj(gpointer data) {
                 k++;
             }
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
-            if (slave_get_profile_name(slave_get_profile_with_index(i)) == "vitesse") {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit") {
                 gui_label_set(strtools_concat("labM",key,"Vel",NULL),slave_get_param_in_char("Velocity",i));
                 gui_label_set(strtools_concat("labM",key,"Vel2send",NULL),slave_get_param_in_char("Vel2send",i));
             }
@@ -102,7 +112,6 @@ gboolean keyword_maj(gpointer data) {
         printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
         INTEGER32 dat;
         motor_get_param(0x02,"Velocity",&dat);
-        printf("Vitesse %x",dat);
     }
     // Vérification du switch translation
     int switch_but = gui_switch_is_active("butVelStart");
@@ -132,6 +141,7 @@ gboolean keyword_maj(gpointer data) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
     }
+    gtk_widget_queue_draw(gui_get_widget("mainWindow"));
     return TRUE;
 }
 
