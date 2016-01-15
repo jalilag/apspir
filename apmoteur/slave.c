@@ -298,11 +298,16 @@ int slave_gui_param_gen(int ind) {
         gtk_grid_attach(grid,ent,1,1,1,1);
         gtk_widget_set_halign(lab,GTK_ALIGN_START);
         gtk_widget_set_halign(ent,GTK_ALIGN_START);
-
-//        // but add
+        GtkWidget* lab7 = gui_create_widget("lab","labPipeLength",strtools_concat(PIPE_LENGTH," : ",NULL),"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(grid,lab7,0,2,1,1);
+        GtkWidget* ent7 = gui_create_widget("ent","entPipeLength",NULL,NULL);
+        g_signal_connect (G_OBJECT(ent7), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
+        gtk_grid_attach(grid,ent7,1,2,1,1);
+        gtk_widget_set_halign(lab7,GTK_ALIGN_START);
+        gtk_widget_set_halign(ent7,GTK_ALIGN_START);
+        // but add
         GtkWidget* lab2 = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
-//        gtk_widget_set_margin_right (lab2,10);
         gtk_grid_attach(grid,lab2,8,1,1,1);
         gtk_widget_set_margin_right (lab2,10);
         gtk_widget_set_halign(lab2,GTK_ALIGN_FILL);
@@ -317,8 +322,53 @@ int slave_gui_param_gen(int ind) {
         g_signal_connect (G_OBJECT(lab3), "clicked", G_CALLBACK (on_butDelStep_clicked),NULL);
         GtkWidget* comb = gui_create_widget("combo","listStep",NULL,NULL);
         gtk_grid_attach(grid,comb,8,2,1,1);
-    }
+        // Chargement des données
+        FILE* helix_fn = fopen(FILE_HELIX_CONFIG,"r");
+        int dat3 = 0;
+        if (helix_fn != NULL) {
+            char title[20];
+            int dattime, dat1,dat2,datpipe;
+            int i=4,j;
+            char chaine[1024] = "";
+            while(fgets(chaine,1024,helix_fn) != NULL) {
+                GtkWidget* ent;
+                printf("%s\n",chaine);
+                if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
+                }
+                if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entPipeLength")), strtools_gnum2str(&datpipe,0x04));
+                }
+                if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
+                    dat3+=dat2;
+                    if (i == 4) {
+                        // Lab title
+                        GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
+                        gtk_widget_set_halign(lab4,GTK_ALIGN_START);
+                        GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
+                        gtk_widget_set_halign(lab5,GTK_ALIGN_START);
+                    }
+                    j = i-3;
+                    GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);
+                    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x04),NULL);
+                    GtkWidget* ent2 = gui_create_widget("ent",strtools_concat("entLength_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat2,0x04),NULL);
+                    g_signal_connect (G_OBJECT(ent2), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
 
+                    gtk_grid_attach(GTK_GRID(grid),lab,0,i,1,1);
+                    gtk_grid_attach(GTK_GRID(grid),ent1,1,i,1,1);
+                    gtk_grid_attach(GTK_GRID(grid),ent2,2,i,1,1);
+
+                    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&j,0x04),strtools_concat(HELIX_STEP," : ",strtools_gnum2str(&j,0x02),NULL));
+                    i++;
+                }
+            }
+        }
+        GtkWidget* lab6 = gui_create_widget("lab","labLengthDefined",strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat3,0x02),NULL),"fontBBig","bold","cell2","greenColor",NULL);
+        gtk_grid_attach(grid,lab6,2,2,2,1);
+        gtk_widget_set_halign(lab6,GTK_ALIGN_START);
+    }
     gtk_widget_show_all(gui_get_widget("boxParam"));
 }
 /**
@@ -363,27 +413,33 @@ int slave_read_definition() {
 int slave_save_param (int index) {
     if (index == 0) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor");
+        GtkWidget* comb = gui_local_get_widget(grid,"listDel");
+
         int i = 3,j,k,l;
         char* labtxt[7] = {"SlaveTitle","Vendor","Product","Revision","Serial","SlaveProfile",NULL};
         char* str2build="";
-        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
-            str2build = strtools_concat(str2build,"--",NULL);
-            j=i-2;
-            for (k=0;k<5;k++) {
-                const char* key = gtk_entry_get_text(GTK_ENTRY(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),labtxt[k],NULL))));
-                if (key == NULL) {
+        int ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                str2build = strtools_concat(str2build,"--",NULL);
+                j=i-2;
+                for (k=0;k<5;k++) {
+                    const char* key = gtk_entry_get_text(GTK_ENTRY(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),labtxt[k],NULL))));
+                    if (key == NULL) {
+                        free(str2build);
+                        return 0;
+                    }
+                    str2build = strtools_concat(str2build,(char*)key, " ; ",NULL);
+                }
+                l = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL))));
+                if (l == -1) {
                     free(str2build);
                     return 0;
                 }
-                str2build = strtools_concat(str2build,(char*)key, " ; ",NULL);
+                str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
+                i++;
             }
-            l = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL))));
-            if (l == -1) {
-                free(str2build);
-                return 0;
-            }
-            str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
-            i++;
         }
         if (!strtools_build_file(FILE_SLAVE_CONFIG,str2build)) {
             if (str2build != "") free(str2build);
@@ -404,20 +460,25 @@ int slave_save_param (int index) {
         }
     } else if (index == 1) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile");
+        GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listDelField");
         char* str2build="";
         int i=3,data,j;
-        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
-            j=i-2;
-            const char* key = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i));
-            const char* key2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
-            if (key == NULL ) {
-                if (str2build != "") free(str2build);
-                return 0;
-            }
-            if ( gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0)
-                return 0;
-            if (sscanf(key,"labParamP%d_",&data) == 1) {
-                str2build = strtools_concat(str2build,pardata[data].gui_code, " ; ",key2,"\n",NULL);
+        int ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                j=i-2;
+                const char* key = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i));
+                const char* key2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+                if (key == NULL ) {
+                    if (str2build != "") free(str2build);
+                    return 0;
+                }
+                if ( gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0)
+                    return 0;
+                if (sscanf(key,"labParamP%d_",&data) == 1) {
+                    str2build = strtools_concat(str2build,pardata[data].gui_code, " ; ",key2,"\n",NULL);
+                }
             }
             i++;
         }
@@ -450,11 +511,20 @@ int slave_save_param (int index) {
         if (time > TIME_SET_LIMIT)
             str2build = strtools_concat(str2build,"Time ",timetxt,"\n",NULL);
         else {
-            gui_info_popup(TIME_ERROR,NULL);
+            int t = TIME_SET_LIMIT;
+            gui_info_popup(strtools_concat(TIME_MIN_ERROR, " ", strtools_gnum2str(&t,0x04)," s",NULL),NULL);
             return 0;
         }
-        int ii=0,i = 3, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
-        while(ii < N-1) {
+        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2))) == 0 ) {
+            gui_info_popup(PIPE_LENGTH_ERROR,NULL);
+            return 0;
+        }
+        const char* pipeLengthtxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2)));
+        int pipeLength = gui_str2num(pipeLengthtxt);
+        str2build = strtools_concat(str2build,"Pipe ",pipeLengthtxt,"\n",NULL);
+        int ii=0,i = 4, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        int dat1 = 0;
+        while(ii < N) {
             if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
                 ii++;
                 if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0 ) {
@@ -471,11 +541,23 @@ int slave_save_param (int index) {
                     gui_info_popup(STEP_ERROR,NULL);
                     return 0;
                 }
+                dat1 += gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))));
                 str2build = strtools_concat(str2build,ent1," ",ent2,"\n",NULL);
             }
             i++;
         }
-        printf("%s\n",str2build);
+        if (pipeLength < dat1) {
+            gui_info_popup(OVER_LENGTH_ERROR,NULL);
+            return 0;
+        }
+
+        if(!strtools_build_file(FILE_HELIX_CONFIG,str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        gui_widget2hide("windowParams",NULL);
+        gui_info_box(SAVE,SAVE_SUCCESS,NULL);
     }
 }
 /**

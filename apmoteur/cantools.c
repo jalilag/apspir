@@ -22,6 +22,9 @@ extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern pthread_mutex_t lock_slave;
 extern int run_init, SLAVE_NUMBER;
 extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
+
+extern UNS16 errgen_state;
+extern char* errgen_aux;
 /**
 * Lecture d'une SDO
 **/
@@ -272,8 +275,6 @@ gpointer cantools_init_loop(gpointer data) {
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
     g_timeout_add(500,keyword_maj,NULL);
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),1);
-    gui_widget2hide("gui_level_bar",NULL);
 
     while (run_init == 1) {
         j++;
@@ -297,7 +298,9 @@ gpointer cantools_init_loop(gpointer data) {
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Stop_Node);
                 if (!lsstools_loop(slave_get_node_with_index(i),0)) {
                     slave_set_param("StateError",i,ERROR_STATE_LSS);
-                    errgen_set(ERR_SLAVE_CONFIG_LSS,slave_get_title_with_index(i));
+                    errgen_state = ERR_SLAVE_CONFIG_LSS;
+                    errgen_aux = slave_get_title_with_index(i);
+                    g_idle_add(errgen_set_safe(NULL),NULL);
                     slave_set_param("Active",i,STATE_DISCONNECTED);
                     printf("State disc\n");
                 } else {
@@ -312,12 +315,13 @@ gpointer cantools_init_loop(gpointer data) {
             // Configuration PreOp
             if (slave_get_param_in_num("State",i) == STATE_CONFIG) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
-                printf("TEST %x\n",slave_get_node_with_index(i));
                 if(slave_config(slave_get_node_with_index(i))) {
                     slave_set_param("State",i,STATE_OP);
                 } else {
                     slave_set_param("StateError",i,ERROR_STATE_CONFIG);
-                    errgen_set(ERR_SLAVE_CONFIG,slave_get_title_with_index(i));
+                    errgen_state = ERR_SLAVE_CONFIG;
+                    errgen_aux = slave_get_title_with_index(i);
+                    g_idle_add(errgen_set_safe(NULL),NULL);
                     slave_set_param("Active",i,0);
                 }
             }
@@ -333,7 +337,9 @@ gpointer cantools_init_loop(gpointer data) {
                     slave_set_param("State",i,STATE_READY);
                 } else {
                     slave_set_param("StateError",i,ERROR_STATE_SON);
-                    errgen_set(ERR_SLAVE_CONFIG_MOTOR_SON,slave_get_title_with_index(i));
+                    errgen_state = ERR_SLAVE_CONFIG_MOTOR_SON;
+                    errgen_aux = slave_get_title_with_index(i);
+                    g_idle_add(errgen_set_safe(NULL),NULL);
                     slave_set_param("Active",i,0);
                 }
             }
@@ -344,7 +350,9 @@ gpointer cantools_init_loop(gpointer data) {
                 if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.90*old_voltage[i]) {
                     slave_set_param("Active",i,0);
                     old_voltage[i] = 0;
-                    errgen_set(ERR_MOTOR_LOW_VOLTAGE,slave_get_param_in_char("SlaveTitle",i));
+                    errgen_state = ERR_MOTOR_LOW_VOLTAGE;
+                    errgen_aux = slave_get_param_in_char("SlaveTitle",i);
+                    g_idle_add(errgen_set_safe(NULL),NULL);
                     slave_set_param("StateError",i,ERROR_STATE_VOLTAGE);
                 }
             }
@@ -353,4 +361,3 @@ gpointer cantools_init_loop(gpointer data) {
     }
     return 0;
 }
-

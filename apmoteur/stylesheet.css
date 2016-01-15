@@ -153,7 +153,8 @@ GtkWindow {
 .purpleLight {background:-gtk-gradient(linear,left top, left bottom, from(#973AA4), to(#E35CF5));}
 .brown {background:-gtk-gradient(linear,left top, left bottom, from(#78520F), to(#B08B49));}
 .red {background:-gtk-gradient(linear,left top, left bottom, from(#C93636), to(#F56060));}
-
+.redColor {color:#C93636;}
+.greenColor{color:#246F20;}
 
 .Wtitle {
     border-radius:0 0 1em 1em;

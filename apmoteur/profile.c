@@ -46,6 +46,5 @@ char* profile_get_filename_with_index(int index) {
         printf("Erreur pas de profile trouvé, index trop grand : %d %d",index,PROFILE_NUMBER);
         exit(EXIT_FAILURE);
     }
-    printf("index %d",index);
     return g_strconcat("profile_",g_utf8_strdown(profile_get_id_with_index(index),-1),"_config.txt",NULL);
 }

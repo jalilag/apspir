@@ -98,12 +98,13 @@ int current_menu = 0;
 
 // A définir mettre a jour
 void catch_signal(int sig) {
-  signal(SIGTERM, catch_signal);
-  signal(SIGINT, catch_signal);
-  printf("Got Signal %d\n",sig);
+    signal(SIGTERM, catch_signal);
+    signal(SIGINT, catch_signal);
+    printf("Got Signal %d\n",sig);
 }
 
 UNS16 errgen_state = 0x0000;
+char* errgen_aux = NULL;
 
 /**
 * Fermeture de l'application
@@ -140,9 +141,10 @@ int main(int argc,char **argv) {
     gchar* thgui = "gui";
     GError * guierr;
     GThread * guithread = g_thread_try_new (thgui, gui_main,NULL, &guierr);
-    if (guithread == NULL)
-        errgen_set(ERR_GUI_LOOP_RUN,NULL);
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.25);
+    if (guithread == NULL) {
+        errgen_state = ERR_GUI_LOOP_RUN;
+        g_idle_add(errgen_set_safe(NULL),NULL);
+    }
 
     // Configuration du socket
 //    pid_t pid = fork();
@@ -153,7 +155,8 @@ int main(int argc,char **argv) {
 //    } else {
 //        if (pid == 0) {
 //            execlp("./test.sh","test.sh",NULL);
-//            errgen_set(ERR_DRIVER_UP,NULL); // Driver error
+//            errgen_state = ERR_DRIVER_UP;
+//            g_idle_add(errgen_set_safe(NULL),NULL);
 //        } else {
 //            wait(0);
 //        }
@@ -167,29 +170,34 @@ int main(int argc,char **argv) {
 // Chemin vers la librairie CANFESTIVAL
     char* LibraryPath="../drivers/can_socket/libcanfestival_can_socket.so";
 // Chargement de la libraire
-	if (LoadCanDriver(LibraryPath) == NULL)
-        errgen_set(ERR_DRIVER_LOAD,NULL);
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.70);
+	if (LoadCanDriver(LibraryPath) == NULL) {
+        errgen_state = ERR_DRIVER_LOAD;
+        g_idle_add(errgen_set_safe(NULL),NULL);
+    }
 
 // Ouverture du port CAN
-//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data))
-//        errgen_set(ERR_DRIVER_OPEN,NULL);
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.80);
+//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
+//        errgen_state = ERR_DRIVER_OPEN;
+//        g_idle_add(errgen_set_safe(NULL),NULL);
+//    }
 
 
 // Definition des esclaves
     if (!slave_read_definition()) {
         run_init = -1;
-        errgen_set(ERR_FILE_SLAVE_DEF,FILE_SLAVE_CONFIG);
+        errgen_state = ERR_FILE_SLAVE_DEF;
+        errgen_aux = FILE_SLAVE_CONFIG;
+        g_idle_add(errgen_set_safe(NULL),NULL);
     }
 // Control des fichiers de configuration
     int i,res;
     for (i=0; i < PROFILE_NUMBER; i++) {
-        if (!slave_check_profile_file(i))
-            errgen_set(ERR_FILE_PROFILE,profile_get_filename_with_index(i));
-
+        if (!slave_check_profile_file(i)) {
+            errgen_state = ERR_FILE_PROFILE;
+            errgen_aux = profile_get_filename_with_index(i);
+            g_idle_add(errgen_set_safe(NULL),NULL);
+        }
     }
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.90);
 
 	TimerInit();
 
@@ -210,8 +218,10 @@ int main(int argc,char **argv) {
     gchar* thinit = "init_loop";
     GError * initerr;
     GThread * initthread = g_thread_try_new (thinit, cantools_init_loop,NULL, &initerr);
-    if (initthread == NULL)
-        errgen_set(ERR_INIT_LOOP_RUN,NULL);
+    if (initthread == NULL) {
+        errgen_state = ERR_INIT_LOOP_RUN;
+        g_idle_add(errgen_set_safe(NULL),NULL);
+    }
     g_thread_join (initthread);
     g_thread_join (guithread);
 

@@ -340,4 +340,3 @@ GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...) {
 
     return lab;
 }
-

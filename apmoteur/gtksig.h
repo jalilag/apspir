@@ -38,4 +38,5 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) ;
 
 void on_butAddStep_clicked(GtkWidget* pEntry);
 void on_butDelStep_clicked(GtkWidget* pEntry);
+void on_lengthDef_changed (GtkWidget* pEntry);
 #endif

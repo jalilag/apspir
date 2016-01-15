@@ -1,5 +1,8 @@
 #include "errgen.h"
+#include "SpirallingControl.h"
 #include <stdlib.h>
+#include <glib.h>
+#include <gtk/gtk.h>
 #include "gui.h"
 #include "keyword.h"
 #include "strtools.h"
@@ -7,6 +10,15 @@
 
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
+extern UNS16 errgen_state;
+extern char* errgen_aux;
+
+GSourceFunc errgen_set_safe(gpointer data) {
+    errgen_set(errgen_state,errgen_aux);
+    errgen_state = 0x0000;
+    errgen_aux = NULL;
+    return FALSE;
+}
 
 void errgen_set(UNS16 dat, char* op) {
     char* title = strtools_concat(ERROR, " : ", strtools_gnum2str(&dat,0x06)," ",errgen_get_title(dat), NULL);

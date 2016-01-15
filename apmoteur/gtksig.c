@@ -164,6 +164,7 @@ void on_butAddSlave_clicked (GtkWidget* pEntry) {
         GtkWidget* lab = gui_create_widget("ent",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),
             labtxt[k],NULL),NULL,NULL);
         gtk_grid_attach(GTK_GRID(grid),lab,k,i,1,1);
+        if (k==0) gtk_widget_set_margin_left (lab,10);
     }
     GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
     for (l=0; l<PROFILE_NUMBER;l++) {
@@ -370,25 +371,24 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) {
 void on_butAddStep_clicked(GtkWidget* pEntry) {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
     GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
-    int i = 3,j;
+    int i = 4,j;
     while(gtk_grid_get_child_at(GTK_GRID(grid),1,i) != NULL) {
-//        printf("%s\n",gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i)));
         i++;
     }
-    printf("%d\n",i);
-    if (i == 3) {
+    if (i == 4) {
         // Lab title
-        GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP,"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(GTK_GRID(grid),lab4,1,2,1,1);
+        GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
         gtk_widget_set_halign(lab4,GTK_ALIGN_START);
         GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(GTK_GRID(grid),lab5,2,2,1,1);
+        gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
         gtk_widget_set_halign(lab5,GTK_ALIGN_START);
     }
-    j = i-2;
+    j = i-3;
     GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x02),NULL),strtools_gnum2str(&j,0x02),"fontBig","bold","cell2",NULL);
     GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entHelix_",strtools_gnum2str(&j,0x02),NULL),NULL,NULL);
     GtkWidget* ent2 = gui_create_widget("ent",strtools_concat("entLength_",strtools_gnum2str(&j,0x02),NULL),NULL,NULL);
+    g_signal_connect (G_OBJECT(ent2), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
     gtk_grid_attach(GTK_GRID(grid),lab,0,i,1,1);
     gtk_grid_attach(GTK_GRID(grid),ent1,1,i,1,1);
     gtk_grid_attach(GTK_GRID(grid),ent2,2,i,1,1);
@@ -403,9 +403,36 @@ void on_butDelStep_clicked(GtkWidget* pEntry) {
     if (ind != -1) {
         const gchar* key = gtk_combo_box_get_active_id(GTK_COMBO_BOX(comb));
         int k = gui_str2num(key);
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),0,k+2));
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),1,k+2));
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),2,k+2));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),0,k+3));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),1,k+3));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),2,k+3));
         gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT(comb), ind);
+    }
+}
+
+void on_lengthDef_changed (GtkWidget* pEntry) {
+    GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
+    GtkWidget* lab = gui_local_get_widget(gui_get_widget("boxParam"),"labLengthDefined");
+    GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
+    int pipeLength = gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2))));
+
+    int i=4,ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+    int dat=0;
+    while(ii < N) {
+        if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+            ii++;
+            dat+= gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))));
+        }
+        i++;
+    }
+    gtk_label_set_text(GTK_LABEL(lab),strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat,0x02),NULL));
+    if (pipeLength < dat) {
+        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"greenColor"))
+            gtk_style_context_remove_class(gtk_widget_get_style_context(lab),"greenColor");
+        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "redColor");
+    } else {
+        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"redColor"))
+            gtk_style_context_remove_class(gtk_widget_get_style_context(lab),"redColor");
+        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "greenColor");
     }
 }

@@ -1,8 +1,10 @@
 #ifndef _ERRGEN_H
 #define _ERRGEN_H
 #include "data.h"
+#include <gtk/gtk.h>
 
 void errgen_set(UNS16 dat,char* op);
+GSourceFunc errgen_set_safe(gpointer data);
 static char* errgen_get_title(UNS16 dat);
 static char* errgen_get_content(UNS16 dat);
 
