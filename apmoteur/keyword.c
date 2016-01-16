@@ -49,6 +49,16 @@ void keyword_init () {
 
     gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
 
+/** BOX SET UP **/
+    gui_label_set("labBoxSetUp",BOX_SETUP_TITLE);
+    gui_label_set("labTrans",TRANSLATION);
+    gui_label_set("labRot",ROTATION);
+    gui_button_set("butTransUp",NULL,"gtk-go-up");
+    gui_button_set("butTransDown",NULL,"gtk-go-down");
+    gui_button_set("butTransStop",NULL,"gtk-media-pause");
+    gui_button_set("butRotRight",NULL,"gtk-redo");
+    gui_button_set("butRotLeft",NULL,"gtk-undo");
+
 /** BOX STATUT **/
     gui_label_set("stateBarTitle",ETAT);
     gtk_label_set_ellipsize (gui_get_label("stateBarContent"),PANGO_ELLIPSIZE_START);
@@ -110,8 +120,6 @@ gboolean keyword_maj(gpointer data) {
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
         printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
-        INTEGER32 dat;
-        motor_get_param(0x02,"Velocity",&dat);
     }
     // Vérification du switch translation
     int switch_but = gui_switch_is_active("butVelStart");

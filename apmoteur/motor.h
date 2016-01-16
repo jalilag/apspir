@@ -20,6 +20,7 @@ struct PARAM {
 UNS8 motor_get_state(UNS16 state);
 char* motor_get_state_title(UNS8 key);
 char* motor_get_error_title(UNS16 data);
+int motor_get_target(UNS16 state);
 int motor_switch_on(UNS8 node);
 int switch_motor_off(UNS8 node);
 int motor_start(UNS8 node,int start); // SON -> OP

@@ -3,11 +3,11 @@
 #include "canfestival.h"
 #include <gtk/gtk.h>
 
-typedef struct GUIELEM GUIELEM;
-struct GUIELEM {
-    char* id;
-    char* title;
-};
+//typedef struct GUIELEM GUIELEM;
+//struct GUIELEM {
+//    char* id;
+//    char* title;
+//};
 
 void gui_label_set(gchar* lab_id, gchar* lab_title);
 void gui_label_set_objs(char* lab_title, char* lab_id, ... );

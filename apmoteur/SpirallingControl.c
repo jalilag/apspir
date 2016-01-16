@@ -91,7 +91,10 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {TORQUE_VELOCITY,"TorqueVel",0x2704,0x00,0x05,0,255,ERR_SET_TORQUE_VELOCITY,ERR_READ_TORQUE_VELOCITY,ERR_SAVE_TORQUE_VELOCITY},
     {TORQUE_VELOCITY_MAKEUP,"TorqueVelMake",0x2703,0x00,0x07,0,10000000,ERR_SET_TORQUE_VELOCITY_MAKEUP,ERR_READ_TORQUE_VELOCITY_MAKEUP,ERR_SAVE_TORQUE_VELOCITY_MAKEUP},
     {TORQUE_HMT_ACTIVATE,"TorqueHmtActive",0x2701,0x00,0x05,0,0x80,ERR_SET_HMT_ACTIVATE,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE},
-    {TORQUE_HMT_CONTROL,"TorqueHmtControl",0x2702,0x00,0x05,0,0xFF,ERR_SET_HMT_CONTROL,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE}
+    {TORQUE_HMT_CONTROL,"TorqueHmtControl",0x2702,0x00,0x05,0,0xFF,ERR_SET_HMT_CONTROL,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE},
+    {VELOCITY,"Velocity",0x60FF,0x00,0x04,0,1000000,ERR_SET_VELOCITY,ERR_READ_VELOCITY,ERR_SAVE_VELOCITY},
+    {TARGET_POSITION,"Position",0x607A,0x00,0x04,0,1000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
+    {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL}
 };
 // Menu courant
 int current_menu = 0;
@@ -212,7 +215,6 @@ int main(int argc,char **argv) {
     SpirallingMaster_Data.post_emcy = SpirallingMaster_post_emcy;
     SpirallingMaster_Data.post_SlaveBootup = SpirallingMaster_post_SlaveBootup;
     SpirallingMaster_Data.post_SlaveStateChange = SpirallingMaster_post_SlaveStateChange;
-
 
     // Initialisation de la boucle d'initialisation
     gchar* thinit = "init_loop";

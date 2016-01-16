@@ -31,6 +31,11 @@ GtkWindow {
     border: 0;
     font-weight: bold;
 }
+.butPurple {
+    background: #5C3661;
+    box-shadow: inset 0em 0em 1em #3E2242;
+}
+.butPurple:hover {background: #973AA4;}
 
 .butGreen {
     background: #39A036;

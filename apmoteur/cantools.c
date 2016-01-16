@@ -293,6 +293,7 @@ gpointer cantools_init_loop(gpointer data) {
         }
         for (i=0; i<SLAVE_NUMBER;i++) {
             // Configuration LSS
+            printf("0\n");
             if (slave_get_param_in_num("State",i) == STATE_LSS_CONFIG) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Stop_Node);
@@ -307,11 +308,13 @@ gpointer cantools_init_loop(gpointer data) {
                     slave_set_param("State",i,STATE_PREOP);
                 }
             }
+            printf("1\n");
             // Boot up
             if (MasterState == 0 && slave_get_param_in_num("State",i) == STATE_PREOP) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Reset_Node);
             }
+            printf("2\n");
             // Configuration PreOp
             if (slave_get_param_in_num("State",i) == STATE_CONFIG) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
@@ -325,11 +328,13 @@ gpointer cantools_init_loop(gpointer data) {
                     slave_set_param("Active",i,0);
                 }
             }
+            printf("3\n");
             // Passage en mode operational
             if (slave_get_param_in_num("State",i) == STATE_OP) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
                 masterSendNMTstateChange (&SpirallingMaster_Data, slave_get_node_with_index(i), NMT_Start_Node);
             }
+            printf("4\n");
             // Mise des moteurs en mode opérationnel
             if (slave_get_param_in_num("State",i) == STATE_SON) {
                 printf("\n\nSLAVE STATE : %s \nnode %d index %d \n\n",slave_get_param_in_char("State",i), slave_get_node_with_index(i),i);
@@ -343,7 +348,8 @@ gpointer cantools_init_loop(gpointer data) {
                     slave_set_param("Active",i,0);
                 }
             }
-            // Détection d'une baisse de voltage
+             printf("5\n");
+           // Détection d'une baisse de voltage
             if (slave_get_param_in_num("Active",i) == 1) {
                 if (slave_get_param_in_num("Volt",i) > old_voltage[i])
                     old_voltage[i] = slave_get_param_in_num("Volt",i);

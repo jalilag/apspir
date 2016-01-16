@@ -39,4 +39,10 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) ;
 void on_butAddStep_clicked(GtkWidget* pEntry);
 void on_butDelStep_clicked(GtkWidget* pEntry);
 void on_lengthDef_changed (GtkWidget* pEntry);
+
+void on_butTransUp_clicked (GtkWidget* pEntry);
+void on_butTransDown_clicked (GtkWidget* pEntry);
+void on_butTransStop_clicked(GtkWidget* pEntry);
+void on_butRotRight_clicked (GtkWidget* pEntry);
+void on_butRotLeft_clicked (GtkWidget* pEntry);
 #endif

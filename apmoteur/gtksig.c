@@ -48,6 +48,14 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "butParamMotor"), "clicked", G_CALLBACK (on_butParamMotor_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamProfile"), "clicked", G_CALLBACK (on_butParamProfile_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamHelix"), "clicked", G_CALLBACK (on_butParamHelix_clicked),NULL);
+
+    // Mise en place
+    g_signal_connect (gtk_builder_get_object (builder, "butTransUp"), "clicked", G_CALLBACK (on_butTransUp_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butTransDown"), "clicked", G_CALLBACK (on_butTransDown_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butTransStop"), "clicked", G_CALLBACK (on_butTransStop_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butRotRight"), "clicked", G_CALLBACK (on_butRotRight_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butRotLeft"), "clicked", G_CALLBACK (on_butRotLeft_clicked),NULL);
+
 }
 
 // Bouton arret
@@ -434,5 +442,141 @@ void on_lengthDef_changed (GtkWidget* pEntry) {
         if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"redColor"))
             gtk_style_context_remove_class(gtk_widget_get_style_context(lab),"redColor");
         gtk_style_context_add_class (gtk_widget_get_style_context(lab), "greenColor");
+    }
+}
+
+void on_butTransUp_clicked (GtkWidget* pEntry) {
+    int i;
+    Exit(0);
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit") {
+                motor_set_param(slave_get_node_with_index(i),"Vitesse",300000);
+                motor_forward(slave_get_node_with_index(i),1);
+            }
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
+                motor_set_param(slave_get_node_with_index(i),"Couple",700);
+                motor_forward(slave_get_node_with_index(i),1);
+            }
+        }
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit" ||
+            profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple")
+                motor_start(slave_get_node_with_index(i),1);
+        }
+    }
+}
+void on_butTransDown_clicked (GtkWidget* pEntry) {
+    int i;
+    Exit(0);
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit") {
+                motor_set_param(slave_get_node_with_index(i),"Vitesse",300000);
+                motor_forward(slave_get_node_with_index(i),0);
+            }
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
+                motor_set_param(slave_get_node_with_index(i),"Couple",700);
+                motor_forward(slave_get_node_with_index(i),0);
+            }
+        }
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit" ||
+            profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple")
+                motor_start(slave_get_node_with_index(i),1);
+        }
+    }
+}
+
+void on_butTransStop_clicked(GtkWidget* pEntry) {
+    int i;
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit" ||
+            profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple")
+                motor_start(slave_get_node_with_index(i),0);
+        }
+    }
+}
+
+void on_butRotRight_clicked (GtkWidget* pEntry) {
+    Exit(0);
+    int i;
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
+                motor_set_param(slave_get_node_with_index(i),"Profile",1);
+                motor_set_param(slave_get_node_with_index(i),"Position",700000);
+                motor_forward(slave_get_node_with_index(i),1);
+                motor_start(slave_get_node_with_index(i),1);
+            }
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                motor_set_param(slave_get_node_with_index(i),"Profile",4);
+                motor_set_param(slave_get_node_with_index(i),"Couple",300);
+                motor_forward(slave_get_node_with_index(i),1);
+                motor_start(slave_get_node_with_index(i),1);
+            }
+        }
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
+                motor_set_param(slave_get_node_with_index(i),"ControlWord",18);
+                motor_set_param(slave_get_node_with_index(i),"ControlWord",17);
+            }
+        }
+    }
+    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
+        usleep(100000);
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                motor_start(slave_get_node_with_index(i),0);
+            }
+        }
+    }
+}
+
+void on_butRotLeft_clicked (GtkWidget* pEntry) {
+    Exit(0);
+    int i;
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
+                motor_set_param(slave_get_node_with_index(i),"Profile",1);
+                motor_set_param(slave_get_node_with_index(i),"Position",700000);
+                motor_forward(slave_get_node_with_index(i),0);
+                motor_start(slave_get_node_with_index(i),1);
+            }
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                motor_set_param(slave_get_node_with_index(i),"Profile",4);
+                motor_set_param(slave_get_node_with_index(i),"Couple",300);
+                motor_forward(slave_get_node_with_index(i),0);
+                motor_start(slave_get_node_with_index(i),1);
+            }
+        }
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
+                motor_set_param(slave_get_node_with_index(i),"ControlWord",18);
+                motor_set_param(slave_get_node_with_index(i),"ControlWord",17);
+            }
+        }
+    }
+    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
+        usleep(100000);
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                motor_start(slave_get_node_with_index(i),0);
+            }
+        }
     }
 }
