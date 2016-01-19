@@ -45,4 +45,5 @@ void on_butTransDown_clicked (GtkWidget* pEntry);
 void on_butTransStop_clicked(GtkWidget* pEntry);
 void on_butRotRight_clicked (GtkWidget* pEntry);
 void on_butRotLeft_clicked (GtkWidget* pEntry);
+void on_butRotInit_clicked (GtkWidget* pEntry);
 #endif

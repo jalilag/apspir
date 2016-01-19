@@ -48,6 +48,9 @@ GtkSwitch* gui_get_switch(gchar* labid) {
 GtkGrid* gui_get_grid(gchar* labid) {
     return GTK_GRID(gui_get_object(labid));
 }
+GtkSpinner* gui_get_spinner(gchar* labid) {
+    return GTK_SPINNER(gui_get_object(labid));
+}
 GtkBox* gui_get_box(gchar* labid) {
     return GTK_BOX(gui_get_object(labid));
 }

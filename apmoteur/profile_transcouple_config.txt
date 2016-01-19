@@ -1,4 +1,4 @@
 Current ; 100
 Profile ; 4
-Torque ; 700
+Torque ; 300
 TorqueVel ; 0

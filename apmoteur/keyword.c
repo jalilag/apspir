@@ -14,6 +14,8 @@ extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 void keyword_init () {
 
+    gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+
 /** TITRE DES WINDOWS **/
     gtk_window_set_title(gui_get_window("mainWindow"), APPLI_TITLE);
     if(gtk_window_set_icon_from_file(gui_get_window("mainWindow"),"images/icon.png",NULL) != 1)
@@ -56,8 +58,8 @@ void keyword_init () {
     gui_button_set("butTransUp",NULL,"gtk-go-up");
     gui_button_set("butTransDown",NULL,"gtk-go-down");
     gui_button_set("butTransStop",NULL,"gtk-media-pause");
-    gui_button_set("butRotRight",NULL,"gtk-redo");
-    gui_button_set("butRotLeft",NULL,"gtk-undo");
+    gui_button_set("butRotRight",NULL,"edit-redo");
+    gui_button_set("butRotLeft",NULL,"edit-undo");
 
 /** BOX STATUT **/
     gui_label_set("stateBarTitle",ETAT);
@@ -78,6 +80,14 @@ gboolean keyword_maj(gpointer data) {
     int i = 0,j,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
+
+    int l = 0;
+    for (i=0; i<SLAVE_NUMBER; i++) {
+        if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
+            l++;
+    }
+    if (l>0) gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+    else gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
@@ -122,33 +132,37 @@ gboolean keyword_maj(gpointer data) {
         printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
     }
     // Vérification du switch translation
-    int switch_but = gui_switch_is_active("butVelStart");
-    printf("%d\n",switch_but);
-    if (switch_but == 1) {
-        for (i=0; i<SLAVE_NUMBER; i++) {
-            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
-                if (slave_get_param_in_num("Active",i) == 1) {
-                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON) {
-                        motor_start(slave_get_node_with_index(i),1);
-                    }
-                }
-            }
-        }
-    } else if (switch_but == 0) {
-        for (i=0; i<SLAVE_NUMBER; i++) {
-            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
-                if (slave_get_param_in_num("Active",i) == 1) {
-                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == OENABLED) {
-                        motor_start(slave_get_node_with_index(i),0);
-                    }
-                }
-            }
-        }
-    }
+//    int switch_but = gui_switch_is_active("butVelStart");
+//    printf("%d\n",switch_but);
+//    if (switch_but == 1) {
+//        for (i=0; i<SLAVE_NUMBER; i++) {
+//            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
+//                if (slave_get_param_in_num("Active",i) == 1) {
+//                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON) {
+//                        motor_start(slave_get_node_with_index(i),1);
+//                    }
+//                }
+//            }
+//        }
+//    } else if (switch_but == 0) {
+//        for (i=0; i<SLAVE_NUMBER; i++) {
+//            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
+//                if (slave_get_param_in_num("Active",i) == 1) {
+//                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == OENABLED) {
+//                        motor_start(slave_get_node_with_index(i),0);
+//                    }
+//                }
+//            }
+//        }
+//    }
     if(slave_get_node_with_profile(0) != 0x00) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
     }
+//    if(slave_get_node_with_profile(2) != 0x00) {
+//        int st = motor_get_target((UNS16)slave_get_param_in_num("Power",slave_get_index_with_node(slave_get_node_with_profile(2))));
+//        gui_push_state(strtools_concat("TARGET : ",strtools_gnum2str(&st,0x04),NULL));
+//    }
     gtk_widget_queue_draw(gui_get_widget("mainWindow"));
     return TRUE;
 }
