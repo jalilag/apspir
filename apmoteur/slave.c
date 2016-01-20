@@ -303,8 +303,8 @@ int slave_gui_param_gen(int ind) {
         GtkWidget* ent7 = gui_create_widget("ent","entPipeLength",NULL,NULL);
         g_signal_connect (G_OBJECT(ent7), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
         gtk_grid_attach(grid,ent7,1,2,1,1);
-        gtk_widget_set_halign(lab7,GTK_ALIGN_START);
         gtk_widget_set_halign(ent7,GTK_ALIGN_START);
+        gtk_widget_set_halign(lab7,GTK_ALIGN_START);
         // but add
         GtkWidget* lab2 = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
@@ -331,18 +331,18 @@ int slave_gui_param_gen(int ind) {
             int i=4,j;
             char chaine[1024] = "";
             while(fgets(chaine,1024,helix_fn) != NULL) {
-                GtkWidget* ent;
                 printf("%s\n",chaine);
                 if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
                     gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
                 }
                 if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
-                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entPipeLength")), strtools_gnum2str(&datpipe,0x04));
+                    gtk_entry_set_text(GTK_ENTRY(ent7), strtools_gnum2str(&datpipe,0x04));
                 }
                 if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
                     dat3+=dat2;
                     if (i == 4) {
                         // Lab title
+
                         GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
                         gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
                         gtk_widget_set_halign(lab4,GTK_ALIGN_START);

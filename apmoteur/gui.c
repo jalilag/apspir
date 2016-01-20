@@ -159,6 +159,8 @@ void gui_local_image_set(gchar* img_id, char* icon_name, int iconsize,char* par_
     }
 }
 
+
+
 void gui_button_set(gchar* but_id, char* labtxt, char* icon_name) {
     if (gui_get_object(but_id) != NULL) {
         gtk_button_set_label (gui_get_button(but_id), labtxt);
@@ -283,8 +285,6 @@ void gui_init() {
     // Init
     gtksig_init();
     keyword_init();
-    gtk_level_bar_set_mode(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),GTK_LEVEL_BAR_MODE_CONTINUOUS);
-    gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0);
     gtk_widget_show_all (gui_get_widget("mainWindow"));
 }
 
@@ -342,4 +342,10 @@ GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...) {
     }
 
     return lab;
+}
+
+int gui_spinner_is_active(char* labid) {
+    int res = -1;
+    g_object_get(gui_get_object("chargement"),"active",&res,NULL);
+    return res;
 }

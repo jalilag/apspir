@@ -35,6 +35,7 @@ void gui_local_entry_set(gchar * parentID, gchar * entID, gchar* labtxt);
 GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* color);
 GtkBox* gui_get_box(gchar* labid);
 GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...);
+int gui_spinner_is_active(char* labid);
 
 GObject* gui_get_object(gchar* labid); // Renvoie l'objet gtk
 GtkWindow* gui_get_window(gchar* labid);
@@ -47,4 +48,5 @@ GtkMenu* gui_get_menu(gchar* labid);
 GtkDialog* gui_get_dialog(gchar* labid);
 GtkSwitch* gui_get_switch(gchar* labid);
 GtkGrid* gui_get_grid(gchar* labid);
+GtkSpinner* gui_get_spinner(gchar* labid);
 #endif

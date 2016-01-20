@@ -86,8 +86,13 @@ gboolean keyword_maj(gpointer data) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
             l++;
     }
-    if (l>0) gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-    else gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
+    if (l>0) {
+        gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+        gui_widget2show("chargement",NULL);
+    } else {
+        gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
+        gui_widget2hide("chargement",NULL);
+    }
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
@@ -159,10 +164,10 @@ gboolean keyword_maj(gpointer data) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
     }
-//    if(slave_get_node_with_profile(2) != 0x00) {
-//        int st = motor_get_target((UNS16)slave_get_param_in_num("Power",slave_get_index_with_node(slave_get_node_with_profile(2))));
-//        gui_push_state(strtools_concat("TARGET : ",strtools_gnum2str(&st,0x04),NULL));
-//    }
+    if(gui_spinner_is_active("chargement")) {
+        gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
+    }
+
     gtk_widget_queue_draw(gui_get_widget("mainWindow"));
     return TRUE;
 }
