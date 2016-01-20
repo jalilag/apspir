@@ -64,6 +64,7 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_READ_VELOCITY                    0x00CB
 #define ERR_READ_POSITION                    0x00CC
 #define ERR_READ_CONTROL                     0x00CD
+#define ERR_READ_VELOCITY_MAX                0x00CE
 
 #define ERR_SET_ACCELERATION                 0x0100
 #define ERR_SET_DECELERATION                 0x0101
@@ -81,6 +82,7 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_SET_VELOCITY                     0x010D
 #define ERR_SET_POSITION                     0x010E
 #define ERR_SET_CONTROL                      0x010F
+#define ERR_SET_VELOCITY_MAX                 0x0110
 
 #define ERR_SAVE_ACCELERATION                0x0140
 #define ERR_SAVE_DECELERATION                0x0141
@@ -96,6 +98,7 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_SAVE_VELOCITY                    0x014B
 #define ERR_SAVE_POSITION                    0x014C
 #define ERR_SAVE_CONTROL                     0x014D
+#define ERR_SAVE_VELOCITY_MAX                0x014F
 
 #define ERR_MOTOR_PAUSE                      0x0180
 #define ERR_MOTOR_RUN                        0x0181

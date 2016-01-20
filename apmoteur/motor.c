@@ -203,8 +203,8 @@ int motor_forward(UNS8 node,int polar) {
         dat = 1;
     else
         dat = -1;
-    if (!motor_start(node,0))
-        return 0;
+//    if (!motor_start(node,0))
+//        return 0;
     if (!cantools_write_sdo(node,polar_adress,&dat))
         return 0;
     return 1;

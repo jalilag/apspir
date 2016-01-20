@@ -321,6 +321,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_READ_TORQUE_VELOCITY_MAKEUP_TITLE "Lecture vitesse make-up (couple)"
 #define ERR_READ_HMT_ACTIVATE_TITLE "Lecture activation HMT"
 #define ERR_READ_HMT_CONTROL_TITLE "Lecture controle HMT a échoué"
+#define ERR_READ_VITESSE_MAX_TITLE "Lecture vitesse max a échoué"
 
 #define ERR_SET_ACCELERATION_TITLE "Accélération"
 #define ERR_SET_DECELERATION_TITLE "Décélération"
@@ -334,7 +335,8 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SET_TORQUE_VELOCITY_MAKEUP_TITLE "Saisie vitesse make-up (couple)"
 #define ERR_SET_HMT_ACTIVATE_TITLE "Saisie activation HMT"
 #define ERR_SET_HMT_CONTROL_TITLE "Saisie controle HMT a échoué"
-#define ERR_SET_PDO_TITLE "Saisie mapping PDO"
+#define ERR_SET_PDO_TITLE "Saisie mapping PDO a échoué"
+#define ERR_SET_VITESSE_MAX_TITLE "Saisie vitesse max a échoué"
 
 #define ERR_SAVE_ACCELERATION_TITLE "Accélération"
 #define ERR_SAVE_DECELERATION_TITLE "Décélération"
@@ -347,6 +349,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SAVE_TORQUE_VELOCITY_MAKEUP_TITLE "Sauvegarde vitesse make-up (couple)"
 #define ERR_SAVE_HMT_ACTIVATE_TITLE "Sauvegarde activation HMT"
 #define ERR_SAVE_HMT_CONTROL_TITLE "Sauvegarde controle HMT a échoué"
+#define ERR_SAVE_VITESSE_MAX_TITLE "Sauvegarde vitesse max a échoué"
 
 #define ERR_MOTOR_PAUSE_TITLE "Mise en pause du moteur"
 #define ERR_MOTOR_RUN_TITLE "Mise en mouvement du moteur"
@@ -409,6 +412,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_READ_TORQUE_VELOCITY_MAKEUP_CONTENT "La lecture de la vitesse make-up (couple) a échoué"
 #define ERR_READ_HMT_ACTIVATE_CONTENT "La lecture de l'activation HMT a échoué"
 #define ERR_READ_HMT_CONTROL_CONTENT "La lecture du controle HMT a échoué"
+#define ERR_READ_VITESSE_MAX_CONTENT "La lecture de la vitesse max a échoué"
 
 #define ERR_SET_ACCELERATION_CONTENT "L'accélération saisie est invalide"
 #define ERR_SET_DECELERATION_CONTENT "La deceleration saisie est invalide"
@@ -423,6 +427,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SET_TORQUE_VELOCITY_MAKEUP_CONTENT "La saisie de la vitesse make-up (couple) est invalide"
 #define ERR_SET_HMT_ACTIVATE_CONTENT "La saisie de l'activation HMT est invalide"
 #define ERR_SET_HMT_CONTROL_CONTENT "La saisie du controle HMT a échoué"
+#define ERR_SET_VITESSE_MAX_CONTENT "La saisie de la vitesse max a échoué"
 
 #define ERR_SAVE_ACCELERATION_CONTENT "La sauvegarde de l'accélération a échoué"
 #define ERR_SAVE_DECELERATION_CONTENT "La sauvegarde de la décélération a échoué"
@@ -435,6 +440,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SAVE_TORQUE_VELOCITY_MAKEUP_CONTENT "La sauvegarde de la vitesse make-up (couple) a échoué"
 #define ERR_SAVE_HMT_ACTIVATE_CONTENT "La sauvegarde de l'activation HMT  a échoué"
 #define ERR_SAVE_HMT_CONTROL_CONTENT "La sauvegarde du controle HMT a échoué"
+#define ERR_SAVE_VITESSE_MAX_CONTENT "La sauvegarde de la vitesse max a échoué"
 
 #define ERR_MOTOR_PAUSE_CONTENT "La mise en pause d'un 'des moteurs a échoué"
 #define ERR_MOTOR_RUN_CONTENT "La mise en mouvement d'un des moteurs a échoué"
