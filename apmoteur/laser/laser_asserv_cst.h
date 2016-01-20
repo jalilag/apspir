@@ -1,5 +1,5 @@
 //params
-#define LASER_ASSERV_SYNC_TIME 150000
+#define LASER_ASSERV_SYNC_TIME 1000000
 #define LASER_ASSERV_DELTAVITESSEMAX_CORRECTION 50000 //steps/s
 #define LASER_ASSERV_MOTROT_POS_INCERTITUDE 51200//19200  1mm erreur laser pour p=4m/tour equivaut à 2.5x10^-4 tour machine soit 1/8 tour moteur(r=500) soit 6400 step
 #define LASER_ASSERV_ERR_VITESSE 30

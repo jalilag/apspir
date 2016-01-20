@@ -21,7 +21,7 @@
 from os.path import join as opj
 
 CC = "gcc"
-PROG_CFLAGS = " -fPIC -DCO_ENABLE_LSS"
+PROG_CFLAGS = " -fPIC -DDEBUG_MSG_CONSOLE_ON -g -DCO_ENABLE_LSS"
 EXE_CFLAGS = " -lpthread -lrt -ldl"
 OS_NAME = "Linux"
 ARCH_NAME = "x86_64"

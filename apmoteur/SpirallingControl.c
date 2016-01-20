@@ -31,18 +31,18 @@ laser ml, sl, lsim;
 struct Helix_User_Data HelixUserData;
 
 // Plateforme MASTER
-s_BOARD MasterBoard = {"0","500k"};
+s_BOARD MasterBoard = {"0","1M"};
 
 // Définition des esclaves
 
 volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 
 volatile PROF profiles[PROFILE_NUMBER] = {
-    {0,"TransVit","Translation (vitesse)"},
-    {1,"TransCouple","Translation (couple)"},
-    {2,"RotVit","Rotation (vitesse)"},
-    {3,"RotCouple","Rotation (couple)"},
-    {4,"Libre","Libre"}
+    {PROF_VITTRANS,"TransVit","Translation (vitesse)"},
+    {PROF_COUPLTRANS,"TransCouple","Translation (couple)"},
+    {PROF_VITROT,"RotVit","Rotation (vitesse)"},
+    {PROF_COUPLROT,"RotCouple","Rotation (couple)"},
+    {PROF_LIBRE,"Libre","Libre"}
 };
 int SLAVE_NUMBER;
 pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
@@ -50,18 +50,13 @@ GMutex lock_gui_box;
 // Les paramètres
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 // Récupération des variables numériques à traiter
-void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4};
-void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4};
-void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4};
-void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
-void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_3,&Velocity_4};
-void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
-void* position[SLAVE_NUMBER_LIMIT] = {&Position_1, &Position_2, &Position_3, &Position_4};
-void* accel[SLAVE_NUMBER_LIMIT] = {&Acceleration_1, &Acceleration_2, &Acceleration_3, &Acceleration_4};
-void* decel[SLAVE_NUMBER_LIMIT] = {&Deceleration_1, &Deceleration_2, &Deceleration_3, &Deceleration_4};
-void* accel2send[SLAVE_NUMBER_LIMIT] = {&Accel2send_1, &Accel2send_2, &Accel2send_3, &Accel2send_4};
-void* decel2send[SLAVE_NUMBER_LIMIT] = {&Decel2send_1, &Decel2send_2, &Decel2send_3, &Decel2send_4};
-INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
+void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4,&StatusWord_5};
+void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrCode_1,&ErrCode_2,&ErrCode_3,&ErrCode_4,&ErrCode_5};
+void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4,&InternalTemp_5};
+void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4, &Voltage_5};
+void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_3,&Velocity_4,&Velocity_5};
+void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4,&Vel2Send_5};
+INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT] = {0};
 
 // Structure d'acces aux variables defini dans le maitre
 volatile PARVAR vardata[VAR_NUMBER] = {
@@ -82,12 +77,8 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"Velinc",0x04,(void*)velocity_inc,DEFAULT},
     {"Velocity",0x04,velocity,DEFAULT},
     {"Vel2send",0x04,vel2send,DEFAULT},
-    {"Vel2sendPDONum",uint8,NULL,DEFAULT},
-    {"Position", int32, position, DEFAULT},
-    {"Acceleration", uint32, accel, DEFAULT},
-    {"Deceleration", uint32, decel, DEFAULT},
-    {"Accel2send", uint32, accel2send, DEFAULT},
-    {"Decel2send", uint32, decel2send, DEFAULT}
+    {"Vel2sendRotPDONum",uint8,NULL,DEFAULT},
+    {"Vel2sendTransPDONum", uint8, NULL, DEFAULT},
 };
 // Boucle d'initialisation
 int run_init = 1;
@@ -131,6 +122,7 @@ void catch_signal(int sig) {
 **/
 void Exit(int type) {
     int i = 0;
+    printf("exit 0\n");
     gtk_switch_set_active(gui_get_switch("butVelStart"),0);
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("Active",i)) {
@@ -142,6 +134,7 @@ void Exit(int type) {
     if (type > 1) {
 		unsigned int err_l;
         run_init = 0;
+        printf("exit 2\n");
 		//exit asserv
 		if(run_asserv){
 		    printf("EXIT ASSERV\n");
@@ -151,7 +144,8 @@ void Exit(int type) {
 		}
 
 		//fermeture laser
-		serialtools_exit_laser();
+		serialtools_exit_laser(&err_exit_laser);
+		//g_idle_add(serialtools_exit_laser, &err_exit_laser);
 
 		//fermeture moteurs
 		for (i=0; i<SLAVE_NUMBER; i++) {
@@ -181,6 +175,7 @@ int main(int argc,char **argv) {
         errgen_set(ERR_GUI_LOOP_RUN,NULL);
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.25);
 
+
     // Configuration du socket
     pid_t pid = fork();
 
@@ -195,6 +190,7 @@ int main(int argc,char **argv) {
             wait(0);
         }
     }
+
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),0.50);
 
 	//DEFINITION DE LA CONSIGNE HELICE UTILISATEUR
@@ -203,7 +199,7 @@ int main(int argc,char **argv) {
   unsigned long d[1];
   long int p[1];
   d[0] = 30000;
-  p[0] = 4000;
+  p[0] = 6000;
 
   HelixUserData.dmax = d[0];
   HelixUserData.NbrOfEntries = 1;

@@ -317,22 +317,17 @@ unsigned int laser_asserv_CalcRotAccel(laser * ml, laser * sl, UNS32 * a_cons_mt
   double K;
   UNS32 a_cons_calc_mrot;
   struct laser_data d;
-    printf("0\n");
 
   if(Laser_GetData(ml, sl, &d) == ERR_LASER_FATAL){
     return FIND_CONSIGNE_FAILURE;
   }
-    printf("1\n");
 
   if(d_to_dparcouru(&d)) return FIND_CONSIGNE_FAILURE;
-    printf("2\n");
 
   if(Recup_NumInterval(&(d.mes), &NumInterval))
     return FIND_CONSIGNE_FAILURE;
-    printf("3\n");
 
   p = labs(HelixUserData.p[NumInterval]);
-    printf("4\n");
 
   if(p == 0)
     K = 0.0;
@@ -340,7 +335,6 @@ unsigned int laser_asserv_CalcRotAccel(laser * ml, laser * sl, UNS32 * a_cons_mt
     {
       K = (double)REL_TRSL_ROT/p * (double)REDUCTION_ROTATION/REDUCTION_TRANS;
     }
-    printf("5\n");
 
   a_cons_calc_mrot = (UNS32)((*a_cons_mt)*K);
   if(*a_cons_mrot != a_cons_calc_mrot){
@@ -441,9 +435,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
   if(((res |= Laser_GetData(ml, sl, &d)) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
     return ERR_LASER_FATAL;
 
-  //v_cons_mt = (INTEGER32)d.vitesse_1s;
-
-  printf("RESULTAT MESURE LASER : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
+ // printf("RESULTAT MESURE LASER : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
 
   if(d_to_dparcouru(&d))
     return DPARC_CALC_ERROR;
@@ -464,7 +456,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
   if(FindConsigne_PosRot(&(d.mes), &cp))
     return (res | FIND_CONSIGNE_FAILURE);
 
-  printf("CONSIGNE POSROT = %ld, POSITION MESUREE = %d\n", cp, p_capt_mrot);
+  //printf("CONSIGNE POSROT = %ld, POSITION MESUREE = %d\n", cp, p_capt_mrot);
   printf("cp - p_capt_mrot = %ld\n", cp - p_capt_mrot);
 
 
@@ -486,7 +478,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
 	  {
 	    pthread_t thread_v_const;
 	    struct Laser_x_thread vc;
-	    printf("VITESSE CONSTANTE + erreur pos\n");
+	    //printf("VITESSE CONSTANTE + erreur pos\n");
 
 	    laser_asserv_estim_error_dmm((INTEGER32)(cp-p_capt_mrot), &err);
 
@@ -521,7 +513,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
 	case PHASE_DECEL:
 	case QUICKSTOP:
 	case STOPPED:
-	  printf("PHASE ACCEL/DECEl/STOPPED OR QUICKSTOP\n");
+	  //printf("PHASE ACCEL/DECEl/STOPPED OR QUICKSTOP\n");
 	default:
 	  //rien
 	  break;

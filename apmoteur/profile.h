@@ -1,6 +1,12 @@
 #ifndef _PROFILE_H
 #define _PROFILE_H
 
+#define PROF_VITTRANS   0
+#define PROF_COUPLTRANS 1
+#define PROF_VITROT     2
+#define PROF_COUPLROT   3
+#define PROF_LIBRE      4
+
 typedef struct PROF PROF;
 struct PROF {
     int index;
@@ -11,5 +17,6 @@ struct PROF {
 char* profile_get_id_with_index(int index);
 char* profile_get_title_with_index(int index);
 int profile_get_index_with_id(char* id);
+char* profile_get_filename_with_index(int index);
 
 #endif

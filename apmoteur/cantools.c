@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cantools.h"
-#include "serialtools.h"
 #include "strtools.h"
 #include "canfestival.h"
 #include "gui.h"
@@ -13,9 +12,10 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
+#include "profile.h"
 
 // CONSTANTS
-#define MAX_SDO_ERROR 2
+#define MAX_SDO_ERROR 50
 #define SDO_TIMEOUT 3
 
 static int SDO_step_error = 0;
@@ -23,6 +23,7 @@ static int SDO_step_error = 0;
 extern pthread_mutex_t lock_slave;
 extern int run_init;
 extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
+extern int SLAVE_NUMBER;
 /**
 * Lecture d'une SDO
 **/
@@ -145,6 +146,7 @@ int cantools_write_local(UNS16 Mindex, UNS8 Msubindex, void* data, UNS32 datsize
     } else {
         gui_push_state(strtools_concat(LOCAL_WRITING_ERROR, " -> ",strtools_gnum2str(&Mindex,0x06)," (", " | ",
         strtools_gnum2str(&Msubindex,0x05),")",NULL));
+        printf ("res write local = %x, Mindex = %x, Msubindex = %x, datsize = %u", res, Mindex, Msubindex, datsize);
         return 0;
     }
 }
@@ -197,6 +199,49 @@ int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans, UNS16 inhibit, UNS1
     return 1;
 }
 
+int cantools_desactive_PDO_reseau(UNS8 nodeID, UNS16 index){
+    UNS16 cobID;
+    if (index == 0x1400) cobID = 0x0200;
+    if (index == 0x1401) cobID = 0x0300;
+    if (index == 0x1402) cobID = 0x0400;
+    if (index == 0x1403) cobID = 0x0500;
+    if (index == 0x1800) cobID = 0x0180;
+    if (index == 0x1801) cobID = 0x0280;
+    if (index == 0x1802) cobID = 0x0380;
+    if (index == 0x1803) cobID = 0x0480;
+    UNS32 DisabledCobid = 0x80000000 + cobID + nodeID;
+    SDOR SDO_cobid = {index,0x01,0x07};
+    // Désactivation
+    if(!cantools_write_sdo(nodeID,SDO_cobid,&DisabledCobid)) {
+        printf("Erreur : desactivation\n");
+        return 0;
+    }
+    return 1;
+
+}
+
+int cantools_PDO_map_local_config(UNS16 PDOMapIndex, ...){
+
+    va_list ap;
+    va_start(ap,PDOMapIndex);
+    UNS32 arg = va_arg(ap,UNS32);
+    UNS8 i=0;
+
+    // Ecriture de tout les index en paramètres
+
+    while (arg != 0) {
+        i++;
+        if(!cantools_write_local(PDOMapIndex, i, &arg, sizeof(UNS32) )) {
+            printf("ERREUR ecriture index : %#.8x\n",arg);
+            return 0;
+        }
+        arg = va_arg(ap,UNS32);
+    }
+    va_end(ap);
+
+    return 1;
+
+}
 
 /**
 * Configuration des PDO map d'un esclave
@@ -262,24 +307,45 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
 }
 
 
-int motor_index;
-gpointer cantools_waitStop_Thread (gpointer arg)
+int rot_motor_index;
+gpointer cantools_waitStopRot_Thread (gpointer arg)
 {
-    INTEGER32 data;
     int apply0 = 1;
-    while (abs(slave_get_param_in_num("Velocity", *(int*)arg)) > 3){
+    while (abs(CaptVit_R) > 3){
         usleep(100);
-        if(abs(slave_get_param_in_num("Vel2send", *(int*)arg)) > 1){
+        if(abs(ConsVit_R) > 1){
             apply0 = 0;
             break;
         }
     }
     if(apply0){
-        data = 0;
-        slave_set_param("Vel2send", *(int*)arg, data);
-        printf("pdonum = %d\n\n\n\n\n", slave_get_param_in_num("Vel2SendPDONum", *(int*)arg));
+        ConsVit_R = 0;
+        printf("pdonum = %d\n\n\n\n\n", slave_get_param_in_num("Vel2sendRotPDONum", *(int*)arg));
         EnterMutex();
-        PDOEventTimerAlarm(&SpirallingMaster_Data, slave_get_param_in_num("Vel2SendPDONum", *(int*)arg));
+        PDOEventTimerAlarm(&SpirallingMaster_Data, slave_get_param_in_num("Vel2sendRotPDONum", *(int*)arg));
+        LeaveMutex();
+
+    }
+
+    g_thread_exit(NULL);
+}
+
+int trans_motor_index;
+gpointer cantools_waitStopTrans_Thread (gpointer arg)
+{
+    int apply0 = 1;
+    while (abs(CaptVit_T) > 3){
+        usleep(100);
+        if(abs(ConsVit_T) > 1){
+            apply0 = 0;
+            break;
+        }
+    }
+    if(apply0){
+        ConsVit_T = 0;
+        printf("pdonum = %d\n\n\n\n\n", slave_get_param_in_num("Vel2sendTransPDONum", *(int*)arg));
+        EnterMutex();
+        PDOEventTimerAlarm(&SpirallingMaster_Data, slave_get_param_in_num("Vel2sendTransPDONum", *(int*)arg));
         LeaveMutex();
 
     }
@@ -288,45 +354,36 @@ gpointer cantools_waitStop_Thread (gpointer arg)
 }
 
 //title = "Rotation" ou "Translation"
-void cantools_ApplyVelocity(INTEGER32 vit, char* Title)
+void cantools_ApplyVelRot(INTEGER32 vit)
 {
     int i;
     UNS32 pdonum;
     INTEGER32 vtm, vtc;
     INTEGER32 data;
     //printf("7\n");
-    int typeVitesse, typeCouple;
-    if(!strcmp(Title, "Rotation")){
-        typeVitesse = SLAVE_PROFILE_ROTATION_VITESSE;
-        typeCouple = SLAVE_PROFILE_ROTATION_COUPLE;
-    } else if (!strcmp(Title, "Translation")){
-        typeVitesse = SLAVE_PROFILE_TRANSLATION_VITESSE;
-        typeCouple = SLAVE_PROFILE_TRANSLATION_COUPLE;
-    } else return; //NA
-
     for (i=0;i<SLAVE_NUMBER; i++){
-        if(slave_get_profile_with_index(i) == typeVitesse){
+        if(slave_get_profile_with_index(i) == PROF_VITROT){
             //printf("8\n");
 
             EnterMutex();
-            vtm = slave_get_param_in_num("Velocity",i);
-            vtc = slave_get_param_in_num("Vel2send",i);
-            LeaveMutex();
+            vtm = CaptVit_R;
+            vtc = ConsVit_R;
             if(vtc!=vit){
                 vtc = vit;
-                slave_set_param("Vel2send", i, vit);
+                ConsVit_R = vit;
             }
+            LeaveMutex();
 
-            pdonum = slave_get_param_in_num("Vel2sendPDONum",i);
+            pdonum = slave_get_param_in_num("Vel2sendRotPDONum",i);
             //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
             if(vtm == 0 || vtc == 0){
                 if((vtm == 0) && (vtc != 0)){
                     data = vtc/abs(vtc);
 
                     EnterMutex();
-                    slave_set_param("Vel2send",i,data);
+                    ConsVit_R = data;
                     PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
-                    slave_set_param("Vel2send", i, vtc);
+                    ConsVit_R = vtc;
                     LeaveMutex();
 
                     usleep(1000);
@@ -334,14 +391,14 @@ void cantools_ApplyVelocity(INTEGER32 vit, char* Title)
                     data = vtm/abs(vtm);
 
                     EnterMutex();
-                    slave_set_param("Vel2send",i,data);
+                    ConsVit_R = data;
                     PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
                     LeaveMutex();
-                    motor_index = i;
-                    if(g_thread_try_new(NULL, cantools_waitStop_Thread, &motor_index, NULL) == NULL){
+                    rot_motor_index = i;
+                    if(g_thread_try_new(NULL, cantools_waitStopRot_Thread, &rot_motor_index, NULL) == NULL){
                         //bloquer le moteur direct
                         EnterMutex();
-                        slave_set_param("Vel2send",i,vtc);
+                        ConsVit_R = vtc;
                         PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
                         LeaveMutex();
                     }
@@ -354,9 +411,90 @@ void cantools_ApplyVelocity(INTEGER32 vit, char* Title)
             PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
             LeaveMutex();
         }
-        else if(slave_get_profile_with_index(i) == typeCouple){}
-        //ajouter mt couple
+        else if(slave_get_profile_with_index(i) == PROF_COUPLROT){
+            SDOR sdoTargetCoupl = {0x6071,0,int16};
+            INTEGER16 data;
+            EnterMutex();
+            if (ConsVit_R <= MOTOR_ROT_MAX_VEL) data = (INTEGER16)(MOTOR_ROT_COUPL_DEFAULT + (1000-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R/MOTOR_ROT_MAX_VEL));
+            else data = 1000;
+            LeaveMutex();
+            if(!cantools_write_sdo(slave_get_node_with_index(i), sdoTargetCoupl, &data)){
+                errgen_set(ERR_SAVE_TORQUE, slave_get_title_with_index(i));
+            }
+        }
+    }
+}
 
+void cantools_ApplyVelTrans(INTEGER32 vit)
+{
+    int i;
+    UNS32 pdonum;
+    INTEGER32 vtm, vtc;
+    INTEGER32 data;
+    printf("7\n");
+    for (i=0;i<SLAVE_NUMBER; i++){
+        if(slave_get_profile_with_index(i) == PROF_VITTRANS){
+            printf("8\n");
+
+            EnterMutex();
+            vtm = CaptVit_T;
+            vtc = ConsVit_T;
+            if(vtc!=vit){
+                vtc = vit;
+                ConsVit_T = vit;
+            }
+            LeaveMutex();
+
+            pdonum = slave_get_param_in_num("Vel2sendTransPDONum",i);
+            printf("pdonum = %d", slave_get_param_in_num("Vel2sendTransPDONum",i));
+            //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
+
+            if(vtm == 0 || vtc == 0){
+                if((vtm == 0) && (vtc != 0)){
+                    data = vtc/abs(vtc);
+
+                    EnterMutex();
+                    ConsVit_T = data;
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    ConsVit_T = vtc;
+                    LeaveMutex();
+
+                    usleep(1000);
+                } else if ((vtc == 0) && (vtm != 0)) {
+                    data = vtm/abs(vtm);
+
+                    EnterMutex();
+                    ConsVit_T = data;
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    LeaveMutex();
+                    trans_motor_index = i;
+                    if(g_thread_try_new(NULL, cantools_waitStopTrans_Thread, &trans_motor_index, NULL) == NULL){
+                        //bloquer le moteur direct
+                        EnterMutex();
+                        ConsVit_T = vtc;
+                        PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                        LeaveMutex();
+                    }
+
+                    return;
+                } else return;//la vitesse de 0 est déjà appliquée.
+
+            }
+            EnterMutex();
+            PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+            LeaveMutex();
+        }
+        else if(slave_get_profile_with_index(i) == PROF_COUPLTRANS){
+            SDOR sdoTargetCoupl = {0x6071,0,int16};
+            INTEGER16 data;
+            EnterMutex();
+            if (ConsVit_T <= MOTOR_TRANS_MAX_VEL) data = (INTEGER16)(MOTOR_TRANS_COUPL_DEFAULT + (1000-MOTOR_TRANS_COUPL_DEFAULT)*(double)(ConsVit_T/MOTOR_TRANS_MAX_VEL));
+            else data = 1000;
+            LeaveMutex();
+            if(!cantools_write_sdo(slave_get_node_with_index(i), sdoTargetCoupl, &data)){
+                errgen_set(ERR_SAVE_TORQUE, slave_get_title_with_index(i));
+            }
+        }
     }
 }
 
@@ -368,34 +506,18 @@ gpointer cantools_init_loop(gpointer data) {
     int i,MasterState = 0;
     INTEGER32 j = 0;
 
-    //Init Laser
-    if(serialtools_init_laser()); //return;
-
     while (run_init == -1) sleep(1);
-    master_init();
+        master_init();
 
-    //autodetect slaves on the network
-    /*
-    if(slave_get_LSS_data(&SpirallingMaster_Data)) {
-        printf("ERROR in getting slave data\n");
-        printf("runinit = %d\n", run_init);
-        return;
-    }
-    */
-
-// Chargement de l'interface
+    // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
     g_timeout_add(500,keyword_maj,NULL);
     gtk_level_bar_set_value(GTK_LEVEL_BAR(gui_get_object("gui_level_bar")),1);
     gui_widget2hide("gui_level_bar",NULL);
 
-    while (run_init == 1) {
-        //check laser state
-        if(!serialtools_in_reinit_laser) serialtools_checkPlotState_laser();
 
-        //Affichage erreur position cables estimée
-        //gui_label_set("labEstimErrPosCabl", "NA");
-        printf("In init loop\n");
+    while (run_init == 1) {
+
         j++;
         MasterState = 0;
         for (i=0; i<SLAVE_NUMBER;i++) {

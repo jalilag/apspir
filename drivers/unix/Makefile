@@ -30,7 +30,7 @@ libcanfestival_$(TARGET)-objs := $(OBJS)
 # Normal Makefile
 CC = gcc
 OPT_CFLAGS = -O2
-PROG_CFLAGS =  -fPIC -DCO_ENABLE_LSS
+PROG_CFLAGS =  -fPIC -DDEBUG_MSG_CONSOLE_ON -g -DCO_ENABLE_LSS
 OS_NAME = Linux
 ARCH_NAME = x86_64
 PREFIX = /usr/local

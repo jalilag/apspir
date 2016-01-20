@@ -1,1 +1,3 @@
-Current ; 100
+Current ; 70
+Profile ; 3
+Velinc ; 10000

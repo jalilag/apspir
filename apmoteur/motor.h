@@ -2,6 +2,14 @@
 #define _MOTOR_H
 #include "canfestival.h"
 
+//only for simulation if no trans motor is defined
+#define MOTOR_DEFAULT_MOTTRANSACCEL 500000
+//parametre pour application du couple (voir cantools.c cantools_ApplyVitRot, cantools_ApplyVitTrans)
+#define MOTOR_TRANS_MAX_VEL 400000
+#define MOTOR_ROT_MAX_VEL 400000
+#define MOTOR_TRANS_COUPL_DEFAULT 300
+#define MOTOR_ROT_COUPL_DEFAULT 300
+
 typedef struct PARAM PARAM;
 struct PARAM {
     char* title;

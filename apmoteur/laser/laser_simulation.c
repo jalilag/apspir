@@ -7,10 +7,12 @@
 #include "laser_simulation.h"
 
 int laser_simu = 0;
-
+static INTEGER32 VelincSimuTrans = 0;
 static INTEGER32 vel_err = 0, const_err = 0;
 
-
+void laser_simulation_set_VelincSimuTrans(INTEGER32 val){
+    VelincSimuTrans = val;
+}
 void laser_simulation_inc_const_err(INTEGER32 val){
     const_err+=val;
 }
@@ -22,6 +24,9 @@ void laser_simulation_inc_vel_err(INTEGER32 val){
 }
 void laser_simulation_dec_vel_err(INTEGER32 val){
     vel_err-=val;
+}
+INTEGER32 laser_simulation_get_VelincSimuTrans(void){
+    return VelincSimuTrans;
 }
 INTEGER32 laser_simulation_get_const_err(void){
     return const_err;
@@ -50,21 +55,12 @@ void * laser_simulation_SimuThread_func(void * arg)
     pthread_exit(NULL);
   }
 
-  int index_trans;
-    if(slave_get_indexList_from_Title("Translation", &index_trans)){
-        if(index_trans<0){
-            errgen_set(ERR_LASER_ASSERV_NOTRANSMOTDEFINED, NULL);
-            laser_simu = 0;
-            pthread_exit(NULL);
-        }
-    }
-
   t0 = GetDate_us();
   //cas pas de glissement
   while(laser_simu)
     {
-      capt_v = slave_get_param_in_num("Velocity", index_trans);
-      cons_v = slave_get_param_in_num("Vel2send", index_trans);
+      capt_v = ConsVit_T;
+      cons_v = CaptVit_T;
 
       t1 = GetDate_us();
 
@@ -75,7 +71,7 @@ void * laser_simulation_SimuThread_func(void * arg)
 
       dat -= ((double)(capt_v+vel_err)*(t1-t0)/1000000)*Cst;
 
-      printf("\nLASER_SIMU_THREAD_GET: dat = %d, time = %lu, t1-t0 = %lu, capt_v = %d, cons_v = %d\n", (INTEGER32)dat, t1, t1-t0, capt_v, cons_v);
+      //printf("\nLASER_SIMU_THREAD_GET: dat = %d, time = %lu, t1-t0 = %lu, capt_v = %d, cons_v = %d\n", (INTEGER32)dat, t1, t1-t0, capt_v, cons_v);
       fprintf(fd, "%lf %lu %lu %d %d\n", dat, t1, t1-t0, capt_v, cons_v);
 
       t0 = t1;
@@ -92,41 +88,25 @@ void * on_ACCELERER_clicked_thread(void * ag)
 {
   unsigned long t0, t1;
 
-  INTEGER32 CaptureVitesse_MotTrans, ConsigneVitesse_MotTrans, CaptureAccel_MotTrans;
-  int index_trans;
-    if(slave_get_indexList_from_Title("Translation", &index_trans)){
-        if(index_trans<0){
-            errgen_set(ERR_LASER_ASSERV_NOTRANSMOTDEFINED, NULL);
-            laser_simu = 0;
-            pthread_exit(NULL);
-        }
-    }
-  ConsigneVitesse_MotTrans = slave_get_param_in_num("Vel2send", index_trans);
-  CaptureVitesse_MotTrans = slave_get_param_in_num("Velocity", index_trans);
-
   t0 = GetDate_us();
-  while(CaptureVitesse_MotTrans<ConsigneVitesse_MotTrans)
+  while(CaptVit_T<ConsVit_T)
     {
-      ConsigneVitesse_MotTrans = slave_get_param_in_num("Vel2send", index_trans);
-      CaptureVitesse_MotTrans = slave_get_param_in_num("Velocity", index_trans);
-      CaptureAccel_MotTrans = slave_get_param_in_num("Acceleration", index_trans);
-
       t1 = GetDate_us();
-      if((CaptureVitesse_MotTrans+(INTEGER32)((double)CaptureAccel_MotTrans*(t1-t0)/1000000)) > ConsigneVitesse_MotTrans)
+      if((CaptVit_T+(INTEGER32)((double)CaptAccel_T*(t1-t0)/1000000)) > ConsVit_T)
 	{
-	  CaptureVitesse_MotTrans = ConsigneVitesse_MotTrans;
+	  CaptVit_T = ConsVit_T;
 	  break;
 	}
       else
-	CaptureVitesse_MotTrans += (INTEGER32)((double)CaptureAccel_MotTrans*(t1-t0)/1000000);
+	CaptVit_T += (INTEGER32)((double)CaptAccel_T*(t1-t0)/1000000);
 
-      LeaveMutex();
+      //LeaveMutex();
       t0 = t1;
       usleep(50000);
-      EnterMutex();
+      //EnterMutex();
     }
 
-  LeaveMutex();
+  //LeaveMutex();
   pthread_exit(NULL);
 }
 
@@ -145,43 +125,27 @@ void laser_simulation_on_ACCELERER_clicked(void)
 //uniquement pour la simu moteur
 void * on_RALENTIR_clicked_thread(void * arg)
 {
-  INTEGER32 CaptureDecel_MotTrans,ConsigneVitesse_MotTrans, CaptureVitesse_MotTrans;
   unsigned long t0, t1;
-  int index_trans;
-
-    if(slave_get_indexList_from_Title("Translation", &index_trans)){
-        if(index_trans<0){
-            errgen_set(ERR_LASER_ASSERV_NOTRANSMOTDEFINED, NULL);
-            laser_simu = 0;
-            pthread_exit(NULL);
-        }
-    }
-  ConsigneVitesse_MotTrans = slave_get_param_in_num("Vel2send", index_trans);
-  CaptureVitesse_MotTrans = slave_get_param_in_num("Velocity", index_trans);
 
   t0 = GetDate_us();
-  while(CaptureVitesse_MotTrans>ConsigneVitesse_MotTrans)
+  while(CaptVit_T>ConsVit_T)
     {
-      ConsigneVitesse_MotTrans = slave_get_param_in_num("Vel2send", index_trans);
-      CaptureVitesse_MotTrans = slave_get_param_in_num("Velocity", index_trans);
-      CaptureDecel_MotTrans = slave_get_param_in_num("Deceleration", index_trans);
-
       t1 = GetDate_us();
-      if((CaptureVitesse_MotTrans-(INTEGER32)((double)CaptureDecel_MotTrans*(t1-t0)/1000000)) < ConsigneVitesse_MotTrans)
+      if((CaptVit_T-(INTEGER32)((double)CaptDecel_T*(t1-t0)/1000000)) < ConsVit_T)
 	{
-	  CaptureVitesse_MotTrans = ConsigneVitesse_MotTrans;
+	  CaptVit_T = ConsVit_T;
 	  break;
 	}
       else
-	CaptureVitesse_MotTrans -= (INTEGER32)((double)CaptureDecel_MotTrans*(t1-t0)/1000000);
+	CaptVit_T -= (INTEGER32)((double)CaptDecel_T*(t1-t0)/1000000);
 
-      //printf("CAPTURE VITESSE T = %d\n", CaptureVitesse_MotTrans);
+      //printf("CAPTURE VITESSE T = %d\n", CaptVit_T);
 
       t0 = t1;
       usleep(50000);
     }
 
-  LeaveMutex();
+  //LeaveMutex();
 
   pthread_exit(NULL);
 }

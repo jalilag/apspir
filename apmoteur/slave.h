@@ -27,16 +27,7 @@ struct PARVAR {
     char* title;
 };
 
-<<<<<<< HEAD
 
-typedef struct PROF PROF;
-struct PROF {
-    int index;
-    char* id;
-    char* title;
-};
-=======
->>>>>>> a98d4c1ff52dd73fb72293e86aef0d41f18e057a
 
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
@@ -79,7 +70,7 @@ INTEGER32 slave_get_param_in_num(char* parid, int index);
 void slave_set_param(char* parid, int index,INTEGER32);
 char* slave_get_param_title (char* parid);
 
-int slave_get_indexList_from_ProfileName(char* ProfileName, int * indexList);
-
+int slave_get_indexList_from_Profile(int Profile, int * indexList);
+int slave_profile_exist(int profile);
 
 #endif // _SLAVE_H

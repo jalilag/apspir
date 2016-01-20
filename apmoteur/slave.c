@@ -16,8 +16,6 @@ extern GMutex lock_gui, lock_err;
 
 extern int SLAVE_NUMBER, run_init;
 
-extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
-
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
@@ -48,33 +46,79 @@ static int slave_config_com(UNS8 nodeID) {
         return 0;
     }
     /** CONFIGURATION PDOT **/
-    // StatusWord, Error Code
-    if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0)) {
+    // StatusWord, Error Code, Voltage, Temp
+    if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0x20150110,0x20180108,0)) {
         errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
     }
-    // Voltage, Temp
+    // pdo vitesse ou couple défini lors de l'enregistrement des paramètres
+    /*
     if(!cantools_PDO_map_config(nodeID,0x1A01,0x20150110,0x20180108,0)) {
         errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
     }
+    */
     /** ACTIVATION DES PDOs **/
-    if (!cantools_PDO_trans(nodeID,0x1800,0xFF,0x000A,0x0000)) {
+    //transmission volt, temp, status, etc.
+    if (!cantools_PDO_trans(nodeID,0x1800,0xFF,5000,0)) {
         errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,0x1388,0x0000)) {
+    //transmission vitesse réservé moteur vitesse directeurs du mouvement, rotation ou translation. Pour mesure sur moteurs couple utiliser l'index suivant.
+    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
         errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    if (!cantools_PDO_trans(nodeID,0x1802,0xFF,0x0000,0x0000)) {
+
+    if (!cantools_desactive_PDO_reseau(nodeID,0x1802)) {
         errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
-    if (!cantools_PDO_trans(nodeID,0x1803,0xFF,0x0000,0x0000)) {
+    if (!cantools_desactive_PDO_reseau(nodeID,0x1803)) {
         errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
     }
+    /**PROFILE SPECIFIC**/
+     int l = slave_get_profile_with_node(nodeID);
+     if (l == PROF_VITROT){
+        //vitesse et position
+        //mapping PDO T moteur (vitesse, position)
+        if (!cantools_PDO_map_config(nodeID,0x1A01,0x606C0020,0x60640020,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        //param PDO T moteur (tous les 10ms)
+        if (!cantools_PDO_trans(nodeID,0x1801,0x01,0,0)) {//on sync sinon on la recoit tous le temps (la position...)
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+     } else if (l == PROF_VITTRANS){
+        //uniquement la vitesse
+        //mapping PDOT moteur
+        if (!cantools_PDO_map_config(nodeID, 0x1A01, 0x606C0020, 0)){
+            errgen_set(ERR_SLAVE_CONFIG_PDOT, slave_get_title_with_node(nodeID));
+            return 0;
+        }
+       //param PDOT moteur
+        if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+     } else if (l == PROF_COUPLROT || l == PROF_COUPLTRANS){
+        //couple à transmettre
+        //mapping:
+        if( !cantools_PDO_map_config(nodeID,0x1A01,0x60770010,0)){
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        //param PDOT moteur
+        if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+     } else if (l == PROF_LIBRE){
+     }
+
     return 1;
 }
 /**
@@ -217,6 +261,7 @@ gboolean slave_gui_load_state(gpointer data) {
     }
 
     gtk_widget_show_all (gui_get_widget("mainWindow"));
+    return FALSE;
 }
 /** Generation de la page param **/
 int slave_gui_param_gen(int ind) {
@@ -324,6 +369,7 @@ int slave_save_param (int index) {
         int i = 3,j,k,l;
         char* labtxt[7] = {"SlaveTitle","Vendor","Product","Revision","Serial","SlaveProfile",NULL};
         char* str2build="";
+            //motor index i, profile l
         while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
             str2build = strtools_concat(str2build,"--",NULL);
             j=i-2;
@@ -353,7 +399,7 @@ int slave_save_param (int index) {
             return 0;
         }
         if (str2build != "") free(str2build);
-        gui_widget2hide("windowParams",NULL);
+            gui_widget2hide("windowParams",NULL);
         if (run_init == -1) {
             if (!slave_read_definition()) {
                 run_init = 0;
@@ -385,7 +431,7 @@ int slave_save_param (int index) {
             i++;
         }
         int ind = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(gui_get_widget("boxParam"),"listProfile")));
-        if(!strtools_build_file(slave_get_profile_filename(ind),str2build)) {
+        if(!strtools_build_file(profile_get_filename_with_index(ind),str2build)) {
             if (str2build != "") free(str2build);
             return 0;
         }
@@ -722,8 +768,6 @@ INTEGER32 slave_get_param_in_num(char* parid, int index) {
             } else if (!strcmp(parid, "Velinc")) {
                 INTEGER32* data = (INTEGER32*)vardata[i].tab;
                 return (INTEGER32)data[index];
-            } else if (!strcmp(parid, "Vel2sendPDONum")){
-                return index;
             } else if (!strcmp(parid, "State")) {
                 return (INTEGER32)slave_get_state_with_index(index);
             } else if (!strcmp(parid,"StateError")) {
@@ -740,6 +784,10 @@ INTEGER32 slave_get_param_in_num(char* parid, int index) {
                 return (INTEGER32)slave_get_serial_with_index(index);
             } else if (!strcmp(parid, "Active")) {
                 return (INTEGER32)slave_get_active_with_index(index);
+            } else if (!strcmp(parid, "Vel2sendRotPDONum")) {
+                return (4*index);
+            } else if (!strcmp(parid, "Vel2sendTransPDONum")) {
+                return (4*index);
             } else {
                 if (vardata[i].type == 0x02) {
                     INTEGER8 *data = *(vardata[i].tab+index);
@@ -784,6 +832,10 @@ void slave_set_param(char* parid, int index,INTEGER32 dat) {
                 g_idle_add(keyword_active_maj,&slaves[index].node);
             } else if (parid == "SlaveProfile") {
                 slave_set_profile_with_index(index,dat);
+            } else if (!strcmp(parid, "Vel2sendRotPDONum")){
+                return;
+            } else if (!strcmp(parid, "Vel2sendTransPDONum")) {
+                return;
             } else {
                 if (vardata[i].type == 0x02) {
                     INTEGER8 *data = *(vardata[i].tab+index);
@@ -821,7 +873,7 @@ char* slave_get_param_in_char(char* parid, int index) {
     for (i=0;i<VAR_NUMBER;i++) {
         if (parid == vardata[i].id) {
             res = 1;
-            if (parid == "Volt") {
+            if (!strcmp(parid,"Volt")) {
                 UNS16 *data = *(vardata[i].tab+index);
                 INTEGER32 data2= (INTEGER32)*data;
                 data2 = data2/10;
@@ -878,7 +930,7 @@ char* slave_get_param_title (char* parid) {
 /**retourne la liste des index de profile Profile correspondent**/
 //retourne 0 si pas d'erreur
 //retourne 1 si le nombre d'index vérifiant le truc est > à sizeof(indexlist) ou si aucun index à été trouvé
-int slave_get_indexList_from_ProfileName(char* ProfileName, int* indexList){
+int slave_get_indexList_from_Profile(int Profile, int* indexList){
     int i;
     for (i=0; i<sizeof(indexList)/sizeof(int); i++){
         indexList[i] = -1;
@@ -886,7 +938,7 @@ int slave_get_indexList_from_ProfileName(char* ProfileName, int* indexList){
     int maxcount = sizeof(indexList)/sizeof(int);
     int count=0;
     for (i=0;i<SLAVE_NUMBER;i++){
-        if(!strcmp(slave_get_profile_name(i),)){
+        if(slave_get_profile_with_index(i) == Profile){
             if(count < maxcount) {
                 indexList[count] = i;
                 count++;
@@ -895,5 +947,15 @@ int slave_get_indexList_from_ProfileName(char* ProfileName, int* indexList){
         }
     }
     if (count == 0) return 1;// aucun moteur défini
+    return 0;
+}
+
+//return 1 if profile exist
+int slave_profile_exist(int profile){
+    int i;
+    for (i=0;i<SLAVE_NUMBER; i++){
+        if(slave_get_profile_with_index(i) == profile)
+            return 1;
+    }
     return 0;
 }

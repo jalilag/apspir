@@ -12,23 +12,24 @@ static char* errgen_get_content(UNS16 dat);
 #define LASER_ERROR(err)                    (0x80 | err)
 #define ERR_LASER_REINIT                     0x0500
 #define ERR_LASER_SERIAL_CONFIG              0x0501
+#define ERR_LASER_STARTCHECKTHREAD           0x0502
 
-#define ERR_SLAVE_CONFIG_ROT_REFPOS          0x0502
-#define ERR_MASTER_CONFIG_PDOT2              0x0503
-#define ERR_LASER_ASSERV_START               0x0504
-#define ERR_LASER_ASSERV_STOP                0x0505
-#define ERR_LASER_SIMU_START                 0x0506
-#define ERR_LASER_SIMU_STOP                  0x0507
-#define ERR_ROT_CALC_ACCEL                   0x0508
-#define ERR_ROT_WRITE_ACCEL                  0x0509
-#define ERR_ROT_GET_ACCEL                    0x0510
-#define ERR_ROT_GET_DECEL                    0x0511
+#define ERR_SLAVE_CONFIG_ROT_REFPOS          0x0510
+#define ERR_MASTER_CONFIG_PDOT2              0x0511
+#define ERR_LASER_ASSERV_START               0x0512
+#define ERR_LASER_ASSERV_STOP                0x0513
+#define ERR_LASER_SIMU_START                 0x0514
+#define ERR_LASER_SIMU_STOP                  0x0515
+#define ERR_ROT_CALC_ACCEL                   0x0516
+#define ERR_ROT_WRITE_ACCEL                  0x0517
+#define ERR_ROT_GET_ACCEL                    0x0518
+#define ERR_ROT_GET_DECEL                    0x0519
 
-#define ERR_LOAD_ID_DATA                     0x0512
-
-#define ERR_LASER_ASSERV_NOTRANSMOTDEFINED   0x0513
-#define ERR_LASER_ASSERV_NOVELMOTROTDEFINED  0x0514
-#define ERR_LASER_ASSERV_READMOTROTDATA      0x0515
+#define ERR_LASER_ASSERV_2_VELMOTROTDEFINED  0x0540
+#define ERR_LASER_ASSERV_READMOTROTDATA      0x0541
+#define ERR_LASER_ASSERV_GETINDEXROT         0x0542
+#define ERR_LASER_ASSERV_GETINDEXTRANS       0x0543
+#define ERR_LASER_ASSERV_MOTROT              0x0544
 
 #define ERR_DRIVER_UP                        0x0001
 #define ERR_DRIVER_LOAD                      0x0002
@@ -50,6 +51,7 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_MASTER_SET_HB_CONS               0x0014
 #define ERR_MASTER_CONFIG_PDOR               0x0015
 #define ERR_MASTER_CONFIG_PDOT               0x0016
+#define ERR_MASTER_CONFIG_MAP                0x0017
 
 #define ERR_SLAVE_CONFIG                     0x0020
 #define ERR_SLAVE_CONFIG_LSS                 0x0021
@@ -115,5 +117,4 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_MOTOR_BACKWARD                   0x0184
 #define ERR_MOTOR_LOW_VOLTAGE                0x0185
 
-#define ERR_CLEAR_LOCKED_ROTOR               0x0186
 #endif // _ERRGEN

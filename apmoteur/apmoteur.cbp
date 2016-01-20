@@ -132,6 +132,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="od_callback.h" />
+		<Unit filename="profile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="profile.h" />
 		<Unit filename="serialtools.c">
 			<Option compilerVar="CC" />
 		</Unit>

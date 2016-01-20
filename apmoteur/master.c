@@ -1,24 +1,4 @@
-/*
-This file is part of CanFestival, a library implementing CanOpen Stack.
 
-Copyright (C): Edouard TISSERANT and Francis DUPIN
-
-See COPYING file for copyrights details.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 #include "master.h"
 #include "slave.h"
 #include <stdio.h>
@@ -32,6 +12,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "gui.h"
 #include "od_callback.h"
 #include "errgen.h"
+#include "profile.h"
 extern int SLAVE_NUMBER;
 extern s_BOARD MasterBoard;
 char* baud_rate="1M";
@@ -85,17 +66,19 @@ static int master_config() {
             return 0;
         }
     }
-    /** PDOR CONFIGURATION **/
+    /** PDOR et PDOT CONFIGURATION **/
     int j;
     UNS8 trans =0xFF;
     for (i=0; i < SLAVE_NUMBER; i++) {
         for (j=0; j<4; j++){
+        //reception
             dat = 0x40000180 + 0x100*j  + slave_get_node_with_index(i);
             if (!cantools_write_local(0x1400+(4*i+j),0x01,&dat,sizeof(UNS32))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOR,NULL);
                 printf("dat %x\n",dat);
                 return 0;
             }
+            //transmission
             dat = 0x40000200 + 0x100*j  + slave_get_node_with_index(i);
             if (!cantools_write_local(0x1800+(4*i+j),0x01,&dat,sizeof(UNS32))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
@@ -108,8 +91,77 @@ static int master_config() {
                 return 0;
             }
         }
+        int l = slave_get_profile_with_index(i);
+        if (l == PROF_VITROT){
+            //mapping PDOT maitre
+            if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x201A0020, 0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            //mapping PDOR maitre
+            //la vitesse
+            if(!cantools_PDO_map_local_config( 0x1601+4*i, 0x201C0020, 0x201D0020, 0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            //params PDOR maitre specifique profil
+            UNS16 inhibit = 0;
+            UNS16 event = 50000;
+            if (!cantools_write_local(0x1800+(4*i),0x03,&inhibit,sizeof(UNS16))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("inhibit rot %x\n",inhibit);
+                return 0;
+            }
+            if (!cantools_write_local(0x1800+(4*i),0x05,&event,sizeof(UNS16))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("event rot %x\n",event);
+                return 0;
+            }
+        } else if (l == PROF_VITTRANS){
+            //mapping PDOT maitre
+             if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20190020,0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            //mapping PDOR maitre
+            if(!cantools_PDO_map_local_config( 0x1601+4*i, 0x201B0020, 0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            UNS16 inhibit = 0;
+            UNS16 event = 50000;
+            if (!cantools_write_local(0x1800+(4*i),0x03,&inhibit,sizeof(UNS16))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("inhibit trans %x\n",inhibit);
+                return 0;
+            }
+            if (!cantools_write_local(0x1800+(4*i),0x05,&event,sizeof(UNS16))) {
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("event trans %x\n",event);
+                return 0;
+            }
+         } else if (l == PROF_COUPLROT){
+         } else if (l == PROF_COUPLTRANS){
+         } else if (l == PROF_LIBRE){
+         }
+
+
     }
+    /**mise en 0xFF des PDO inutiles**/
+    trans = 0xFF;
+    for (i=SLAVE_NUMBER; i<SLAVE_NUMBER_LIMIT; i++){
+        for (j=0; j<4; j++){
+            if(!cantools_write_local(0x1800+4*i+j, 0x02, &trans, sizeof(UNS8))){
+                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
+                printf("dat %x\n",dat);
+                return 0;
+            }
+        }
+    }
+
     return 1;
+
+    /**PDOT map CONFIGURATION (de base: rien)**/
 }
 
 
@@ -133,7 +185,7 @@ void SpirallingMaster_preOperational(CO_Data* d) {
     }
     for (i=0; i<SLAVE_NUMBER; i++) {
         printf("%d",i);
-        if (slave_get_param_in_num("Active",i))
+        if (slave_get_param_in_num("Active",i));
             slave_set_param("State",i,STATE_LSS_CONFIG);
     }
 }
@@ -147,7 +199,7 @@ void SpirallingMaster_stopped(CO_Data* d) {
 }
 
 void SpirallingMaster_post_sync(CO_Data* d) {
-     sendPDOevent(d);
+     //sendPDOevent(d);
 }
 
 void SpirallingMaster_post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg) {
@@ -188,8 +240,20 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
         break;
     }
 }
-
+static unsigned long MasterSyncCount = 0;
 void SpirallingMaster_post_TPDO(CO_Data* d) {
+    if (MasterSyncCount%10 == 0){
+        printf("\nSpirallingMaster_post_TPDO MasterSyncCount = %lu \n", MasterSyncCount);
+
+        printf("MotRotVars :ConsigneVitesse = %d, CaptureVitesse = %d, CapturePosition = %d, Acceleration = %u, Deceleration = %u\n",
+            ConsVit_R, CaptVit_R, CaptPos_R, CaptAccel_R, CaptDecel_R);
+
+        printf("MotTransVars :ConsigneVitesse = %d, CaptureVitesse = %d, Acceleration = %u, Deceleration = %u\n",
+            ConsVit_T, CaptVit_T, CaptAccel_T, CaptDecel_T);
+    }
+
+    MasterSyncCount++;
+
 }
 
 void SpirallingMaster_post_SlaveBootup(CO_Data* d, UNS8 nodeid) {

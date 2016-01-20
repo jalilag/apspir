@@ -7,15 +7,15 @@
 #include "slave.h"
 #include "motor.h"
 #include "SpirallingControl.h"
+#include "SpirallingMaster.h"
 #include "profile.h"
+#include "serialtools.h"
 
-<<<<<<< HEAD
-extern PROF slave_profile[PROFILE_NUMBER_LIMIT];
-=======
+
 extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
->>>>>>> a98d4c1ff52dd73fb72293e86aef0d41f18e057a
+
 void keyword_init () {
 
 /** TITRE DES WINDOWS **/
@@ -66,6 +66,7 @@ gboolean keyword_maj(gpointer data) {
     int i = 0,j,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
+
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
@@ -103,10 +104,9 @@ gboolean keyword_maj(gpointer data) {
             gui_local_label_set(strtools_concat("labM",key,"State",NULL),slave_get_param_in_char("State",i),"mainWindow");
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
-        printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
+        //printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
         INTEGER32 dat;
         motor_get_param(0x02,"Velocity",&dat);
-        printf("Vitesse %x",dat);
     }
     // Vérification du switch translation
     int switch_but = gui_switch_is_active("butVelStart");
@@ -133,8 +133,8 @@ gboolean keyword_maj(gpointer data) {
         }
     }
     if(slave_get_node_with_profile(0) != 0x00) {
-        gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
-        gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
+        gui_label_set("labTransVel2send",strtools_gnum2str_all_decimal(&ConsVit_T, int32)/*slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0)))*/);
+        gui_label_set("labTransVel",strtools_gnum2str_all_decimal(&CaptVit_T, int32)/*slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0)))*/);
     }
     return TRUE;
 }
@@ -143,7 +143,7 @@ gboolean keyword_active_maj(gpointer data) {
     UNS8* res = data;
     int i = slave_get_index_with_node(*res);
     int var = slave_get_param_in_num("Active",i);
-    printf("%d %d %d\n",*res,i,var);
+    //printf("%d %d %d\n",*res,i,var);
     int j = i+1;
     if(var == 0) {
         GtkWidget* but = gui_local_get_widget(gui_get_widget("gridState"),strtools_concat("butActive",strtools_gnum2str(&j,0x02),NULL));

@@ -1,6 +1,9 @@
 //indicateur de fonctionnement du module
 extern int laser_simu;
 
+//incrementation de vitesse dans le cas de simulation laser et moteur translation.
+void laser_simulation_set_VelincSimuTrans(INTEGER32 val);
+
 //perturbations
 void laser_simulation_inc_const_err(INTEGER32 val);
 void laser_simulation_dec_const_err(INTEGER32 val);
@@ -8,6 +11,7 @@ void laser_simulation_dec_const_err(INTEGER32 val);
 void laser_simulation_inc_vel_err(INTEGER32 val);
 void laser_simulation_dec_vel_err(INTEGER32 val);
 
+INTEGER32 laser_simulation_get_VelincSimuTrans(void);
 INTEGER32 laser_simulation_get_const_err(void);
 INTEGER32 laser_simulation_get_vel_err(void);
 

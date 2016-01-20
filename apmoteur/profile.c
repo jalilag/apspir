@@ -1,4 +1,6 @@
+#include "profile.h"
 #include "SpirallingControl.h"
+#include <glib.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -32,7 +34,11 @@ int profile_get_index_with_id(char* id) {
     int i = 0;
     for (i;i<PROFILE_NUMBER;i++)
         if (profiles[i].id == id) return i;
+
     printf("Erreur pas de profile trouvé, id inconnu : %s",id);
     exit(EXIT_FAILURE);
-    }
+}
+
+char* profile_get_filename_with_index(int index) {
+    return g_strconcat("profile_",g_utf8_strdown(profiles[index].id,-1),"_config.txt",NULL);
 }

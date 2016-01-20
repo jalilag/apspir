@@ -1,345 +1,209 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-<<<<<<< HEAD
-	<File name="motor.c" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="gui.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="315" topLine="150" />
+			<Cursor1 position="55" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="keyword.c" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="strtools.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="158" topLine="0" />
+			<Cursor1 position="692" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="motor.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="75" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="SpirallingControl.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3325" topLine="105" />
-		</Cursor>
-	</File>
-	<File name="master.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="712" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="master.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1200" topLine="15" />
-		</Cursor>
-	</File>
-	<File name="slave.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2305" topLine="37" />
-		</Cursor>
-	</File>
-	<File name="getopt.c" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10147" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="slave.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="37409" topLine="918" />
-		</Cursor>
-	</File>
-	<File name="lsstools.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="59" topLine="0" />
-=======
-	<File name="SpirallingMaster.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="106722" topLine="1717" />
-		</Cursor>
-	</File>
-	<File name="SpirallingControl.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6701" topLine="186" />
-		</Cursor>
-	</File>
-	<File name="slave.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1064" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="getopt.c" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10147" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="master.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="712" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="slave.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1281" topLine="28" />
-		</Cursor>
-	</File>
-	<File name="getopt.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="102" />
-		</Cursor>
-	</File>
-	<File name="errgen.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1874" topLine="95" />
-		</Cursor>
-	</File>
-	<File name="cantools.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11946" topLine="332" />
-		</Cursor>
-	</File>
-	<File name="stylesheet.css" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1869" topLine="70" />
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
-		</Cursor>
-	</File>
-	<File name="cantools.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-<<<<<<< HEAD
-			<Cursor1 position="640" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="keyword.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="25529" topLine="357" />
-		</Cursor>
-	</File>
-	<File name="errgen.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="523" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="laser/laser_simulation.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="laser/main_test.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="SpirallingControl.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="profile.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="282" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="strtools.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="561" topLine="0" />
-=======
-			<Cursor1 position="86" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="keyword.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9306" topLine="241" />
-		</Cursor>
-	</File>
-	<File name="gui.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7210" topLine="229" />
-		</Cursor>
-	</File>
-	<File name="SpirallingControl.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="282" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="errgen.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="648" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="92" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="SpirallingMaster.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="408" topLine="17" />
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
-		</Cursor>
-	</File>
-	<File name="serialtools.c" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11104" topLine="227" />
-		</Cursor>
-	</File>
-<<<<<<< HEAD
-	<File name="lsstools.c" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="570" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="gui.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1051" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="laser/laser_asserv.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="932" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="serialtools.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="cantools.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10132" topLine="316" />
-		</Cursor>
-	</File>
-	<File name="laser/laser_asserv.c" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="12998" topLine="424" />
-		</Cursor>
-	</File>
-	<File name="gtksig.c" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4937" topLine="94" />
-		</Cursor>
-	</File>
-	<File name="strtools.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5249" topLine="153" />
-		</Cursor>
-	</File>
-	<File name="od_callback.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="488" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="errgen.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14666" topLine="204" />
-		</Cursor>
-	</File>
-	<File name="gtksig.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1074" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="laser/laser_asserv_cst.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="500" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="SpirallingMaster.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="408" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="SpirallingMaster.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="754" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="od_callback.c" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="810" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Makefile" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1381" topLine="18" />
+			<Cursor1 position="365" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="getopt.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="102" />
+			<Cursor1 position="0" topLine="66" />
 		</Cursor>
 	</File>
-	<File name="gui.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cantools.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7755" topLine="257" />
+			<Cursor1 position="15420" topLine="456" />
 		</Cursor>
 	</File>
-	<File name="laser/laser_simulation.c" open="0" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="gtksig.c" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1056" topLine="15" />
+			<Cursor1 position="14452" topLine="332" />
 		</Cursor>
 	</File>
-	<File name="stylesheet.css" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="motor.h" open="0" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="386" topLine="0" />
+			<Cursor1 position="119" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="moteurs.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="laser/laser_asserv.h" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="526" topLine="0" />
-=======
-	<File name="moteurs.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="526" topLine="0" />
+			<Cursor1 position="574" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="gtksig.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="slave.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1224" topLine="0" />
+			<Cursor1 position="153" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="gui.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="gui.c" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1044" topLine="10" />
+			<Cursor1 position="1184" topLine="23" />
+		</Cursor>
+	</File>
+	<File name="laser/laser_simulation.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1664" topLine="45" />
+		</Cursor>
+	</File>
+	<File name="laser/errgen_laser.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="laser/laser_stop.c" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="laser/struct_laser.h" open="0" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="67" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="lsstools.c" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="286" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="cantools.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="139" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="master.h" open="0" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="463" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="errgen.h" open="0" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="451" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="errgen.c" open="0" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16812" topLine="252" />
+		</Cursor>
+	</File>
+	<File name="SpirallingMaster.c" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="138216" topLine="242" />
+		</Cursor>
+	</File>
+	<File name="gtksig.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="340" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="SpirallingMaster.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="12" />
 		</Cursor>
 	</File>
 	<File name="Makefile" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1418" topLine="22" />
+			<Cursor1 position="223" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="motor.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="laser/laser_asserv_cst.h" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="156" topLine="0" />
+			<Cursor1 position="42" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="gtksig.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="master.c" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3247" topLine="64" />
+			<Cursor1 position="8509" topLine="216" />
 		</Cursor>
 	</File>
-	<File name="od_callback.c" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="laser/laser_asserv.c" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="162" topLine="0" />
+			<Cursor1 position="394" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="master.c" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="keyword.c" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6287" topLine="60" />
+			<Cursor1 position="4961" topLine="85" />
 		</Cursor>
 	</File>
-	<File name="od_callback.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="keyword.h" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="72" topLine="0" />
+			<Cursor1 position="4247" topLine="92" />
 		</Cursor>
 	</File>
-	<File name="lsstools.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="stylesheet.css" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="227" topLine="6" />
+			<Cursor1 position="0" topLine="63" />
 		</Cursor>
 	</File>
-	<File name="keyword.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="laser/laser_simulation.h" open="0" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4978" topLine="64" />
+			<Cursor1 position="206" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="strtools.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="profile.c" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6176" topLine="162" />
+			<Cursor1 position="993" topLine="2" />
 		</Cursor>
 	</File>
-	<File name="lsstools.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="motor.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="200" topLine="0" />
+			<Cursor1 position="5960" topLine="173" />
 		</Cursor>
 	</File>
-	<File name="motor.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="serialtools.c" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6302" topLine="265" />
->>>>>>> c5e0f29c6bce206973f4fc7f2336d0ec6b7ba5e7
+			<Cursor1 position="11325" topLine="254" />
+		</Cursor>
+	</File>
+	<File name="serialtools.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="106" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="laser/laser.h" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="875" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="laser/laser.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="19251" topLine="687" />
+		</Cursor>
+	</File>
+	<File name="slave.c" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4256" topLine="84" />
+		</Cursor>
+	</File>
+	<File name="SpirallingControl.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="294" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="strtools.c" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="174" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="SpirallingControl.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5625" topLine="65" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

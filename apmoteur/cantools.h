@@ -2,6 +2,7 @@
 #define _CANTOOLS_H
 #include "canfestival.h"
 #include <gtk/gtk.h>
+#include <glib.h>
 
 
 typedef struct SDOR SDOR;
@@ -15,10 +16,13 @@ int cantools_read_sdo(UNS8 nodeid,SDOR sdo, void* data);
 int cantools_write_sdo(UNS8 nodeid,SDOR sdo, void* data);
 int cantools_write_local(UNS16 Mindex, UNS8 Msubindex, void* data, UNS32 datsize);
 int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans,UNS16 inhibit,UNS16 event);
+int cantools_desactive_PDO_reseau(UNS8 nodeID, UNS16 index);
+int cantools_PDO_map_local_config(UNS16 PDOMapIndex, ...);
 int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...);
 int cantools_sync(int start);
 
-void cantools_ApplyVelocity(INTEGER32 vit, char* Title);
+void cantools_ApplyVelRot(INTEGER32 vit);
+void cantools_ApplyVelTrans(INTEGER32 vit);
 
 
 

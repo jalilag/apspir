@@ -13,6 +13,7 @@
 #include "cantools.h"
 #include "errgen.h"
 #include "slave.h"
+#include "profile.h"
 
 #include "laser_asserv.h"
 #include "laser_simulation.h"
@@ -20,7 +21,6 @@
 int motor_switch_step = 0;
 const int motor_switch_step_max = 10;
 extern PARAM pardata[PARAM_NUMBER];
-extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 
 UNS8 motor_get_state(UNS16 state) {
     char *bstate = strtools_hex2bin(&state,0x06);
@@ -368,15 +368,17 @@ extern UNS32 ConsigneAccel_MotRot, ConsigneDecel_MotRot;
 void motor_set_MotRot_Accel(void)
 {
     int index_rot, index_trans;
-    if(slave_get_indexList_with_ProfileName_with_Title("vitesse","Rotation", &index_rot))
+    printf("1\n");
+    if(slave_get_indexList_from_Profile(PROF_VITROT, &index_rot))
         return;
 
     UNS32 accel_T, decel_T;
     UNS32 accel_R, decel_R;
     SDOR Accel = {0x6083, 0x00, 0x07};
     SDOR Decel = {0x6084, 0x00, 0x07};
-
-    slave_get_indexList_from_Title("Translation", &index_trans);
+    printf("2\n");
+    slave_get_indexList_from_Profile(PROF_VITTRANS, &index_trans);
+    printf("3\n");
     if(index_trans >=0)
     {
         //lecture des accelerations
@@ -388,15 +390,18 @@ void motor_set_MotRot_Accel(void)
             errgen_set(ERR_ROT_GET_DECEL, NULL);
             return;
         }
+    } else {//aucun moteurs vitesse translation
+        accel_T = MOTOR_DEFAULT_MOTTRANSACCEL;
+        decel_T = MOTOR_DEFAULT_MOTTRANSACCEL;
     }
-    else {//aucun moteurs translation
-        accel_T = 64000;
-        decel_T = 64000;
-    }
-    slave_set_param("Acceleration",index_trans, accel_T);
-    slave_set_param("Deceleration", index_trans, decel_T);
+    CaptAccel_T = accel_T;
+    CaptDecel_T = decel_T;
+    ConsAccel_T = accel_T;
+    ConsDecel_T = decel_T;
     //calcul des acceleration rotation correspondante
+    printf("4\n");
     if(!laser_simu){
+        printf("cas pas laser simu\n");
         if(laser_asserv_CalcRotAccel(&ml, &sl, &accel_T, &accel_R)){
             errgen_set(ERR_ROT_CALC_ACCEL, NULL);
             return;
@@ -406,6 +411,7 @@ void motor_set_MotRot_Accel(void)
             return;
         }
     } else {
+        printf("cas laser simu\n");
         if(laser_asserv_CalcRotAccel(&lsim, NULL, &accel_T, &accel_R)){
             errgen_set(ERR_ROT_CALC_ACCEL, NULL);
             return;
@@ -416,6 +422,7 @@ void motor_set_MotRot_Accel(void)
         }
 
     }
+    printf("5\n");
     //ecriture des accelerations
     if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Accel, &accel_R)){
         errgen_set(ERR_ROT_WRITE_ACCEL, NULL);
@@ -425,10 +432,11 @@ void motor_set_MotRot_Accel(void)
         errgen_set(ERR_ROT_WRITE_ACCEL, NULL);
         return;
     }
-    slave_set_param("Accel2send", index_rot, accel_R);
-    slave_set_param("Decel2send", index_rot, decel_R);
-    slave_set_param("Acceleration", index_rot, accel_R);
-    slave_set_param("Deceleration", index_rot, decel_R);
+    printf("6\n");
+    CaptAccel_R = accel_R;
+    CaptDecel_R = decel_R;
+    ConsAccel_R = accel_R;
+    ConsDecel_R = decel_R;
     //printf("A1 = %u, A2 = %u, D1 = %u, D2 = %u\n", accel_T, decel_T, accel_R, decel_R);
 
 }

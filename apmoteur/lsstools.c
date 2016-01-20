@@ -11,7 +11,7 @@ static int LSS_step = 1;
 static int LSS_step_error = 0;
 static int LSS_step_error_max = 2;
 
-
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 // A faire la gestion du send failed: no buffer space
 
 int lsstools_loop(UNS8 nodeID, int error) {

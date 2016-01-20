@@ -371,13 +371,12 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_SLAVE_EXIT_TITLE "Laser 2 exit"
 #define ERR_LASER_REINIT_TITLE "Laser Reinit"
 #define ERR_LASER_SERIAL_CONFIG_TITLE "Serial configuration"
+#define ERR_LASER_STARTCHECKTHREAD_TITLE "Laser data verification thread"
 
 
 #define ERR_LASER_ASSERV_TITLE "Asservissement rotation"
 #define ERR_LASER_SIMU_TITLE "Erreur simulation laser"
 #define ERR_ROT_TITLE "Erreur moteur rotation"
-
-#define ERR_LOAD_ID_DATA_TITLE "ERROR in find LSS params"
 
 // ERROR CONTENT
 #define ERR_DRIVER_UP_CONTENT "Le chargement du driver SOCKET CAN a échoué"
@@ -401,6 +400,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MASTER_CONFIG_PDOR_CONTENT "La configuration de la PDO récepteur du maitre a échoué"
 #define ERR_MASTER_CONFIG_PDOT_CONTENT "La configuration de la PDO transmetteur du maitre a échoué"
 #define ERR_MASTER_CONFIG_CONTENT "La configuration du maitre a échoué"
+#define ERR_MASTER_CONFIG_MAP_CONTENT "La configuration du mapping transmission local à échoué"
 
 #define ERR_SLAVE_CONFIG_CONTENT "La configuration d'un esclave a échoué"
 #define ERR_SLAVE_CONFIG_LSS_CONTENT "La configuration LSS a échoué"
@@ -483,6 +483,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_SLAVE_EXIT_CONTENT "Erreur lors de la fermeture laser 2. Lors du redémarrage débrancher puis rebrancher le laser"
 #define ERR_LASER_REINIT_CONTENT "La reinitialisation des laser a échoué. Verifier les branchements: alim et usb"
 #define ERR_LASER_SERIAL_CONFIG_CONTENT "Serial acces permission problem. Try running the code with sudo"
+#define ERR_LASER_STARTCHECKTHREAD_CONTENT "Laser data consistency verification thread start error"
 
 
 #define ERR_LASER_ASSERV_START_CONTENT "Erreur au démarrage de l'asservissement"
@@ -494,11 +495,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_ROT_GET_ACCEL_CONTENT "L'accéleration du moteur rotation n'a pas pu être obtenue"
 #define ERR_ROT_GET_DECEL_CONTENT "La déceleration du moteur rotation n'a pas pu être obtenue"
 
-#define ERR_LOAD_ID_DATA_CONTENT "Impossible to read configuration data of on of the CAN devices: product Code, serial number, Vendor id or revision number"
-
-#define ERR_CLEAR_LOCKED_ROTOR_CONTENT "locked motor is impossible to unblock"
-
-#define ERR_LASER_ASSERV_NOTRANSMOTDEFINED_CONTENT "Vous avez défini deux moteurs vitesse pour la rotation ou pour la translation. C'est impossible. Définir un moteur vitesse et des moteurs couple'"
-#define ERR_LASER_ASSERV_NOVELMOTROTDEFINED_CONTENT "erreurs possibles: Il n'y a pas de moteur vitesse pour la rotation. Ou alors aucun moteur translation n'est défini."
+#define ERR_LASER_ASSERV_2_VELMOTROTDEFINED_CONTENT "Deux moteurs vitesse rotation sont défini. N'en mettre qu'un avec des moteurs couples"
 #define ERR_LASER_ASSERV_READMOTROTDATA_CONTENT "Erreur de lecture. Cherche à lire une variable mapper qui n'existe pas"
+#define ERR_LASER_ASSERV_GETINDEXROT_CONTENT "Soit aucun moteurs vitesse rotation n'est défini, soit vous en avez défini plusieurs"
+#define ERR_LASER_ASSERV_GETINDEXTRANS_CONTENT "Soit aucun moteurs vitesse translation n'est défini, soit vous en avez défini plusieurs"
+#define ERR_LASER_ASSERV_MOTROT_CONTENT "Impossible de lancer la rotation. Une erreur dans la config du moteur rotation subsiste"
+
 #endif // _SIGNAUX_H

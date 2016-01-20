@@ -199,7 +199,7 @@ int Laser_Init(laser * l)
       tcflush(l->fd, TCIOFLUSH);
       if(tcsetattr(l->fd, TCSANOW, &newtio)<0)
 	{
-	  printf("Unsable to apply given port settings\n");
+	  printf("Unable to apply given port settings\n");
 	  return -1;
 	}
       //printf("succeed in setting port %d params\n", l->fd);
@@ -718,11 +718,11 @@ int laser_verify_usb_connection(laser * l)
 int Laser_GetPositionOffset(laser * master, laser * slave)
 {
   struct laser_data mdat, sdat;
-  //printf("Laser_GetPositionOffset=>");
+  printf("Laser_GetPositionOffset=>");
 
   if(master->ready_for_analyse && slave->ready_for_analyse)
     {
-      //printf("cas 1\n");
+      printf("cas 1\n");
       pthread_mutex_lock(&(master->mutex));
       mdat = master->laser_dat[0];
       pthread_mutex_unlock(&(master->mutex));
@@ -737,7 +737,7 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
 	{
 	  PositionOffset = mdat.mes - sdat.mes;
 	  LastLaserData = mdat;
-	  //printf("PositionOffset = %ld\n", PositionOffset);
+	  printf("PositionOffset = %ld\n", PositionOffset);
 	  return 0;
 	}
 
@@ -745,7 +745,7 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
     }
   else if(master->ready_for_analyse && !slave->ready_for_analyse)
     {
-      //printf("cas2\n");
+      printf("cas2\n");
       pthread_mutex_lock(&(master->mutex));
       mdat = master->laser_dat[0];
       pthread_mutex_unlock(&(master->mutex));
@@ -754,7 +754,7 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
     }
   else if(!master->ready_for_analyse && slave->ready_for_analyse)
     {
-      //printf("cas3\n");
+      printf("cas3\n");
       pthread_mutex_lock(&(slave->mutex));
       sdat = slave->laser_dat[0];
       pthread_mutex_unlock(&(slave->mutex));
@@ -767,7 +767,7 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
       return -1;// laser not ready
     }
 
-  //printf("PositionOffset = %ld\n", PositionOffset);
+  printf("PositionOffset = %ld\n", PositionOffset);
   return 0;
 }
 
@@ -852,6 +852,7 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
     d->mes = master->laser_dat[0].mes;
     d->t = master->laser_dat[0].t;
     d->vitesse = master->laser_dat[0].vitesse;
+    d->vitesse_1s = master->laser_dat[0].vitesse_1s;
     pthread_mutex_unlock(&(master->mutex));
     return 0;
   }
@@ -1327,7 +1328,7 @@ int main(void)
   printf("date = %lu\n", GetDate_us());
   init_laser_data(&l1);
   //initialise mesures laser
-  if((Laser_Init(&l0, "/dev/ttyUSB0"))<0)
+  if(Laser_Init(&l0)<0)
     return -1;
   else
     printf("Laser Initted\n");
@@ -1343,7 +1344,7 @@ int main(void)
 
       //lance reception mesures
 
-      while(count<10)
+      while(count<100)
 	{
 	  t0 = GetDate_us();
 	  if((laser_status = Laser_GetData(&l0, &l1, &d))!=ERR_LASER_FATAL)
