@@ -171,10 +171,6 @@ gboolean keyword_maj(gpointer data) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
     }
-    if(gui_spinner_is_active("chargement")) {
-        gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
-    }
-
     gtk_widget_queue_draw(gui_get_widget("mainWindow"));
     return TRUE;
 }

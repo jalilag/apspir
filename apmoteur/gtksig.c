@@ -548,35 +548,12 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Position",2850000)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
-
-            }
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-//                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
-//                if (!motor_forward(slave_get_node_with_index(i),0)) return;
-//                if (!motor_start(slave_get_node_with_index(i),1)) return;
-//            }
-        }
-    }
-    for (i=0; i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("Active",i)) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",127)) return;
                 sleep(1);
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",111)) return;
             }
         }
     }
-//    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 1) {
-//        usleep(100000);
-//    }
-//    for (i=0; i<SLAVE_NUMBER;i++) {
-//        if (slave_get_param_in_num("Active",i)) {
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_start(slave_get_node_with_index(i),0)) return;
-//            }
-//        }
-//    }
 }
 
 void on_butRotLeft_clicked (GtkWidget* pEntry) {
@@ -593,12 +570,12 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"Position",2850000)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-//                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
-//                if (!motor_forward(slave_get_node_with_index(i),1)) return;
-//                if (!motor_start(slave_get_node_with_index(i),1)) return;
-//            }
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"Couple",500)) return;
+                if (!motor_forward(slave_get_node_with_index(i),1)) return;
+                if (!motor_start(slave_get_node_with_index(i),1)) return;
+            }
         }
     }
     for (i=0; i<SLAVE_NUMBER;i++) {
@@ -610,16 +587,16 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
             }
         }
     }
-//    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
-//        usleep(100000);
-//    }
-//    for (i=0; i<SLAVE_NUMBER;i++) {
-//        if (slave_get_param_in_num("Active",i)) {
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_start(slave_get_node_with_index(i),0)) return;
-//            }
-//        }
-//    }
+    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
+        usleep(100000);
+    }
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        if (slave_get_param_in_num("Active",i)) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+                if (!motor_start(slave_get_node_with_index(i),0)) return;
+            }
+        }
+    }
 }
 
 void on_butRotInit_clicked (GtkWidget* pEntry) {
