@@ -26,8 +26,7 @@ static int MasterControl = 1;//flag indiquant quel laser détient le contrôle 0
 //MasterControl: dans Laser_GetData et VerifyMeasureConsistency
 
 
-unsigned long GetDate_us(void)
-{
+unsigned long GetDate_us(void) {
         static unsigned long InitDate=0;
         struct timespec t1;
         clock_gettime(CLOCK_MONOTONIC,&t1);
@@ -38,8 +37,7 @@ unsigned long GetDate_us(void)
 
 static int isopen[10] = {0,0,0,0,0,0,0,0,0,0};
 
-int openPort(laser * l)
-{
+int openPort(laser * l) {
     int fd = -1;
     char * portName = "/dev/ttyUSB";
     int imax=10;
@@ -74,17 +72,15 @@ int openPort(laser * l)
 }
 
 //mise à 0 donnees laser
-void init_laser_data(laser * l)
-{
+void init_laser_data(laser * l) {
   int i;
   pthread_mutex_lock(&(l->mutex));
   l->ready_for_analyse = 0;
   l->running = 0;
-  for (i=0; i<sizeof(l->laser_dat)/sizeof(struct laser_data); i++)
-    {
+  for (i=0; i<sizeof(l->laser_dat)/sizeof(struct laser_data); i++) {
       l->laser_dat[i].t = 0;
       l->laser_dat[i].mes = 0;
-    }
+  }
   pthread_mutex_unlock(&(l->mutex));
   LastLaserData.t = 0;
   LastLaserData.mes = 0;
@@ -92,8 +88,7 @@ void init_laser_data(laser * l)
   LastLaserData.vitesse_1s = 0;
 }
 
-void Laser_Init_Simu(laser * l)
-{
+void Laser_Init_Simu(laser * l) {
   pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
   l->mutex = m;
   l->fd = 0;
@@ -101,8 +96,7 @@ void Laser_Init_Simu(laser * l)
   init_laser_data(l);
 }
 
-int Laser_serial_config(void)
-{
+int Laser_serial_config(void) {
     pid_t pid = fork();
     if (pid < 0) {
         printf("A fork error in Laser_serial_config has occurred.\n");
@@ -123,32 +117,27 @@ int Laser_serial_config(void)
     return 0;
 }
 
-int Laser_Init(laser * l)
-{
+int Laser_Init(laser * l) {
   pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
   l->mutex = mut;
   l->isSimu = 0;
   init_laser_data(l);
 
   /** open serial ports**/
-  if(openPort(l)<0)
-    {
+  if(openPort(l)<0) {
       printf("openPort ERROR\n");
       return -2;
-    }
-  else
-    {
+  } else {
     /**Configuring serial port transmission type**/
       struct termios newtio;
 
       //printf("port %s opened. fd = %d->", l->portName, l->fd);
       //printf("Setting port %d params->", l->fd);
 
-      if(!isatty(l->fd))
-	{
-	  printf("port %d is not a tty\n", l->fd);
-	  return -1;
-	}
+      if(!isatty(l->fd)) {
+          printf("port %d is not a tty\n", l->fd);
+          return -1;
+      }
       /*
       if(tcgetattr(l->fd, &oldtio) < 0)
 	{
@@ -161,11 +150,10 @@ int Laser_Init(laser * l)
       //setting c_cflags
       // set baud rates
       tcflush(l->fd, TCIOFLUSH);
-      if(cfsetispeed(&newtio, B19200) < 0 || cfsetospeed(&newtio, B19200) < 0)
-	{
-	  printf("Impossible to set baud rates of port %d\n", l->fd);
-	  return -1;
-	}
+      if(cfsetispeed(&newtio, B19200) < 0 || cfsetospeed(&newtio, B19200) < 0) {
+          printf("Impossible to set baud rates of port %d\n", l->fd);
+          return -1;
+      }
 
       //even parity
       newtio.c_cflag |= PARENB;//parity check

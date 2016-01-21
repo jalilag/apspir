@@ -1,12 +1,14 @@
+#include "gtksig.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <gtk/gtk.h>
+#include <glib.h>
+
 #include "canfestival.h"
 
-#include "gtksig.h"
 #include "keyword.h"
 #include "master.h"
 #include "gui.h"
@@ -483,7 +485,7 @@ void on_butTransUp_clicked (GtkWidget* pEntry) {
         if (slave_get_param_in_num("Active",i)) {
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
                 motor_set_param(slave_get_node_with_index(i),"Couple",300);
-                motor_forward(slave_get_node_with_index(i),1);
+                motor_forward(slave_get_node_with_index(i),0);
                 motor_start(slave_get_node_with_index(i),1);
             }
         }
@@ -506,7 +508,7 @@ void on_butTransDown_clicked (GtkWidget* pEntry) {
         if (slave_get_param_in_num("Active",i)) {
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
                 motor_set_param(slave_get_node_with_index(i),"Couple",300);
-                motor_forward(slave_get_node_with_index(i),0);
+                motor_forward(slave_get_node_with_index(i),1);
                 motor_start(slave_get_node_with_index(i),1);
             }
         }
@@ -548,12 +550,12 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
 
             }
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
-                if (!motor_forward(slave_get_node_with_index(i),0)) return;
-                if (!motor_start(slave_get_node_with_index(i),1)) return;
-            }
+//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
+//                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
+//                if (!motor_forward(slave_get_node_with_index(i),0)) return;
+//                if (!motor_start(slave_get_node_with_index(i),1)) return;
+//            }
         }
     }
     for (i=0; i<SLAVE_NUMBER;i++) {
@@ -565,20 +567,16 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
             }
         }
     }
-    gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-    gui_widget2show("chargement",NULL);
-    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 1) {
-        usleep(100000);
-    }
-    gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
-    gui_widget2hide("chargement",NULL);
-    for (i=0; i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("Active",i)) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
-            }
-        }
-    }
+//    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 1) {
+//        usleep(100000);
+//    }
+//    for (i=0; i<SLAVE_NUMBER;i++) {
+//        if (slave_get_param_in_num("Active",i)) {
+//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+//                if (!motor_start(slave_get_node_with_index(i),0)) return;
+//            }
+//        }
+//    }
 }
 
 void on_butRotLeft_clicked (GtkWidget* pEntry) {
@@ -595,12 +593,12 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"Position",2850000)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
-                if (!motor_forward(slave_get_node_with_index(i),1)) return;
-                if (!motor_start(slave_get_node_with_index(i),1)) return;
-            }
+//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
+//                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
+//                if (!motor_forward(slave_get_node_with_index(i),1)) return;
+//                if (!motor_start(slave_get_node_with_index(i),1)) return;
+//            }
         }
     }
     for (i=0; i<SLAVE_NUMBER;i++) {
@@ -612,20 +610,16 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
             }
         }
     }
-    gui_widget2show("chargement",NULL);
-    gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 1) {
-        usleep(100000);
-    }
-    gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
-    gui_widget2hide("chargement",NULL);
-    for (i=0; i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("Active",i)) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
-            }
-        }
-    }
+//    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
+//        usleep(100000);
+//    }
+//    for (i=0; i<SLAVE_NUMBER;i++) {
+//        if (slave_get_param_in_num("Active",i)) {
+//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
+//                if (!motor_start(slave_get_node_with_index(i),0)) return;
+//            }
+//        }
+//    }
 }
 
 void on_butRotInit_clicked (GtkWidget* pEntry) {

@@ -1,5 +1,5 @@
-#include "SpirallingControl.h"
 #include "profile.h"
+#include "SpirallingControl.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

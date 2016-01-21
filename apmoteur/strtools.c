@@ -1,10 +1,10 @@
+#include "strtools.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "gtksig.h"
 #include <gtk/gtk.h>
-#include "strtools.h"
 #include "canfestival.h"
 
 char* strtools_concat(char* s1, char* s2, ...) {

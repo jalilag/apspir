@@ -1,9 +1,9 @@
+#include "motor.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#include "motor.h"
 #include "strtools.h"
 #include "gui.h"
 #include "keyword.h"

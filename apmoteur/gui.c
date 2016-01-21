@@ -1,9 +1,9 @@
+#include "gui.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include "gui.h"
 #include "strtools.h"
 #include "keyword.h"
 #include "SpirallingControl.h"

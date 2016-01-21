@@ -36,6 +36,7 @@ GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* colo
 GtkBox* gui_get_box(gchar* labid);
 GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...);
 int gui_spinner_is_active(char* labid);
+//void motor_running();
 
 GObject* gui_get_object(gchar* labid); // Renvoie l'objet gtk
 GtkWindow* gui_get_window(gchar* labid);

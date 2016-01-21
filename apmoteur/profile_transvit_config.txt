@@ -1,5 +1,5 @@
 Current ; 100
-Velinc ; 250000
+Velinc ; 51200
 Profile ; 3
 Pdot3 ; 0X606C0020
 Pdor1 ; 0X60FF0020

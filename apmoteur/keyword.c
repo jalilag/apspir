@@ -14,8 +14,6 @@ extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 void keyword_init () {
 
-    gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-
 /** TITRE DES WINDOWS **/
     gtk_window_set_title(gui_get_window("mainWindow"), APPLI_TITLE);
     if(gtk_window_set_icon_from_file(gui_get_window("mainWindow"),"images/icon.png",NULL) != 1)
@@ -77,7 +75,7 @@ void keyword_init () {
     gtk_button_set_image(gui_get_button("butParamHelix"),GTK_WIDGET(gtk_image_new_from_file("images/spiral.png")));
 }
 gboolean keyword_maj(gpointer data) {
-    int i = 0,j,k;
+    int i = 0,j=0,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
 
@@ -85,13 +83,22 @@ gboolean keyword_maj(gpointer data) {
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
             l++;
+        if (slave_get_param_in_num("Active",i)) {
+            if (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0)
+                j++;
+        }
     }
     if (l>0) {
         gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
         gui_widget2show("chargement",NULL);
     } else {
-        gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
-        gui_widget2hide("chargement",NULL);
+//        if (j>0) {
+//            gui_widget2show("chargement",NULL);
+//            gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+//        } else {
+            gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
+            gui_widget2hide("chargement",NULL);
+//        }
     }
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;

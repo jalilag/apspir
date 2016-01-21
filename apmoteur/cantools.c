@@ -1,7 +1,7 @@
+#include "cantools.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "cantools.h"
 #include "strtools.h"
 #include "canfestival.h"
 #include "gui.h"

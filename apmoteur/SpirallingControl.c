@@ -1,3 +1,4 @@
+#include "SpirallingControl.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -10,7 +11,6 @@
 
 #include "master.h"
 #include "slave.h"
-#include "SpirallingControl.h"
 #include "cantools.h"
 #include "gtksig.h"
 #include "gui.h"
@@ -95,7 +95,7 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {VELOCITY,"Velocity",0x60FF,0x00,0x04,0,1000000,ERR_SET_VELOCITY,ERR_READ_VELOCITY,ERR_SAVE_VELOCITY},
     {TARGET_POSITION,"Position",0x607A,0x00,0x04,0,10000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
     {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL},
-    {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,0XFFFFFFFF,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX}
+    {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,512000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX}
 };
 // Menu courant
 int current_menu = 0;
