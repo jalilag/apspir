@@ -28,8 +28,8 @@ UNS16 ErrorCode_3 = 0x0;		/* Mapped at index 0x2012, subindex 0x00 */
 UNS16 ErrorCode_4 = 0x0;		/* Mapped at index 0x2013, subindex 0x00 */
 INTEGER32 Vel2Send_3 = 0x0;		/* Mapped at index 0x2014, subindex 0x00 */
 INTEGER32 Vel2Send_4 = 0x0;		/* Mapped at index 0x2015, subindex 0x00 */
-UNS8 Velocity_3 = 0x0;		/* Mapped at index 0x2016, subindex 0x00 */
-UNS8 Velocity_4 = 0x0;		/* Mapped at index 0x2017, subindex 0x00 */
+INTEGER32 Velocity_3 = 0x0;		/* Mapped at index 0x2016, subindex 0x00 */
+INTEGER32 Velocity_4 = 0x0;		/* Mapped at index 0x2017, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -717,7 +717,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 SpirallingMaster_highestSubIndex_obj160A = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj160A[] =
                     {
-                      0x20160008,	/* 538312712 */
+                      0x20160020,	/* 538312736 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -797,7 +797,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 SpirallingMaster_highestSubIndex_obj160E = 8; /* number of subindex - 1*/
                     UNS32 SpirallingMaster_obj160E[] =
                     {
-                      0x20170008,	/* 538378248 */
+                      0x20170020,	/* 538378272 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -1880,13 +1880,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 /* index 0x2016 :   Mapped variable Velocity_3 */
                     subindex SpirallingMaster_Index2016[] =
                      {
-                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_3 }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_3 }
                      };
 
 /* index 0x2017 :   Mapped variable Velocity_4 */
                     subindex SpirallingMaster_Index2017[] =
                      {
-                       { RW, uint8, sizeof (UNS8), (void*)&Velocity_4 }
+                       { RW, int32, sizeof (INTEGER32), (void*)&Velocity_4 }
                      };
 
 /**************************************************************************/

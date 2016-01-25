@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
+#include "serialtools.h"
 // CONSTANTS
 #define MAX_SDO_ERROR 2
 #define SDO_TIMEOUT 3
@@ -272,6 +273,9 @@ gpointer cantools_init_loop(gpointer data) {
     while (run_init == -1) sleep(1);
     master_init();
 
+// Chargement des lasers
+//    g_idle_add(serialtools_init_laser,NULL);
+
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
     g_timeout_add(500,keyword_maj,NULL);
@@ -347,7 +351,7 @@ gpointer cantools_init_loop(gpointer data) {
             if (slave_get_param_in_num("Active",i) == 1) {
                 if (slave_get_param_in_num("Volt",i) > old_voltage[i])
                     old_voltage[i] = slave_get_param_in_num("Volt",i);
-                if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.90*old_voltage[i]) {
+                if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.50*old_voltage[i]) {
                     slave_set_param("Active",i,0);
                     old_voltage[i] = 0;
                     errgen_state = ERR_MOTOR_LOW_VOLTAGE;

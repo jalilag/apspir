@@ -5,7 +5,7 @@
 //REGLAGES
 //constantes
 #define NUM_READPORT_ERROR_TOL 40
-#define TIMECONSISTENCY_VAL 500000 // in micro s
+#define TIMECONSISTENCY_VAL 1000000 // in micro s
 #define POSITIONCONSISTENCY_VAL 60 // en 10eme de mm
 #define MESCONSISTENCY_VAL(vitesse_machine) (/*POSITIONCONSISTENCY_VAL*/60+labs(vitesse_machine)/2)//vitesse_machine en 10eme de mm/s
 #define CONVERT_MUS_S(t) ((double)(t)/1000000)

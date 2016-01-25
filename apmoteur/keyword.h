@@ -30,6 +30,7 @@ gboolean keyword_active_maj(gpointer data);
 #define DENOMINATION "Dénomination"
 #define DIAL_BOX_INIT_TITLE "Erreur d'initialisation"
 #define DIRECTION "Direction"
+#define DISTANCE "Distance"
 #define DELAYED "Différé"
 #define ETAT "Etat"
 #define ELEM_KEY "Elément concerné : "
@@ -142,6 +143,7 @@ gboolean keyword_active_maj(gpointer data);
 #define STATUT_TITLE "Status"
 #define STATUT_BAR "STATUS -> "
 #define STATUT "Statuts des périphériques"
+#define STATE_LASER "Etat Laser"
 #define START "Go"
 #define STEP_ERROR "Pas incorrect"
 #define STOP "Stop"
@@ -247,6 +249,16 @@ gboolean keyword_active_maj(gpointer data);
 #define ERROR_STATE_OP_TXT  "Erreur OP"
 #define ERROR_STATE_SON_TXT "Erreur SON"
 #define ERROR_STATE_VOLTAGE_TXT "Erreur tension"
+
+//LASER LABEL SET
+#define LASER_STATUS_OK_LABEL "Laser Status OK"
+#define MASTER_FAILED_TIMEOUT_LABEL "ERREUR TIMEOUT"
+#define SLAVE_FAILED_TIMEOUT_LABEL "ERREUR TIMEOUT"
+#define MASTER_FAILED_DATCONSISTENCY_LABEL "INCOHERENCE DES DONNEES"
+#define SLAVE_FAILED_DATCONSISTENCY_LABEL "INCOHERENCE DES DONNEES"
+#define MASTER_NOT_STARTED_LABEL "PAS CONNECTE"
+#define SLAVE_NOT_STARTED_LABEL "PAS CONNECTE"
+
 
 // MOTOR ERROR CODE
 #define MOTOR_ERROR_CAN_OVERRUN 0x8110

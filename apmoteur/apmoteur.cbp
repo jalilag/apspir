@@ -136,6 +136,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="profile.h" />
+		<Unit filename="serialtools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="serialtools.h" />
 		<Unit filename="slave.c">
 			<Option compilerVar="CC" />
 		</Unit>

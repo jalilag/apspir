@@ -542,7 +542,7 @@ int slave_save_param (int index) {
                     return 0;
                 }
                 dat1 += gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))));
-                str2build = strtools_concat(str2build,ent1," ",ent2,"\n",NULL);
+                str2build = strtools_concat(str2build,(char*)ent1," ",ent2,"\n",NULL);
             }
             i++;
         }
@@ -634,7 +634,7 @@ static int slave_get_state_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("2Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 
@@ -647,7 +647,7 @@ static void slave_set_state_with_index(int i, int dat) {
         slaves[i].state = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("3Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 /**
@@ -660,7 +660,7 @@ static int slave_get_state_error_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("4Index trop grand : %d",i);
+        printf("Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -673,7 +673,7 @@ static void slave_set_state_error_with_index (int i, int dat) {
         slaves[i].state_error = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("5Index trop grand : %d",i);
+        printf("Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -685,7 +685,7 @@ static void slave_set_active_with_index(int i, int var) {
         slaves[i].active = var;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("6Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 static int slave_get_active_with_index(int i) {
@@ -695,7 +695,7 @@ static int slave_get_active_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return var;
     } else {
-        printf("7Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 

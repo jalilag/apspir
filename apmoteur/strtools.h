@@ -10,6 +10,7 @@ int strtools_num_char_in_file(FILE* file, const char* delim); // Compte le nombr
 int strtools_num_char_in_str(char* strRef, char* str2find); // Nombre d'occurence dans une chaine
 void strtools_print_data(void* data,UNS8 type); // Show data on shell
 gchar* strtools_gnum2str(void *data,UNS8 type); // Convert to str for GTK
+gchar* strtools_gnum2str_all_decimal(void * data, UNS8 type);
 char* strtools_hex2bin(UNS16* data,UNS8 type); // Hexa -> binaire
 void strtools_inv_str(char *chaine); // Inversion de chaine
 int strtools_build_file(char* fname, char* str2write);

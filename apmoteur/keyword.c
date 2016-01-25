@@ -8,10 +8,12 @@
 #include "motor.h"
 #include "SpirallingControl.h"
 #include "profile.h"
+#include <time.h>
 
 extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
+
 void keyword_init () {
 
 /** TITRE DES WINDOWS **/
@@ -73,6 +75,20 @@ void keyword_init () {
     gtk_button_set_image(gui_get_button("butParamMotor"),GTK_WIDGET(gtk_image_new_from_file("images/moteur.png")));
     gtk_button_set_image(gui_get_button("butParamProfile"),GTK_WIDGET(gtk_image_new_from_file("images/profil.png")));
     gtk_button_set_image(gui_get_button("butParamHelix"),GTK_WIDGET(gtk_image_new_from_file("images/spiral.png")));
+
+/** BOX LASER **/
+    gui_image_set("imgLaserStateG", "gtk-no", 2);
+    gui_image_set("imgLaserStateD", "gtk-no", 2);
+    gui_label_set("labLaserStateG", DEFAULT);
+    gui_label_set("labLaserStateD", DEFAULT);
+    gui_label_set("labLaserDataG", DEFAULT);
+    gui_label_set("labLaserDataD", DEFAULT);
+    gui_label_set("labLaserDataV", DEFAULT);
+    gui_label_set("labLaserTitleG", LASERG);
+    gui_label_set("labLaserTitleD", LASERD);
+    gui_label_set("labLaserState",STATE_LASER);
+    gui_label_set("labLaserData", DISTANCE);
+
 }
 gboolean keyword_maj(gpointer data) {
     int i = 0,j=0,k;
@@ -92,13 +108,13 @@ gboolean keyword_maj(gpointer data) {
         gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
         gui_widget2show("chargement",NULL);
     } else {
-//        if (j>0) {
-//            gui_widget2show("chargement",NULL);
-//            gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-//        } else {
+        if (j>0) {
+            gui_widget2show("chargement",NULL);
+            gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+        } else {
             gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
             gui_widget2hide("chargement",NULL);
-//        }
+        }
     }
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;
@@ -141,7 +157,19 @@ gboolean keyword_maj(gpointer data) {
             gui_local_label_set(strtools_concat("labM",key,"State",NULL),slave_get_param_in_char("State",i),"mainWindow");
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
-        printf("Vitesse %s %d\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_num("Velocity",i));
+        printf("Vitesse %s %s\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_char("Velocity",i));
+        // Ecriture des vitesses
+        FILE* f = fopen(strtools_concat("dat/",slave_get_param_in_char("SlaveTitle",i),"_",profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)),".dat",NULL),"a");
+        char temps[20];
+        time_t now = time(NULL);
+        strftime(temps, 20, "%H:%M:%S", localtime(&now));
+        if (f != NULL) {
+            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit")
+                fputs(strtools_concat(temps," ",slave_get_param_in_char("Velocity",i)," ",slave_get_param_in_char("Vel2send",i),"\n",NULL),f);
+            else
+                fputs(strtools_concat(temps," ",slave_get_param_in_char("Velocity",i),"\n",NULL),f);
+            fclose(f);
+        }
     }
     // Vérification du switch translation
 //    int switch_but = gui_switch_is_active("butVelStart");
@@ -170,9 +198,6 @@ gboolean keyword_maj(gpointer data) {
     if(slave_get_node_with_profile(0) != 0x00) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
-    }
-    if(gui_spinner_is_active("chargement")) {
-        gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
     }
 
     gtk_widget_queue_draw(gui_get_widget("mainWindow"));

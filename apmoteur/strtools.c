@@ -184,6 +184,33 @@ gchar* strtools_gnum2str(void *data,UNS8 type) {
     }
 }
 
+gchar* strtools_gnum2str_all_decimal(void * data, UNS8 type){
+    int* pdata = data;
+    if (type == 0x01) {
+        if ((int)*pdata == 1) {
+            return "True";
+        } else if ((int)*pdata == 0) {
+            return "False";
+        } else {
+            printf("num2str error: no boolean\n");exit(1);
+        }
+    } else if (type == 0x02) {
+        return g_strdup_printf ("%d", (INTEGER8)*pdata);
+    } else if (type == 0x03) {
+        return g_strdup_printf ("%d", (INTEGER16)*pdata);
+    } else if (type == 0x04) {
+        return g_strdup_printf ("%d", (INTEGER32)*pdata);
+    } else if (type == 0x05) {
+        return g_strdup_printf ("%u", (UNS8)*pdata);
+    } else if (type == 0x06) {
+        return g_strdup_printf ("%u", (UNS16)*pdata);
+    } else if (type == 0x07) {
+        return g_strdup_printf ("%u", (UNS32)*pdata);
+    } else {
+        printf("num2str error : Type inconnu : %x \n",type); exit(1);
+    }
+}
+
 // Transformation d'un hexadecimal en binaire
 char* strtools_hex2bin(UNS16* data,UNS8 type) {
     if (data != NULL) {

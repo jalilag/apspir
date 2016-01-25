@@ -34,7 +34,7 @@ extern UNS16 ErrorCode_3;		/* Mapped at index 0x2012, subindex 0x00*/
 extern UNS16 ErrorCode_4;		/* Mapped at index 0x2013, subindex 0x00*/
 extern INTEGER32 Vel2Send_3;		/* Mapped at index 0x2014, subindex 0x00*/
 extern INTEGER32 Vel2Send_4;		/* Mapped at index 0x2015, subindex 0x00*/
-extern UNS8 Velocity_3;		/* Mapped at index 0x2016, subindex 0x00*/
-extern UNS8 Velocity_4;		/* Mapped at index 0x2017, subindex 0x00*/
+extern INTEGER32 Velocity_3;		/* Mapped at index 0x2016, subindex 0x00*/
+extern INTEGER32 Velocity_4;		/* Mapped at index 0x2017, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H
