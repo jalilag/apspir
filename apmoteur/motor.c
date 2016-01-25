@@ -11,11 +11,15 @@
 #include "master.h"
 #include "canfestival.h"
 #include "cantools.h"
+#include "errgen.h"
+#include "slave.h"
 
 int motor_switch_step = 0;
 const int motor_switch_step_max = 10;
 extern PARAM pardata[PARAM_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
+extern UNS16 errgen_state;
+char* errgen_aux;
 
 UNS8 motor_get_state(UNS16 state) {
     char *bstate = strtools_hex2bin(&state,0x06);
@@ -221,7 +225,9 @@ int motor_set_param(UNS8 node,char* id,INTEGER32 dat) {
     for (i=0;i<PARAM_NUMBER;i++) {
         if (strcmp(pardata[i].gui_code,id) == 0 ) {
             if (dat<pardata[i].valDown || dat>pardata[i].valUp) {
-                errgen_set(pardata[i].err_set,slave_get_title_with_node(node));
+                errgen_state = pardata[i].err_set;
+                errgen_aux = slave_get_title_with_node(node);
+                g_idle_add(errgen_set_safe(NULL),NULL);
                 return 0;
             }
             if (pardata[i].gui_code == "Velinc")
@@ -231,37 +237,49 @@ int motor_set_param(UNS8 node,char* id,INTEGER32 dat) {
                 if(pardata[i].type == 0x02) {
                     INTEGER8 data = (INTEGER8)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else if(pardata[i].type == 0x03) {
                     INTEGER16 data = (INTEGER16)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else if(pardata[i].type == 0x04) {
                     INTEGER32 data = (INTEGER32)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else if(pardata[i].type == 0x05) {
                     UNS8 data = (UNS8)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else if(pardata[i].type == 0x06) {
                     UNS16 data = (UNS16)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else if(pardata[i].type == 0x07) {
                     UNS32 data = (UNS32)dat;
                     if (!cantools_write_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_save;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                 } else {
@@ -290,42 +308,54 @@ int motor_get_param(UNS8 node,char* id,INTEGER32* dat) {
                 if(pardata[i].type == 0x02) {
                     INTEGER8 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (INTEGER8)data;
                 } else if(pardata[i].type == 0x03) {
                     INTEGER16 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (INTEGER16)data;
                 } else if(pardata[i].type == 0x04) {
                     INTEGER32 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (INTEGER32)data;
                 } else if(pardata[i].type == 0x05) {
                     UNS8 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (UNS8)data;
                 } else if(pardata[i].type == 0x06) {
                     UNS16 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (UNS16)data;
                 } else if(pardata[i].type == 0x07) {
                     UNS32 data;
                     if (!cantools_read_sdo(node,address,&data)) {
-                        errgen_set(pardata[i].err_read,slave_get_title_with_node(node));
+                        errgen_state = pardata[i].err_read;
+                        errgen_aux = slave_get_title_with_node(node);
+                        g_idle_add(errgen_set_safe(NULL),NULL);
                         return 0;
                     }
                     *dat = (UNS32)data;
@@ -364,4 +394,13 @@ UNS8 motor_get_param_type(char* id) {
     }
     printf("id : %s non trouvé\n",id);
     exit(1);
+}
+
+int motor_get_couple(INTEGER32 vel) {
+    if (vel == 0) return 150;
+    else if (vel > 0 && vel < 280000) return 1000;
+    else if (vel >= 280000 && vel < 300000) return 800;
+    else if (vel >= 300000 && vel < 320000) return 600;
+    else if (vel >= 320000 && vel < 341000) return 500;
+    else if (vel >= 341000 ) return 400;
 }

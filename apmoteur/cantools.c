@@ -274,7 +274,7 @@ gpointer cantools_init_loop(gpointer data) {
     master_init();
 
 // Chargement des lasers
-    g_idle_add(serialtools_init_laser,NULL);
+//    g_idle_add(serialtools_init_laser,NULL);
 
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
@@ -351,7 +351,7 @@ gpointer cantools_init_loop(gpointer data) {
             if (slave_get_param_in_num("Active",i) == 1) {
                 if (slave_get_param_in_num("Volt",i) > old_voltage[i])
                     old_voltage[i] = slave_get_param_in_num("Volt",i);
-                if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.80*old_voltage[i]) {
+                if (old_voltage[i] > 0 && slave_get_param_in_num("Volt",i) < 0.50*old_voltage[i]) {
                     slave_set_param("Active",i,0);
                     old_voltage[i] = 0;
                     errgen_state = ERR_MOTOR_LOW_VOLTAGE;

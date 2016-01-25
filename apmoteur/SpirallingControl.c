@@ -21,6 +21,8 @@
 #include "motor.h"
 #include "profile.h"
 #include "serialtools.h"
+#include <time.h>
+
 
 
 // Plateforme MASTER
@@ -201,6 +203,18 @@ int main(int argc,char **argv) {
             errgen_state = ERR_FILE_PROFILE;
             errgen_aux = profile_get_filename_with_index(i);
             g_idle_add(errgen_set_safe(NULL),NULL);
+        }
+    }
+
+// Initialisation des fichiers vitesse
+    for (i=0; i<SLAVE_NUMBER;i++) {
+        FILE* f = fopen(strtools_concat("dat/",slave_get_param_in_char("SlaveTitle",i),"_",profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)),".dat",NULL),"w");
+        char temps[20];
+        time_t now = time(NULL);
+        strftime(temps, 20, "%d-%m-%Y %H:%M:%S", localtime(&now));
+        if (f != NULL) {
+            fputs(strtools_concat(profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i))," -> ",slave_get_param_in_char("SlaveTitle",i),"\nDate : ",temps,"\n","Temps   ","Vitesse\n",NULL),f);
+            fclose(f);
         }
     }
 

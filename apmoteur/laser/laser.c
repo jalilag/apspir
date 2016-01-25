@@ -103,13 +103,11 @@ int Laser_serial_config(void) {
         exit(-1);
     } else {
         if (pid == 0) {
-            #if STAND_ALONE_TEST
-            execlp("./serial_conf.sh", "serial_conf.sh", NULL);
-            #else
+//            #if STAND_ALONE_TEST
+//            #else
             execlp("./laser/serial_conf.sh","laser/serial_conf.sh",NULL);
-            #endif // STAND_ALONE_TEST
-            printf("laser serial config script error\n");
-            return -1;
+            printf("laser serial config script error\n"); exit(1);
+//            #endif // STAND_ALONE_TEST
         } else {
             wait(0);
         }
