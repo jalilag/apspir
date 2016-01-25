@@ -90,6 +90,7 @@ void keyword_init () {
     gui_label_set("labLaserData", DISTANCE);
 
 }
+extern int motor_running;
 gboolean keyword_maj(gpointer data) {
     int i = 0,j=0,k;
     char* key;
@@ -114,6 +115,10 @@ gboolean keyword_maj(gpointer data) {
         } else {
             gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
             gui_widget2hide("chargement",NULL);
+            if (motor_running) {
+                Exit(0);
+                motor_running = 0;
+            }
         }
     }
     for (i=0; i<SLAVE_NUMBER; i++) {

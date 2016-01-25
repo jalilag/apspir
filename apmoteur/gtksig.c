@@ -570,7 +570,7 @@ void on_butTransStop_clicked(GtkWidget* pEntry) {
         }
     }
 }
-
+int motor_running = 0;
 void on_butRotRight_clicked (GtkWidget* pEntry) {
     if(gui_spinner_is_active("chargement")) return;
     Exit(0);
@@ -599,20 +599,10 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",127)) return;
                 sleep(1);
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",111)) return;
-                while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
-                    usleep(100000);
-                }
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
             }
         }
     }
-    for (i=0; i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("Active",i)) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
-            }
-        }
-    }
+    motor_running = 1;
 }
 
 void on_butRotLeft_clicked (GtkWidget* pEntry) {
@@ -643,20 +633,10 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",127)) return;
                 sleep(1);
                 if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",111)) return;
-                while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
-                    usleep(100000);
-                }
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
             }
         }
     }
-    for (i=0; i<SLAVE_NUMBER;i++) {
-        if (slave_get_param_in_num("Active",i)) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-                if (!motor_start(slave_get_node_with_index(i),0)) return;
-            }
-        }
-    }
+    motor_running = 1;
 }
 
 void on_butRotInit_clicked (GtkWidget* pEntry) {
