@@ -2,6 +2,7 @@
 #define _ERRGEN_H
 #include "data.h"
 #include <gtk/gtk.h>
+#include "errgen_laser.h"
 
 void errgen_set(UNS16 dat,char* op);
 GSourceFunc errgen_set_safe(gpointer data);
@@ -30,25 +31,25 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_MASTER_CONFIG_PDOR               0x0045
 #define ERR_MASTER_CONFIG_PDOT               0x0046
 
-#define ERR_SLAVE_CONFIG                     0x0080
-#define ERR_SLAVE_CONFIG_LSS                 0x0081
-#define ERR_SLAVE_CONFIG_HB                  0x0082
-#define ERR_SLAVE_CONFIG_PDOT                0x0083
-#define ERR_SLAVE_CONFIG_PDOR                0x0086
-#define ERR_SLAVE_CONFIG_ACTIVE_PDO          0x0087
-#define ERR_SLAVE_CONFIG_CURRENT             0x0088
-#define ERR_SLAVE_CONFIG_PROFILE             0x0089
-#define ERR_SLAVE_CONFIG_MAX_VELOCITY        0x008A
-#define ERR_SLAVE_CONFIG_ACCELERATION        0x008B
-#define ERR_SLAVE_CONFIG_DECELERATION        0x008C
-#define ERR_SLAVE_CONFIG_DECELERATION_QS     0x008D
-#define ERR_SLAVE_CONFIG_TORQUE              0x008E
-#define ERR_SLAVE_CONFIG_TORQUE_SLOPE        0x008F
-#define ERR_SLAVE_CONFIG_TORQUE_MAX_VELOCITY 0x0090
-#define ERR_SLAVE_CONFIG_MOTOR_SON           0x0091
-#define ERR_SLAVE_SAVE_CONFIG                0x0092
-#define ERR_SLAVE_LOAD_CONFIG                0x0093
-#define ERR_SLAVE_LOAD_INTERFACE             0x0094
+#define ERR_SLAVE_CONFIG                     0x0060
+#define ERR_SLAVE_CONFIG_LSS                 0x0061
+#define ERR_SLAVE_CONFIG_HB                  0x0062
+#define ERR_SLAVE_CONFIG_PDOT                0x0063
+#define ERR_SLAVE_CONFIG_PDOR                0x0064
+#define ERR_SLAVE_CONFIG_ACTIVE_PDO          0x0065
+#define ERR_SLAVE_CONFIG_CURRENT             0x0066
+#define ERR_SLAVE_CONFIG_PROFILE             0x0067
+#define ERR_SLAVE_CONFIG_MAX_VELOCITY        0x0068
+#define ERR_SLAVE_CONFIG_ACCELERATION        0x0069
+#define ERR_SLAVE_CONFIG_DECELERATION        0x006A
+#define ERR_SLAVE_CONFIG_DECELERATION_QS     0x006B
+#define ERR_SLAVE_CONFIG_TORQUE              0x006C
+#define ERR_SLAVE_CONFIG_TORQUE_SLOPE        0x006D
+#define ERR_SLAVE_CONFIG_TORQUE_MAX_VELOCITY 0x006E
+#define ERR_SLAVE_CONFIG_MOTOR_SON           0x006F
+#define ERR_SLAVE_SAVE_CONFIG                0x0070
+#define ERR_SLAVE_LOAD_CONFIG                0x0071
+#define ERR_SLAVE_LOAD_INTERFACE             0x0072
 
 #define ERR_READ_ACCELERATION                0x00C0
 #define ERR_READ_DECELERATION                0x00C1
@@ -106,4 +107,10 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_MOTOR_FORWARD                    0x0183
 #define ERR_MOTOR_BACKWARD                   0x0184
 #define ERR_MOTOR_LOW_VOLTAGE                0x0185
+
+#define LASER_ERROR(err)                    (0x80 | err)
+#define ERR_LASER_REINIT                     0x0500
+#define ERR_LASER_SERIAL_CONFIG              0x0501
+#define ERR_LASER_STARTCHECKTHREAD           0x0502
+
 #endif // _ERRGEN

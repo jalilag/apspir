@@ -6,6 +6,9 @@
 #include "gui.h"
 #include "strtools.h"
 
+UNS8 errgen_laserState = 0x00;
+laser ml, sl, lsim;
+
 int serialtools_in_reinit_laser = 0;
 extern int SLAVE_NUMBER;
 
@@ -122,7 +125,7 @@ gboolean serialtools_init_laser(gpointer err_init) {
 //    if(g_thread_try_new(NULL,serialtools_check_laser_500ms,NULL,NULL) == NULL){
 //        //errgen_set(ERR_LASER_STARTCHECKTHREAD, NULL);
 //    }
-    g_timeout_add(500,serialtools_check_laser_500ms,NULL);
+    g_timeout_add(500,(GSourceFunc)serialtools_check_laser_500ms,NULL);
 
 
     //printf ("err_l = %x", err_l);
@@ -144,7 +147,7 @@ gboolean serialtools_checkPlotState_laser(gpointer err_check) {
         return;
     }
 
-    if(laser_state = Laser_GetData(&ml, &sl, &d)){
+    if(laser_state = Laser_GetData(&ml, &sl, &d)) {
         if((laser_state & ERR_LASER_FATAL) == ERR_LASER_FATAL){
             printf("15\n");
             //errgen_set(LASER_ERROR(ERR_LASER_FATAL), NULL);
@@ -242,7 +245,7 @@ gboolean serialtools_checkPlotState_laser(gpointer err_check) {
 }
 
 static int run_laser_check = 0;
-gpointer serialtools_check_laser_500ms(gpointer data) {
+gboolean serialtools_check_laser_500ms(gpointer data) {
     run_laser_check = 1;
     while(run_laser_check) {
         //check laser state

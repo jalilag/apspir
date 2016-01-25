@@ -20,6 +20,7 @@
 #include "errgen.h"
 #include "motor.h"
 #include "profile.h"
+#include "serialtools.h"
 
 
 // Plateforme MASTER
@@ -127,6 +128,7 @@ void Exit(int type) {
         }
     }
     if (type > 1) {
+		serialtools_exit_laser(&err_exit_laser);
         run_init = 0;
         masterSendNMTstateChange (&SpirallingMaster_Data, 0, NMT_Stop_Node);
         if (getState(&SpirallingMaster_Data) != Unknown_state &&

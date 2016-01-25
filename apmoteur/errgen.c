@@ -13,6 +13,7 @@ extern GMutex lock_gui_box;
 extern UNS16 errgen_state;
 extern char* errgen_aux;
 
+
 GSourceFunc errgen_set_safe(gpointer data) {
     errgen_set(errgen_state,errgen_aux);
     errgen_state = 0x0000;
@@ -64,7 +65,7 @@ void errgen_set(UNS16 dat, char* op) {
             on_butParams_clicked(NULL);
         else
             Exit(2);
-    } else{
+    } else {
         g_mutex_lock(&lock_gui_box);
         gui_info_box(title,content,NULL);
         free(content); free(title);
