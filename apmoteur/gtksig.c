@@ -22,7 +22,7 @@
 
 GtkBuilder *builder;
 
-extern int run_init, SLAVE_NUMBER, current_menu;
+extern int run_init, SLAVE_NUMBER, current_menu, motor_running;
 extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
@@ -98,7 +98,7 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
         slave_get_param_in_num("Active",i))
             motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple(0));
     }
-    sleep(1);
+//    sleep(1);
     for (i=0; i<SLAVE_NUMBER; i++) {
         if ((slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransVit") ||
         slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransCouple")) &&
@@ -108,7 +108,8 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
                     motor_start(slave_get_node_with_index(i),1);
             } else if (j == 0) {
                 if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == OENABLED) {
-                    motor_start(slave_get_node_with_index(i),0);
+                    motor_running = 1;
+//                    motor_start(slave_get_node_with_index(i),0);
                 }
             }
         }
