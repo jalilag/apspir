@@ -22,6 +22,10 @@ extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
 
+CONFIG conf1;
+int step[2][20] = {{0}};
+int support[20]={0};
+
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -225,6 +229,8 @@ int slave_gui_param_gen(int ind) {
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
     if (gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix"));
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom"));
     if (ind == 0) {
         // grid
         GtkGrid* grid = gui_local_grid_set("gridMotor",MOTOR_PARAM_TITLE,6,"black");
@@ -286,6 +292,74 @@ int slave_gui_param_gen(int ind) {
             gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),profiles[i].title);
         }
         g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
+    } else if (ind == 2) {
+        // grid
+        GtkGrid* grid = gui_local_grid_set("gridGeom",GEOM_PARAM_TITLE,5,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        // Labs
+        GtkWidget* lab = gui_create_widget("lab","labLength2Pipe",strtools_concat(LENGTH_2_PIPE," : ",NULL),"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(grid,lab,0,1,1,1);
+        GtkWidget* ent = gui_create_widget("ent","entLength2Pipe",NULL,NULL);
+        gtk_grid_attach(grid,ent,1,1,1,1);
+        gtk_widget_set_halign(lab,GTK_ALIGN_START);
+        gtk_widget_set_halign(ent,GTK_ALIGN_START);
+        // but add
+        GtkWidget* lab2 = gui_create_widget("but","butAddSupport",ADD,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+        gtk_grid_attach(grid,lab2,3,1,1,1);
+        gtk_widget_set_margin_right (lab2,10);
+        gtk_widget_set_halign(lab2,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butAddSupport_clicked),NULL);
+        // but del
+        GtkWidget* lab3 = gui_create_widget("but","butDelSupport",REMOVE,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab3),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_left (lab3,10);
+        gtk_grid_attach(grid,lab3,4,2,1,1);
+        gtk_widget_set_margin_right (lab3,10);
+        gtk_widget_set_halign(lab3,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab3), "clicked", G_CALLBACK (on_butDelSupport_clicked),NULL);
+        GtkWidget* comb = gui_create_widget("combo","listSupport",NULL,NULL);
+        gtk_grid_attach(grid,comb,3,2,1,1);
+        // Chargement des données
+        FILE* geom_fn = fopen(FILE_GEOM_CONFIG,"r");
+        if (geom_fn != NULL) {
+            char title[20];
+            int datreflect,dat1;
+            int i=4,j;
+            char chaine[1024] = "";
+            while(fgets(chaine,1024,geom_fn) != NULL) {
+                printf("%s\n",chaine);
+                if (sscanf(chaine,"%19s %d",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entLength2Pipe")), strtools_gnum2str(&datreflect,0x04));
+                }
+                if (sscanf(chaine,"--%d",&dat1) == 1) {
+                    if (i == 4) {
+                        // Lab title
+                        GtkWidget* lab4 = gui_create_widget("lab","labSupportTitle",SUPPORT_TITLE,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab4,0,3,1,1);
+                        gtk_widget_set_halign(lab4,GTK_ALIGN_START);
+                        GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",SUPPORT_LENGTH,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab5,1,3,1,1);
+                        gtk_widget_set_halign(lab5,GTK_ALIGN_START);
+                    }
+                    j = i-3;
+                    GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);
+                    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entSupport_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x04),NULL);
+                    gtk_widget_set_halign(lab,GTK_ALIGN_START);
+                    gtk_widget_set_halign(ent1,GTK_ALIGN_START);
+
+                    gtk_grid_attach(GTK_GRID(grid),lab,0,i,1,1);
+                    gtk_grid_attach(GTK_GRID(grid),ent1,1,i,1,1);
+
+                    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&j,0x04),strtools_concat(SUPPORT_TITLE," : ",strtools_gnum2str(&j,0x02),NULL));
+                    i++;
+                }
+
+            }
+            fclose(geom_fn);
+        }
+
     } else if (ind == 3) {
         // grid
         GtkGrid* grid = gui_local_grid_set("gridHelix",HELIX_PARAM_TITLE,10,"black");
@@ -364,6 +438,7 @@ int slave_gui_param_gen(int ind) {
                     i++;
                 }
             }
+            fclose(helix_fn);
         }
         GtkWidget* lab6 = gui_create_widget("lab","labLengthDefined",strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat3,0x02),NULL),"fontBBig","bold","cell2","greenColor",NULL);
         gtk_grid_attach(grid,lab6,2,2,2,1);
@@ -495,6 +570,44 @@ int slave_save_param (int index) {
                 slave_set_param("State",i,STATE_PREOP);
         }
         return 1;
+    } else if (index == 2) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom");
+        GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listSupport");
+        int error = 0;
+        char* str2build ="";
+        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))) == 0 ) {
+            gui_info_popup(LENGTH_2_PIPE_ERROR,NULL);
+            return 0;
+        }
+        const char* l2pipetxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
+        str2build = strtools_concat(str2build,"Length2Pipe ",l2pipetxt,"\n",NULL);
+
+        int ii=0,i = 4, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        int dat1 = 0;
+        if (N == 0) {
+            gui_info_popup(SUPPORT_LENGTH_ERROR,NULL);
+            return 0;
+        }
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0 ) {
+                    gui_info_popup(SUPPORT_LENGTH_ERROR,NULL);
+                    return 0;
+                }
+                const char* ent1 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+                str2build = strtools_concat(str2build,"--",(char*)ent1,"\n",NULL);
+            }
+            i++;
+        }
+        if(!strtools_build_file(FILE_GEOM_CONFIG,str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        gui_widget2hide("windowParams",NULL);
+        gui_info_box(SAVE,SAVE_SUCCESS,NULL);
+
     } else if (index == 3) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
         GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
@@ -537,7 +650,7 @@ int slave_save_param (int index) {
                 }
                 const char* ent1 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
                 const char* ent2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i)));
-                if (gui_str2num(ent1) < STEP_LIMIT ) {
+                if (gui_str2num(ent1) < STEP_LIMIT && gui_str2num(ent1) != 0 ) {
                     gui_info_popup(STEP_ERROR,NULL);
                     return 0;
                 }
@@ -1026,5 +1139,86 @@ char* slave_get_param_title (char* parid) {
     }
     printf("parid : %s non trouvé",parid);
     exit(1);
+}
+
+gboolean slave_gui_load_visu(gpointer data) {
+    int i,j,valid=0,i1=0,i2=0;
+    for (i=0;i<20;i++) {
+        for (j=0;j<2;j++){
+            step[j][i] = 0;
+        }
+        support[i] = 0;
+    }
+    conf1.step_size = 0;
+    conf1.support_size = 0;
+    FILE* helix_fn = fopen(FILE_HELIX_CONFIG,"r");
+    if (helix_fn != NULL) {
+        char title[20];
+        int dattime, dat1,dat2,datpipe;
+        int i=4,j;
+        char chaine[1024] = "";
+        while(fgets(chaine,1024,helix_fn) != NULL) {
+            printf("%s\n",chaine);
+            if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
+                conf1.time = dattime;
+                printf("-1\n");
+                valid++;
+            }
+            if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
+                printf("-2\n");
+                conf1.pipeLength = datpipe;
+                valid++;
+            }
+            if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
+                step[0][i1] = dat1;
+                step[1][i1] = dat2;
+                i1++;
+                conf1.step_size = i1;
+            }
+        }
+        fclose(helix_fn);
+    }
+    FILE* geom_fn = fopen(FILE_GEOM_CONFIG,"r");
+    if (geom_fn != NULL) {
+        char title[20];
+        int datreflect,dat3;
+        int i=4,j;
+        char chaine[1024] = "";
+        while(fgets(chaine,1024,geom_fn) != NULL) {
+            if (sscanf(chaine,"%19s %d",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
+                conf1.length2pipe = datreflect;
+                valid++;
+                printf("-3\n");
+            }
+            if (sscanf(chaine,"--%d",&dat3) == 1) {
+                support[i2] = dat3;
+                i2++;
+                conf1.support_size = i2;
+            }
+        }
+        fclose(geom_fn);
+    }
+    // Grid
+    if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu"));
+    GtkGrid* grid = gui_local_grid_set("gridVisu",NULL,31,"");
+    gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(grid),TRUE,TRUE,0);
+    if (valid == 3 && i1>0 && i2>0) {
+        GtkWidget* lev = gtk_level_bar_new();
+        gtk_grid_attach(grid,lev,0,0,conf1.pipeLength,1);
+
+        for (i=0;i<conf1.pipeLength;i++) {
+            if (i<10) {
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("lab_",strtools_gnum2str(&i,0x04),NULL),strtools_concat(" ",strtools_gnum2str(&i,0x04),NULL),"cell3","bold","black",NULL);
+                gtk_grid_attach(grid,lab,i,1,1,1);
+            } else {
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("lab_",strtools_gnum2str(&i,0x04),NULL),strtools_gnum2str(&i,0x04),"cell3","bold","black",NULL);
+                gtk_grid_attach(grid,lab,i,1,1,1);
+            }
+        }
+    }
+    gtk_grid_set_row_homogeneous(grid,TRUE);
+    gtk_widget_show_all(gui_get_widget("mainWindow"));
+    return FALSE;
 }
 

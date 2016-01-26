@@ -84,7 +84,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -270,6 +270,7 @@
                   <object class="GtkLabel" id="labLaserTItle">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
                     <property name="label" translatable="yes">label</property>
                     <style>
                       <class name="h1"/>
@@ -500,7 +501,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -1063,6 +1064,21 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="boxVisu">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">3</property>
           </packing>
         </child>
@@ -1387,6 +1403,7 @@
                 <property name="xalign">0.49000000953674316</property>
                 <property name="yalign">0.49000000953674316</property>
                 <property name="always_show_image">True</property>
+                <signal name="clicked" handler="on_butParamGeom_clicked" swapped="no"/>
                 <style>
                   <class name="stdButton"/>
                   <class name="butBlack2"/>

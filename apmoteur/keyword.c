@@ -72,9 +72,11 @@ void keyword_init () {
     gui_button_set("butParamMotor",MOTOR_PARAM_TITLE,"gtk-save");
     gui_button_set("butParamProfile",PROFIL_PARAM_TITLE,"gtk-save");
     gui_button_set("butParamHelix",HELIX_PARAM_TITLE,"gtk-save");
+    gui_button_set("butParamGeom",GEOM_PARAM_TITLE,"gtk-save");
     gtk_button_set_image(gui_get_button("butParamMotor"),GTK_WIDGET(gtk_image_new_from_file("images/moteur.png")));
     gtk_button_set_image(gui_get_button("butParamProfile"),GTK_WIDGET(gtk_image_new_from_file("images/profil.png")));
     gtk_button_set_image(gui_get_button("butParamHelix"),GTK_WIDGET(gtk_image_new_from_file("images/spiral.png")));
+    gtk_button_set_image(gui_get_button("butParamGeom"),GTK_WIDGET(gtk_image_new_from_file("images/geom.png")));
 
 /** BOX LASER **/
     gui_image_set("imgLaserStateG", "gtk-no", 2);

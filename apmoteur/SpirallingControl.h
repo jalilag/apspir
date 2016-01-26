@@ -10,8 +10,9 @@
 #define HB_CONS_BASE 0x000003E8 // Verification du heartbeat tout les 1000ms
 #define HB_CONS_BASE_OFFSET 0x00000032 // Décalage de vérification 50ms
 #define HB_PROD 0x01F4 // Hearbeat esclave envoyé tout les 500ms
-#define FILE_SLAVE_CONFIG "slave_config.txt"
-#define FILE_HELIX_CONFIG "helix_config.txt"
+#define FILE_SLAVE_CONFIG "config/slave_config.txt"
+#define FILE_HELIX_CONFIG "config/helix_config.txt"
+#define FILE_GEOM_CONFIG "config/geom_config.txt"
 #define TIME_SET_LIMIT 300
 #define STEP_LIMIT 6
 // PROFILE

@@ -278,6 +278,7 @@ gpointer cantools_init_loop(gpointer data) {
 
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
+    g_idle_add(slave_gui_load_visu,NULL);
     g_timeout_add(500,keyword_maj,NULL);
 
     while (run_init == 1) {

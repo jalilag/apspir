@@ -49,6 +49,7 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "butParamSave"), "clicked", G_CALLBACK (on_butParamSave_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamMotor"), "clicked", G_CALLBACK (on_butParamMotor_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamProfile"), "clicked", G_CALLBACK (on_butParamProfile_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butParamGeom"), "clicked", G_CALLBACK (on_butParamGeom_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamHelix"), "clicked", G_CALLBACK (on_butParamHelix_clicked),NULL);
 
     // Mise en place
@@ -273,6 +274,13 @@ void on_butParamMotor_clicked(GtkWidget* pEntry) {
 **/
 void on_butParamProfile_clicked(GtkWidget* pEntry) {
     current_menu = 1;
+    slave_gui_param_gen(current_menu);
+}
+/**
+* Bouton Header paramètre Geometrie
+**/
+void on_butParamGeom_clicked(GtkWidget* pEntry) {
+    current_menu = 2;
     slave_gui_param_gen(current_menu);
 }
 /**
@@ -513,6 +521,47 @@ void on_lengthDef_changed (GtkWidget* pEntry) {
         gtk_style_context_add_class (gtk_widget_get_style_context(lab), "greenColor");
     }
 }
+
+void on_butAddSupport_clicked (GtkWidget* pEntry) {
+    GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom");
+    GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listSupport");
+    int i = 4,j;
+    while(gtk_grid_get_child_at(GTK_GRID(grid),1,i) != NULL) {
+        i++;
+    }
+    if (i == 4) {
+        // Lab title
+        GtkWidget* lab4 = gui_create_widget("lab","labSupportTitle",SUPPORT_TITLE,"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(GTK_GRID(grid),lab4,0,3,1,1);
+        gtk_widget_set_halign(lab4,GTK_ALIGN_START);
+        GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",SUPPORT_LENGTH,"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(GTK_GRID(grid),lab5,1,3,1,1);
+        gtk_widget_set_halign(lab5,GTK_ALIGN_START);
+    }
+    j = i-3;
+    GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x02),NULL),strtools_gnum2str(&j,0x02),"fontBig","bold","cell2",NULL);
+    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entSupport_",strtools_gnum2str(&j,0x02),NULL),NULL,NULL);
+//    g_signal_connect (G_OBJECT(ent2), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
+    gtk_widget_set_halign(lab,GTK_ALIGN_START);
+    gtk_widget_set_halign(ent1,GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(grid),lab,0,i,1,1);
+    gtk_grid_attach(GTK_GRID(grid),ent1,1,i,1,1);
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&j,0x02),strtools_concat(SUPPORT_TITLE," : ",strtools_gnum2str(&j,0x02),NULL));
+    gtk_widget_show_all(grid);
+}
+
+void on_butDelSupport_clicked (GtkWidget* pEntry) {
+    GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom");
+    GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listSupport");
+    int ind = gtk_combo_box_get_active(GTK_COMBO_BOX(comb));
+    if (ind != -1) {
+        const gchar* key = gtk_combo_box_get_active_id(GTK_COMBO_BOX(comb));
+        int k = gui_str2num(key);
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),0,k+3));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),1,k+3));
+        gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT(comb), ind);
+    }
+ }
 
 void on_butTransUp_clicked (GtkWidget* pEntry) {
     if(gui_spinner_is_active("chargement")) return;

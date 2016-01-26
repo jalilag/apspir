@@ -30,6 +30,7 @@ void on_butParamMotor_clicked(GtkWidget* pEntry);
 void on_butParamProfile_clicked(GtkWidget* pEntry);
 void on_butParamHelix_clicked(GtkWidget* pEntry);
 void on_listProfile_changed(GtkWidget* pEntry);
+void on_butParamGeom_clicked(GtkWidget* pEntry);
 void on_butAddField_clicked (GtkWidget* pEntry);
 void on_butDelField_clicked (GtkWidget* pEntry);
 
@@ -39,6 +40,9 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) ;
 void on_butAddStep_clicked(GtkWidget* pEntry);
 void on_butDelStep_clicked(GtkWidget* pEntry);
 void on_lengthDef_changed (GtkWidget* pEntry);
+
+void on_butAddSupport_clicked (GtkWidget* pEntry);
+void on_butDelSupport_clicked (GtkWidget* pEntry);
 
 void on_butTransUp_clicked (GtkWidget* pEntry);
 void on_butTransDown_clicked (GtkWidget* pEntry);

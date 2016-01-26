@@ -292,13 +292,15 @@ void gui_init() {
 GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* color) {
     GtkGrid* grid = GTK_GRID(gtk_grid_new());
     gtk_widget_set_name(GTK_WIDGET(grid),gridID);
-    GtkWidget* lab = gtk_label_new(gridTitle);
-    gtk_grid_attach (grid, lab, 0, 0, numcol, 1);
-    gtk_widget_set_hexpand(lab,TRUE);
-    gtk_widget_set_halign(lab,GTK_ALIGN_FILL);
+    if (gridTitle != NULL) {
+        GtkWidget* lab = gtk_label_new(gridTitle);
+        gtk_grid_attach (grid, lab, 0, 0, numcol, 1);
+        gtk_widget_set_hexpand(lab,TRUE);
+        gtk_widget_set_halign(lab,GTK_ALIGN_FILL);
+        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "h1");
+        gtk_style_context_add_class (gtk_widget_get_style_context(lab), color);
+    }
     gtk_widget_set_halign(GTK_WIDGET(grid),GTK_ALIGN_FILL);
-    gtk_style_context_add_class (gtk_widget_get_style_context(lab), "h1");
-    gtk_style_context_add_class (gtk_widget_get_style_context(lab), color);
     gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid)), "box");
     gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid)), strtools_concat(color,"Box",NULL));
     gtk_widget_set_margin_top (GTK_WIDGET(grid),10);

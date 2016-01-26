@@ -26,6 +26,14 @@ struct PARVAR {
     char* title;
 };
 
+typedef struct CONFIG CONFIG;
+struct CONFIG {
+    int time; // s
+    int pipeLength; // m
+    int length2pipe;
+    int step_size;
+    int support_size;
+};
 
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
@@ -62,6 +70,7 @@ int slave_save_param (int index);
 gboolean slave_gui_load_state(gpointer data);
 int slave_check_profile_file();
 int slave_read_definition();
+gboolean slave_gui_load_visu(gpointer data);
 
 char* slave_get_param_in_char(char* parid, int index);
 INTEGER32 slave_get_param_in_num(char* parid, int index);
