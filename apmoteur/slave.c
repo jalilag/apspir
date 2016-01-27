@@ -11,16 +11,20 @@
 #include "master.h"
 #include "gtksig.h"
 #include "profile.h"
+
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
-
 extern int SLAVE_NUMBER, run_init;
+
+extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
 
+extern UNS16 errgen_state;
+extern char* errgen_aux;
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -39,94 +43,180 @@ int slave_config(UNS8 nodeID) {
 **/
 static int slave_config_com(UNS8 nodeID) {
     /** ACTIVATION HEARTBEAT PRODUCER **/
+
     UNS16 heartbeat_prod = HB_PROD;
     SDOR hbprod = {0x1017,0x00,0x06};
+
     if(!cantools_write_sdo(nodeID,hbprod,&heartbeat_prod)) {
-        errgen_set(ERR_SLAVE_CONFIG_HB,slave_get_title_with_node(nodeID));
+        errgen_state = ERR_SLAVE_CONFIG_HB;
+        errgen_aux = slave_get_title_with_node(nodeID);
+        g_idle_add(errgen_set_safe(NULL), NULL);
         return 0;
     }
+    /** ACTIVATION DES PDOs **/
+
     /** CONFIGURATION PDOT **/
     // StatusWord, Error Code, Voltage, Temp
+
     if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0x20150110,0x20180108,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+        errgen_state = ERR_SLAVE_CONFIG_PDOT;
+        errgen_aux = slave_get_title_with_node(nodeID);
+        g_idle_add(errgen_set_safe(NULL), NULL);
         return 0;
     }
-    // pdo vitesse ou couple défini lors de l'enregistrement des paramètres
-    /*
-    if(!cantools_PDO_map_config(nodeID,0x1A01,0x20150110,0x20180108,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
-        return 0;
-    }
-    */
-    /** ACTIVATION DES PDOs **/
     //transmission volt, temp, status, etc.
     if (!cantools_PDO_trans(nodeID,0x1800,0xFF,5000,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-        return 0;
-    }
-    //transmission vitesse réservé moteur vitesse directeurs du mouvement, rotation ou translation. Pour mesure sur moteurs couple utiliser l'index suivant.
-    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+        errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+        errgen_aux = slave_get_title_with_node(nodeID);
+        g_idle_add(errgen_set_safe(NULL), NULL);
         return 0;
     }
 
-    if (!cantools_desactive_PDO_reseau(nodeID,0x1802)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-        return 0;
-    }
-    if (!cantools_desactive_PDO_reseau(nodeID,0x1803)) {
-        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-        return 0;
-    }
     /**PROFILE SPECIFIC**/
      int l = slave_get_profile_with_node(nodeID);
+     printf("l = %d, nodeId = %d", l, nodeID);
      if (l == PROF_VITROT){
         //vitesse et position
         //mapping PDO T moteur (vitesse, position)
         if (!cantools_PDO_map_config(nodeID,0x1A01,0x606C0020,0x60640020,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            errgen_state = ERR_SLAVE_CONFIG_PDOT;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
         //param PDO T moteur (tous les 10ms)
         if (!cantools_PDO_trans(nodeID,0x1801,0x01,0,0)) {//on sync sinon on la recoit tous le temps (la position...)
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
+        //mapping PDOR
+        if(!cantools_PDO_map_config(nodeID, 0x1600, 0x60FF0020, 0)){
+            errgen_state = ERR_SLAVE_CONFIG_PDOR;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return 0;
+        }
+
      } else if (l == PROF_VITTRANS){
         //uniquement la vitesse
         //mapping PDOT moteur
         if (!cantools_PDO_map_config(nodeID, 0x1A01, 0x606C0020, 0)){
-            errgen_set(ERR_SLAVE_CONFIG_PDOT, slave_get_title_with_node(nodeID));
+            errgen_state = ERR_SLAVE_CONFIG_PDOT;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
-       //param PDOT moteur
+        //
         if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
+        //mapping PDOR
+        if(!cantools_PDO_map_config(nodeID, 0x1600, 0x60FF0020, 0)){
+            errgen_state = ERR_SLAVE_CONFIG_PDOR;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return 0;
+        }
+
      } else if (l == PROF_COUPLROT || l == PROF_COUPLTRANS){
         //couple à transmettre
-        //mapping:
-        if( !cantools_PDO_map_config(nodeID,0x1A01,0x60770010,0)){
-            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
-            return 0;
+        //mapping PDOT:
+        if(l == PROF_COUPLTRANS){
+            if( !cantools_PDO_map_config(nodeID,0x1A01,0x606C0020,0x60770010,0)){
+                errgen_state = ERR_SLAVE_CONFIG_PDOT;
+                errgen_aux = slave_get_title_with_node(nodeID);
+                g_idle_add(errgen_set_safe(NULL), NULL);
+                //return 0;
+            }
+        } else {
+            if( !cantools_PDO_map_config(nodeID,0x1A01,0x60770010,0)){
+                errgen_state = ERR_SLAVE_CONFIG_PDOT;
+                errgen_aux = slave_get_title_with_node(nodeID);
+                g_idle_add(errgen_set_safe(NULL), NULL);
+                //return 0;
+            }
         }
-        //param PDOT moteur
         if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
-     } else if (l == PROF_LIBRE){
-     }
+        //mapping PDOR
 
+        if(!cantools_PDO_map_config(nodeID, 0x1600, 0x60710010, 0)){
+            errgen_state = ERR_SLAVE_CONFIG_PDOR;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return 0;
+        }
+
+     } else if (l == PROF_LIBRE){}
+
+     if (!cantools_desactive_PDO_reseau(nodeID,0x1802)) {
+        errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+        errgen_aux = slave_get_title_with_node(nodeID);
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return 0;
+    }
+    if (!cantools_desactive_PDO_reseau(nodeID,0x1803)) {
+        errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
+        errgen_aux = slave_get_title_with_node(nodeID);
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return 0;
+    }
     return 1;
 }
+/**Old function**/
+//static int slave_config_com(UNS8 nodeID) {
+//    /** ACTIVATION HEARTBEAT PRODUCER **/
+//    UNS16 heartbeat_prod = HB_PROD;
+//    SDOR hbprod = {0x1017,0x00,0x06};
+//    if(!cantools_write_sdo(nodeID,hbprod,&heartbeat_prod)) {
+//        errgen_set(ERR_SLAVE_CONFIG_HB,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    /** CONFIGURATION PDOT **/
+//    // StatusWord, Error Code
+//    if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0)) {
+//        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    // Voltage, Temp
+//    if(!cantools_PDO_map_config(nodeID,0x1A01,0x20150110,0x20180108,0)) {
+//        errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    /** ACTIVATION DES PDOs **/
+//    if (!cantools_PDO_trans(nodeID,0x1800,0xFF,0x000A,0x0000)) {
+//        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    if (!cantools_PDO_trans(nodeID,0x1801,0xFF,0x1388,0x0000)) {
+//        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    if (!cantools_PDO_trans(nodeID,0x1802,0xFF,0x0000,0x0000)) {
+//        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    if (!cantools_PDO_trans(nodeID,0x1803,0xFF,0x0000,0x0000)) {
+//        errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+//        return 0;
+//    }
+//    return 1;
+//}
 /**
 * Configuration des esclaves à partir du fichier profile correspondant
 * 0: Echec; 1 Reussite
 **/
 int slave_config_with_file(UNS8 nodeID) {
-    FILE* motor_fn = fopen(slave_get_profile_filename(slave_get_profile_with_node(nodeID)),"r");
+    FILE* motor_fn = fopen(profile_get_filename_with_index(slave_get_profile_with_node(nodeID)),"r");
     if (motor_fn != NULL) {
         UNS32 datu32;
         INTEGER32 dati32;
@@ -174,11 +264,13 @@ int slave_config_with_file(UNS8 nodeID) {
             UNS32 *data = *(pdor+i);
             if (data[0] != 0) {
                 if(!cantools_PDO_map_config(nodeID,0x1600+i,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],0)) {
-                    errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+		    errgen_state = ERR_SLAVE_CONFIG_PDOR; errgen_aux = slave_get_title_with_node(nodeID);
+		    g_idle_add(errgen_set_safe(NULL), NULL);
                     return 0;
                 }
                 if (!cantools_PDO_trans(nodeID,0x1400+i,0xFF,0x0000,0x0000)) {
-                    errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+                    errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO; errgen_aux = slave_get_title_with_node(nodeID);
+		    g_idle_add(errgen_set_safe(NULL), NULL);
                     return 0;
                 }
             }
@@ -188,18 +280,21 @@ int slave_config_with_file(UNS8 nodeID) {
             INTEGER32 *data = *(pdot+i);
             if (data[0] != 0) {
                 if(!cantools_PDO_map_config(nodeID,0x1A00+2+i,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],0)) {
-                    errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+                    errgen_state = ERR_SLAVE_CONFIG_PDOR; errgen_aux = slave_get_title_with_node(nodeID);
+		    g_idle_add(errgen_set_safe(NULL), NULL);
                     return 0;
                 }
                 if (!cantools_PDO_trans(nodeID,0x1800+2+i,0xFF,0x0000,0x0000)) {
-                    errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+                    errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO; errgen_aux = slave_get_title_with_node(nodeID);
+		    g_idle_add(errgen_set_safe(NULL), NULL);
                     return 0;
                 }
             }
         }
         fclose(motor_fn);
     } else {
-        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(slave_get_profile_with_node(nodeID)));
+	errgen_state = ERR_FILE_OPEN; errgen_aux = profile_get_filename_with_index(slave_get_profile_with_node(nodeID));
+	g_idle_add(errgen_set_safe(NULL), NULL);
         return 0;
     }
     return 1;
@@ -259,7 +354,6 @@ gboolean slave_gui_load_state(gpointer data) {
         g_signal_connect (G_OBJECT(but), "clicked", G_CALLBACK (on_butActive_clicked),&slaves[i].node);
         g_signal_connect (G_OBJECT(but2), "clicked", G_CALLBACK (on_butFree_clicked),&slaves[i].node);
     }
-
     gtk_widget_show_all (gui_get_widget("mainWindow"));
     return FALSE;
 }
@@ -269,19 +363,23 @@ int slave_gui_param_gen(int ind) {
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor"));
     if (gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile"));
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix"));
     if (ind == 0) {
         // grid
         GtkGrid* grid = gui_local_grid_set("gridMotor",MOTOR_PARAM_TITLE,6,"black");
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         // but add
-        GtkWidget* lab = gui_create_widget("but","butAddSlave",ADD);
+        GtkWidget* lab = gui_create_widget("but","butAddSlave",ADD,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_right (lab,10);
         gtk_grid_attach(grid,lab,5,1,1,1);
         g_signal_connect (G_OBJECT(lab), "clicked", G_CALLBACK (on_butAddSlave_clicked),NULL);
         // but del
-        GtkWidget* lab2 = gui_create_widget("but","butDelSlave",REMOVE);
+        GtkWidget* lab2 = gui_create_widget("but","butDelSlave",REMOVE,"stdButton","butBlue",NULL);
         gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_left (lab2,10);
         gtk_grid_attach(grid,lab2,0,1,1,1);
         g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butDelSlave_clicked),NULL);
         //list to del
@@ -293,6 +391,10 @@ int slave_gui_param_gen(int ind) {
             GtkWidget* lab = gui_create_widget("lab",strtools_concat("labParamM",labtxt[i],NULL),
                 slave_get_param_title(labtxt[i]),"bold",NULL);
             gtk_grid_attach(grid,lab,i,2,1,1);
+            gtk_widget_set_margin_left (lab,13);
+            if (i==0) gtk_widget_set_margin_left (lab,18);
+            gtk_widget_set_halign(lab,GTK_ALIGN_START);
+
         }
         int j,k,l;
         for (i=0;i<SLAVE_NUMBER;i++) {
@@ -302,16 +404,19 @@ int slave_gui_param_gen(int ind) {
                 GtkWidget* lab = gui_create_widget("ent",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),
                     labtxt[k],NULL),slave_get_param_in_char(labtxt[k],i),NULL);
                 gtk_grid_attach(grid,lab,k,i+3,1,1);
+                if (k==0) gtk_widget_set_margin_left (lab,10);
             }
             GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
             for (l=0; l<PROFILE_NUMBER;l++) {
                 gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
             }
             gtk_grid_attach(grid,comb,5,i+3,1,1);
+            gtk_widget_set_margin_right (comb,10);
             gtk_combo_box_set_active (GTK_COMBO_BOX(comb), slave_get_profile_with_index(i));
         }
-    } else if (ind == 1){
-        GtkGrid* grid = gui_local_grid_set("gridProfile",MOTOR_PARAM_TITLE,4,"black");
+    } else if (ind == 1) {
+        // Grid
+        GtkGrid* grid = gui_local_grid_set("gridProfile",PROFIL_PARAM_TITLE,4,"black");
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         GtkWidget* comb = gui_create_widget("combo","listProfile",NULL,NULL);
@@ -321,6 +426,88 @@ int slave_gui_param_gen(int ind) {
             gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&i,0x02),profiles[i].title);
         }
         g_signal_connect (G_OBJECT(comb), "changed", G_CALLBACK (on_listProfile_changed),NULL);
+    } else if (ind == 3) {
+        // grid
+        GtkGrid* grid = gui_local_grid_set("gridHelix",HELIX_PARAM_TITLE,10,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        // Labs
+        GtkWidget* lab = gui_create_widget("lab","labTimeSet",strtools_concat(TIME_2_SET," : ",NULL),"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(grid,lab,0,1,1,1);
+        GtkWidget* ent = gui_create_widget("ent","entTimeSet",NULL,NULL);
+        gtk_grid_attach(grid,ent,1,1,1,1);
+        gtk_widget_set_halign(lab,GTK_ALIGN_START);
+        gtk_widget_set_halign(ent,GTK_ALIGN_START);
+        GtkWidget* lab7 = gui_create_widget("lab","labPipeLength",strtools_concat(PIPE_LENGTH," : ",NULL),"fontBig","bold","cell2",NULL);
+        gtk_grid_attach(grid,lab7,0,2,1,1);
+        GtkWidget* ent7 = gui_create_widget("ent","entPipeLength",NULL,NULL);
+        g_signal_connect (G_OBJECT(ent7), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
+        gtk_grid_attach(grid,ent7,1,2,1,1);
+        gtk_widget_set_halign(ent7,GTK_ALIGN_START);
+        gtk_widget_set_halign(lab7,GTK_ALIGN_START);
+        // but add
+        GtkWidget* lab2 = gui_create_widget("but","butAddStep",ADD,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab2),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-add",GTK_ICON_SIZE_BUTTON)));
+        gtk_grid_attach(grid,lab2,8,1,1,1);
+        gtk_widget_set_margin_right (lab2,10);
+        gtk_widget_set_halign(lab2,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab2), "clicked", G_CALLBACK (on_butAddStep_clicked),NULL);
+        // but del
+        GtkWidget* lab3 = gui_create_widget("but","butDelStep",REMOVE,"stdButton","butBlue",NULL);
+        gtk_button_set_image(GTK_BUTTON(lab3),GTK_WIDGET(gtk_image_new_from_icon_name("list-remove",GTK_ICON_SIZE_BUTTON)));
+        gtk_widget_set_margin_left (lab3,10);
+        gtk_grid_attach(grid,lab3,9,2,1,1);
+        gtk_widget_set_margin_right (lab3,10);
+        gtk_widget_set_halign(lab3,GTK_ALIGN_FILL);
+        g_signal_connect (G_OBJECT(lab3), "clicked", G_CALLBACK (on_butDelStep_clicked),NULL);
+        GtkWidget* comb = gui_create_widget("combo","listStep",NULL,NULL);
+        gtk_grid_attach(grid,comb,8,2,1,1);
+        // Chargement des données
+        FILE* helix_fn = fopen(FILE_HELIX_CONFIG,"r");
+        int dat3 = 0;
+        if (helix_fn != NULL) {
+            char title[20];
+            int dattime, dat1,dat2,datpipe;
+            int i=4,j;
+            char chaine[1024] = "";
+            while(fgets(chaine,1024,helix_fn) != NULL) {
+                printf("%s\n",chaine);
+                if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
+                }
+                if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(ent7), strtools_gnum2str(&datpipe,0x04));
+                }
+                if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
+                    dat3+=dat2;
+                    if (i == 4) {
+                        // Lab title
+
+                        GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
+                        gtk_widget_set_halign(lab4,GTK_ALIGN_START);
+                        GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
+                        gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
+                        gtk_widget_set_halign(lab5,GTK_ALIGN_START);
+                    }
+                    j = i-3;
+                    GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);
+                    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x04),NULL);
+                    GtkWidget* ent2 = gui_create_widget("ent",strtools_concat("entLength_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat2,0x04),NULL);
+                    g_signal_connect (G_OBJECT(ent2), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
+
+                    gtk_grid_attach(GTK_GRID(grid),lab,0,i,1,1);
+                    gtk_grid_attach(GTK_GRID(grid),ent1,1,i,1,1);
+                    gtk_grid_attach(GTK_GRID(grid),ent2,2,i,1,1);
+
+                    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&j,0x04),strtools_concat(HELIX_STEP," : ",strtools_gnum2str(&j,0x02),NULL));
+                    i++;
+                }
+            }
+        }
+        GtkWidget* lab6 = gui_create_widget("lab","labLengthDefined",strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat3,0x02),NULL),"fontBBig","bold","cell2","greenColor",NULL);
+        gtk_grid_attach(grid,lab6,2,2,2,1);
+        gtk_widget_set_halign(lab6,GTK_ALIGN_START);
     }
     gtk_widget_show_all(gui_get_widget("boxParam"));
 }
@@ -366,44 +553,44 @@ int slave_read_definition() {
 int slave_save_param (int index) {
     if (index == 0) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridMotor");
+        GtkWidget* comb = gui_local_get_widget(grid,"listDel");
+
         int i = 3,j,k,l;
         char* labtxt[7] = {"SlaveTitle","Vendor","Product","Revision","Serial","SlaveProfile",NULL};
         char* str2build="";
-            //motor index i, profile l
-        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
-            str2build = strtools_concat(str2build,"--",NULL);
-            j=i-2;
-            for (k=0;k<5;k++) {
-                const char* key = gtk_entry_get_text(GTK_ENTRY(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),labtxt[k],NULL))));
-                if (key == NULL) {
+        int ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                str2build = strtools_concat(str2build,"--",NULL);
+                j=i-2;
+                for (k=0;k<5;k++) {
+                    const char* key = gtk_entry_get_text(GTK_ENTRY(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),labtxt[k],NULL))));
+                    if (key == NULL) {
+                        free(str2build);
+                        return 0;
+                    }
+                    str2build = strtools_concat(str2build,(char*)key, " ; ",NULL);
+                }
+                l = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL))));
+                if (l == -1) {
                     free(str2build);
                     return 0;
                 }
-                str2build = strtools_concat(str2build,(char*)key, " ; ",NULL);
+                str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
+                i++;
             }
-            l = gtk_combo_box_get_active(GTK_COMBO_BOX(gui_local_get_widget(grid,strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL))));
-            if (l == -1) {
-                free(str2build);
-                return 0;
-            }
-            str2build = strtools_concat(str2build,strtools_gnum2str(&l,0x02), "\n",NULL);
-            i++;
         }
-//        if (PROFILE_NUMBER > 0)
-//            for (i=0; i<PROFILE_NUMBER; i++)
-//                str2build = strtools_concat(str2build,"##",slave_profile[i].title, "\n",NULL);
-//        else
-//            str2build = strtools_concat(str2build,"##Translation\n##Rotation\n##Libre",NULL);
         if (!strtools_build_file(FILE_SLAVE_CONFIG,str2build)) {
             if (str2build != "") free(str2build);
             return 0;
         }
         if (str2build != "") free(str2build);
-            gui_widget2hide("windowParams",NULL);
+        gui_widget2hide("windowParams",NULL);
         if (run_init == -1) {
             if (!slave_read_definition()) {
                 run_init = 0;
-                errgen_set(ERR_FILE_PROFILE,slave_get_profile_filename(i));
+                errgen_set(ERR_FILE_PROFILE,profile_get_filename_with_index(i));
             }
             run_init = 1;
         } else {
@@ -413,20 +600,25 @@ int slave_save_param (int index) {
         }
     } else if (index == 1) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile");
+        GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listDelField");
         char* str2build="";
         int i=3,data,j;
-        while(gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
-            j=i-2;
-            const char* key = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i));
-            const char* key2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
-            if (key == NULL ) {
-                if (str2build != "") free(str2build);
-                return 0;
-            }
-            if ( gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0)
-                return 0;
-            if (sscanf(key,"labParamP%d_",&data) == 1) {
-                str2build = strtools_concat(str2build,pardata[data].gui_code, " ; ",key2,"\n",NULL);
+        int ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                j=i-2;
+                const char* key = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i));
+                const char* key2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+                if (key == NULL ) {
+                    if (str2build != "") free(str2build);
+                    return 0;
+                }
+                if ( gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0)
+                    return 0;
+                if (sscanf(key,"labParamP%d_",&data) == 1) {
+                    str2build = strtools_concat(str2build,pardata[data].gui_code, " ; ",key2,"\n",NULL);
+                }
             }
             i++;
         }
@@ -443,6 +635,69 @@ int slave_save_param (int index) {
                 slave_set_param("State",i,STATE_PREOP);
         }
         return 1;
+    } else if (index == 3) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
+        GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
+        int error = 0;
+        char *errortxt="";
+        char* str2build ="";
+
+        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))) == 0 ) {
+            gui_info_popup(TIME_ERROR,NULL);
+            return 0;
+        }
+        const char* timetxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
+        int time = gui_str2num(timetxt);
+        if (time > TIME_SET_LIMIT)
+            str2build = strtools_concat(str2build,"Time ",timetxt,"\n",NULL);
+        else {
+            int t = TIME_SET_LIMIT;
+            gui_info_popup(strtools_concat(TIME_MIN_ERROR, " ", strtools_gnum2str(&t,0x04)," s",NULL),NULL);
+            return 0;
+        }
+        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2))) == 0 ) {
+            gui_info_popup(PIPE_LENGTH_ERROR,NULL);
+            return 0;
+        }
+        const char* pipeLengthtxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2)));
+        int pipeLength = gui_str2num(pipeLengthtxt);
+        str2build = strtools_concat(str2build,"Pipe ",pipeLengthtxt,"\n",NULL);
+        int ii=0,i = 4, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        int dat1 = 0;
+        while(ii < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                ii++;
+                if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0 ) {
+                    gui_info_popup(STEP_ERROR,NULL);
+                    return 0;
+                }
+                if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))) == 0 ) {
+                    gui_info_popup(LENGTH_ERROR,NULL);
+                    return 0;
+                }
+                const char* ent1 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i)));
+                const char* ent2 = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i)));
+                if (gui_str2num(ent1) < STEP_LIMIT ) {
+                    gui_info_popup(STEP_ERROR,NULL);
+                    return 0;
+                }
+                dat1 += gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),2,i))));
+                str2build = strtools_concat(str2build,(char*)ent1," ",ent2,"\n",NULL);
+            }
+            i++;
+        }
+        if (pipeLength < dat1) {
+            gui_info_popup(OVER_LENGTH_ERROR,NULL);
+            return 0;
+        }
+
+        if(!strtools_build_file(FILE_HELIX_CONFIG,str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        gui_widget2hide("windowParams",NULL);
+        gui_info_box(SAVE,SAVE_SUCCESS,NULL);
     }
 }
 /**
@@ -450,7 +705,7 @@ int slave_save_param (int index) {
 **/
 int slave_check_profile_file(int profId) {
     int i,j=0,res;
-    FILE *f = fopen(slave_get_profile_filename(profId),"r");
+    FILE *f = fopen(profile_get_filename_with_index(profId),"r");
     if (f != NULL) {
         char title[20];
         int data;
@@ -462,19 +717,21 @@ int slave_check_profile_file(int profId) {
                     if (strcmp(pardata[i].gui_code,title) == 0 ) res = 1;
                 if (res == 0) {
                     j = 0;
-                    errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,slave_get_profile_filename(profId));
+                    errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,profile_get_filename_with_index(profId));
                 }
         }
         fclose(f);
         if (j > 0) return 1;
         else {
-            strtools_build_file(slave_get_profile_filename(profId)," ");
-            errgen_set(ERR_FILE_EMPTY,slave_get_profile_filename(profId));
+            strtools_build_file(profile_get_filename_with_index(profId)," ");
+	    errgen_state = ERR_FILE_EMPTY; errgen_aux = profile_get_filename_with_index(profId);
+	    g_idle_add(errgen_set_safe(NULL), NULL);
         }
     } else {
-        errgen_set(ERR_FILE_OPEN,slave_get_profile_filename(profId));
-        if (!strtools_build_file(slave_get_profile_filename(profId)," ")) {
-            errgen_set(ERR_FILE_GEN,slave_get_profile_filename(profId));
+        errgen_set(ERR_FILE_OPEN,profile_get_filename_with_index(profId));
+        if (!strtools_build_file(profile_get_filename_with_index(profId)," ")) {
+            errgen_state = ERR_FILE_GEN; errgen_aux = profile_get_filename_with_index(profId);
+	    g_idle_add(errgen_set_safe(NULL), NULL);
             return 0;
         }
     }
@@ -491,7 +748,7 @@ UNS8 slave_get_node_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("1Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 /**
@@ -512,14 +769,14 @@ UNS8 slave_get_node_with_profile(int profInd) {
 /**
 * Retourne state en fonction index
 **/
-int slave_get_state_with_index(int i) {
+static int slave_get_state_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state;
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("2Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 
@@ -532,7 +789,7 @@ static void slave_set_state_with_index(int i, int dat) {
         slaves[i].state = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("3Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 /**
@@ -545,7 +802,7 @@ static int slave_get_state_error_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return dat;
     } else {
-        printf("Index trop grand : %d",i);
+        printf("4Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -558,7 +815,7 @@ static void slave_set_state_error_with_index (int i, int dat) {
         slaves[i].state_error = dat;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d",i);
+        printf("5Index trop grand : %d",i);
         exit(EXIT_FAILURE);
     }
 }
@@ -570,7 +827,7 @@ static void slave_set_active_with_index(int i, int var) {
         slaves[i].active = var;
         pthread_mutex_unlock (&lock_slave);
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("6Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 static int slave_get_active_with_index(int i) {
@@ -580,7 +837,7 @@ static int slave_get_active_with_index(int i) {
         pthread_mutex_unlock (&lock_slave);
         return var;
     } else {
-        printf("Index trop grand : %d \n",i); exit(EXIT_FAILURE);
+        printf("7Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
 
@@ -613,7 +870,7 @@ int slave_get_profile_with_index(int i) {
         return dat;
     } else {
         printf("Index trop grand : %d",i);
-        exit(EXIT_FAILURE);
+       // exit(EXIT_FAILURE);
     }
 }
 void slave_set_profile_with_index(int i, int dat) {
@@ -744,14 +1001,8 @@ static char* slave_get_state_error_title(int state) {
     else if(state == ERROR_STATE_VOLTAGE) return ERROR_STATE_VOLTAGE_TXT;
     else return DEFAULT;
 }
-/**
-* Renvoi le nom du fichier correspondant au profil
-**/
-char* slave_get_profile_filename(int index) {
-    return g_strconcat("profile_",g_utf8_strdown(profiles[slaves[index].profile].id,-1),"_config.txt",NULL);
-}
 char* slave_get_profile_name(int index) {
-    return profiles[slaves[index].profile].title;
+    return profile_get_title_with_index(slave_get_profile_with_index(index));
 }
 /**
 * Retourne en INTEGER32 le paramètre
@@ -760,34 +1011,34 @@ INTEGER32 slave_get_param_in_num(char* parid, int index) {
     int i;
     for (i=0;i<VAR_NUMBER;i++) {
         if (parid == vardata[i].id) {
-            if (!strcmp(parid, "Volt")) {
+            if (parid == "Volt") {
                 UNS16 *data = *(vardata[i].tab+index);
                 INTEGER32 data2= (INTEGER32)*data;
                 data2 = data2/10;
                 return data2;
-            } else if (!strcmp(parid, "Velinc")) {
+            } else if (parid == "Velinc") {
                 INTEGER32* data = (INTEGER32*)vardata[i].tab;
                 return (INTEGER32)data[index];
-            } else if (!strcmp(parid, "State")) {
+            } else if (parid == "State") {
                 return (INTEGER32)slave_get_state_with_index(index);
-            } else if (!strcmp(parid,"StateError")) {
+            } else if (parid == "StateError") {
                 return (INTEGER32)slave_get_state_with_index(index);
-            } else if (!strcmp(parid, "SlaveProfile")) {
+            } else if (parid == "SlaveProfile") {
                 return (INTEGER32)slave_get_profile_with_index(index);
-            } else if (!strcmp(parid, "Vendor")) {
+            } else if (parid == "Vendor") {
                 return (INTEGER32)slave_get_vendor_with_index(index);
-            } else if (!strcmp(parid, "Product")) {
+            } else if (parid == "Product") {
                 return (INTEGER32)slave_get_product_with_index(index);
-            } else if (!strcmp(parid, "Revision")) {
+            } else if (parid == "Revision") {
                 return (INTEGER32)slave_get_revision_with_index(index);
-            } else if (!strcmp(parid, "Serial")) {
+            } else if (parid == "Serial") {
                 return (INTEGER32)slave_get_serial_with_index(index);
-            } else if (!strcmp(parid, "Active")) {
+            } else if (parid == "Active") {
                 return (INTEGER32)slave_get_active_with_index(index);
-            } else if (!strcmp(parid, "Vel2sendRotPDONum")) {
-                return (4*index);
-            } else if (!strcmp(parid, "Vel2sendTransPDONum")) {
-                return (4*index);
+                //ajout220116
+            } else if (parid == "GetPDOT0Num") {
+                return (UNS32)(4*index);
+                //fin ajout 220116
             } else {
                 if (vardata[i].type == 0x02) {
                     INTEGER8 *data = *(vardata[i].tab+index);
@@ -832,10 +1083,6 @@ void slave_set_param(char* parid, int index,INTEGER32 dat) {
                 g_idle_add(keyword_active_maj,&slaves[index].node);
             } else if (parid == "SlaveProfile") {
                 slave_set_profile_with_index(index,dat);
-            } else if (!strcmp(parid, "Vel2sendRotPDONum")){
-                return;
-            } else if (!strcmp(parid, "Vel2sendTransPDONum")) {
-                return;
             } else {
                 if (vardata[i].type == 0x02) {
                     INTEGER8 *data = *(vardata[i].tab+index);
@@ -873,7 +1120,7 @@ char* slave_get_param_in_char(char* parid, int index) {
     for (i=0;i<VAR_NUMBER;i++) {
         if (parid == vardata[i].id) {
             res = 1;
-            if (!strcmp(parid,"Volt")) {
+            if (parid == "Volt") {
                 UNS16 *data = *(vardata[i].tab+index);
                 INTEGER32 data2= (INTEGER32)*data;
                 data2 = data2/10;

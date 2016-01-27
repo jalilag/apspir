@@ -1,12 +1,12 @@
 #ifndef _PROFILE_H
 #define _PROFILE_H
-
+//debut ajout 220116
 #define PROF_VITTRANS   0
 #define PROF_COUPLTRANS 1
 #define PROF_VITROT     2
 #define PROF_COUPLROT   3
 #define PROF_LIBRE      4
-
+//fin ajout 220116
 typedef struct PROF PROF;
 struct PROF {
     int index;

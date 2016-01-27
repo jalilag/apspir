@@ -11,6 +11,10 @@
 #include <time.h>   // time calls
 #include <pthread.h> //les threads
 #include <unistd.h> // UNIX standard function definitions
+//ajout220116
+#include <sys/types.h>
+#include <sys/wait.h>//pour fonction wait(0);
+//fin ajout 220116
 
 #include "laser.h"
 #include "Laser_Close_Cfile_gen.h"
@@ -25,12 +29,11 @@ static struct laser_data LastLaserData;//dernière donnée vérifiée
 static int MasterControl = 1;//flag indiquant quel laser détient le contrôle 0 ou 1
 //MasterControl: dans Laser_GetData et VerifyMeasureConsistency
 
-
 unsigned long GetDate_us(void)
 {
         static unsigned long InitDate=0;
         struct timespec t1;
-        clock_gettime(CLOCK_MONOTONIC,&t1);
+        clock_gettime(CLOCK_MONOTONIC,&t1);//alternative à tester clock_gettime(CLOCK_REALTIME, &t1);
         if(InitDate == 0)
                 InitDate=(t1.tv_sec * 1000000 + t1.tv_nsec / 1000);
         return (t1.tv_sec * 1000000 + t1.tv_nsec / 1000 - InitDate);
@@ -100,7 +103,12 @@ void Laser_Init_Simu(laser * l)
   l->isSimu = 1;
   init_laser_data(l);
 }
-
+void Laser_Init_Minimal(laser * l){
+  pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+  l->mutex = m;
+  l->running = 0;
+  l->ready_for_analyse = 0;
+}
 int Laser_serial_config(void)
 {
     pid_t pid = fork();
@@ -274,11 +282,11 @@ void Save_Data_Laser(laser * l, unsigned long mes, unsigned long t)
 
   l->laser_dat[0].mes = mes;
   l->laser_dat[0].t = t;
-  //vitesse instantannée err 30dmm/s
+  //vitesse 1s err 3dmm/s
   dx = mes-(l->laser_dat[ORDRE_APPROX-1].mes);
   dt = CONVERT_MUS_S(t-(l->laser_dat[ORDRE_APPROX-1].t));
   l->laser_dat[0].vitesse_1s = (long int)(dx/dt);
-  //vitesse 1s err 3dmm/s
+  //vitesse instantannée err 30dmm/s
   dx = mes-(l->laser_dat[1].mes);
   dt = CONVERT_MUS_S(t-(l->laser_dat[1].t));
   l->laser_dat[0].vitesse = (long int)(dx/dt);
@@ -286,6 +294,19 @@ void Save_Data_Laser(laser * l, unsigned long mes, unsigned long t)
   pthread_mutex_unlock(&(l->mutex));
   //printf("laser %d, mes = %lu, t = %lu, v = %ld, v1s = %ld\n", l->fd, mes, t, l->laser_dat[0].vitesse, l->laser_dat[0].vitesse_1s);
   return;
+}
+
+int laser_verify_usb_connection(laser * l)
+{
+    if (!(isopen[l->portNumber])){//pas connecté
+        pthread_mutex_lock(&(l->mutex));
+        l->ready_for_analyse = 0;
+        l->running = 0;
+        pthread_mutex_unlock(&(l->mutex));
+        return 1;
+    }
+
+    return 0;//connecté
 }
 
 int read_port(laser * l, int recvBytes, char * buf)
@@ -307,7 +328,7 @@ int read_port(laser * l, int recvBytes, char * buf)
   FD_SET(fd, &rfds);
   //Timeout 500ms
   tv.tv_sec = 0;
-  tv.tv_usec = 500000;
+  tv.tv_usec = TIMECONSISTENCY_VAL;//500000;
 
   while(retval == 0)
     {
@@ -355,7 +376,6 @@ int read_port(laser * l, int recvBytes, char * buf)
             buf[res] = 0;
             printf("Erreur laser %d: Synchro perdue\n", l->fd);
             printf("Mesure: buf = %s, res = %d", buf, res);
-            sleep(1);
             tcflush(l->fd, TCIOFLUSH);
             return -1;
       }
@@ -402,7 +422,7 @@ int Laser_wait_until_ready(laser * l)
   unsigned long time = GetDate_us();
   //printf("Laser_wait_until_ready\n");
   pthread_mutex_lock(&(((laser*)l)->mutex));
-  while(!(l->ready_for_analyse) && (GetDate_us()-time < 5000000))
+  while(!(l->ready_for_analyse) && (GetDate_us()-time < (ORDRE_APPROX*2)*TIMECONSISTENCY_VAL))
     {
       //printf("\nBoucle while\n\n");
       pthread_mutex_unlock(&(((laser*)l)->mutex));
@@ -702,19 +722,6 @@ unsigned int VerifyTimeConsistency(unsigned long MasterTime, unsigned long Slave
     }
 }
 
-int laser_verify_usb_connection(laser * l)
-{
-    if (!(isopen[l->portNumber])){//pas connecté
-        pthread_mutex_lock(&(l->mutex));
-        l->ready_for_analyse = 0;
-        l->running = 0;
-        pthread_mutex_unlock(&(l->mutex));
-        return 1;
-    }
-
-    return 0;//connecté
-}
-
 int Laser_GetPositionOffset(laser * master, laser * slave)
 {
   struct laser_data mdat, sdat;
@@ -846,6 +853,7 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
   unsigned int laser_status = LASER_STATUS_OK;
 
   unsigned long t0, t2;
+  int r1, r2;
 
   if(master->isSimu){
     pthread_mutex_lock(&(master->mutex));
@@ -857,44 +865,30 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
     return 0;
   }
 
-  if(master->ready_for_analyse==1)
-    {
-      //t0 = GetDate_us();//printf("Time0 = %lu=>", GetDate_us());
-      pthread_mutex_lock(&(master->mutex));
+  if(laser_verify_usb_connection(master)) laser_status |= MASTER_NOT_STARTED;//ready_for_analyse set to 0
+  pthread_mutex_lock(&(master->mutex));
+  if(master->ready_for_analyse==1) MasterData = master->laser_dat[0];
+  r1 = master->ready_for_analyse;
+  pthread_mutex_unlock(&(master->mutex));
 
-      if(laser_verify_usb_connection(master)){
-        laser_status |= MASTER_NOT_STARTED;//ready_for_analyse set to 0
-      }
-
-      MasterData = master->laser_dat[0];
-      pthread_mutex_unlock(&(master->mutex));
-    }
   time = GetDate_us();
-  //printf("Time1 = %lu=>", GetDate_us());
 
-  if (slave->ready_for_analyse==1)
-    {
+  if(laser_verify_usb_connection(slave)) laser_status |= SLAVE_NOT_STARTED;//ready_for_analyse set to 0
+  pthread_mutex_lock(&(slave->mutex));
+  if (slave->ready_for_analyse==1) SlaveData = slave->laser_dat[0];
+  r2 = slave->ready_for_analyse;
+  pthread_mutex_unlock(&(slave->mutex));
 
-      pthread_mutex_lock(&(slave->mutex));
-      SlaveData = slave->laser_dat[0];
-
-      if(laser_verify_usb_connection(slave)){
-        laser_status |= SLAVE_NOT_STARTED;//ready_for_analyse set to 0
-      }
-
-      pthread_mutex_unlock(&(slave->mutex));
-    }
-
-  if(master->ready_for_analyse!=1 && slave->ready_for_analyse!=1){
-    //printf("boucle0\n");
-    return ERR_LASER_FATAL;
+  if(r1!=1 && r2!=1){
+    d = NULL;
+    return (laser_status | ERR_LASER_FATAL);
   }
   //t2 = GetDate_us();
   //printf("Time2 = %lu %lu\n", t2-time, time-t0);
 
   //printf("Master dt = %lu, Slave dt = %lu\n, MasterSlave dt = %lu\n", labs(MasterData.t-time), labs(SlaveData.t-time), labs(MasterData.t-SlaveData.t));
   //printf("Master time = %lu, Slave time = %lu, time = %lu\n", MasterData.t, SlaveData.t, time);
-  if(master->ready_for_analyse==1 && slave->ready_for_analyse==1)
+  if(r1==1 && r2==1)
     {
       //printf("boucle1\n");
       switch(laser_status |= VerifyTimeConsistency(MasterData.t, SlaveData.t, time))
@@ -912,6 +906,7 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
 	case ERR_LASER_FATAL:
 	  {
 	    printf("TIMECONSISTENCY ERROR\n");
+	    d = NULL;
 	    return ERR_LASER_FATAL;
 	  }
 	default:
@@ -919,21 +914,23 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
 	}
       //printf("Time consistency = %u\n",VerifyTimeConsistency(MasterData.t, SlaveData.t, time));
     }
-  else if (master->ready_for_analyse==1 && slave->ready_for_analyse!=1)
+  else if (r1==1 && r2!=1)
     {
       //printf("boucle2\n");
       laser_status |= SLAVE_NOT_STARTED;
       switch(laser_status |= VerifyTimeConsistency_OneLaser(MasterData.t, time))
 	{
 	case ERR_LASER_FATAL:
-	  return ERR_LASER_FATAL;
+	case (ERR_LASER_FATAL | SLAVE_NOT_STARTED):
+	  d = NULL;
+	  return laser_status;
 	default:
         //printf ("Timeconsistency ok\n");
 	  laser_status |= VerifyMeasureConsistency_OneLaser(&MasterData);
 	  break;
 	}
     }
-  else if (master->ready_for_analyse!=1 && slave->ready_for_analyse==1)
+  else if (r1!=1 && r2==1)
     {
       //printf("boucle3\n");
       laser_status |= MASTER_NOT_STARTED;
@@ -943,7 +940,9 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
       switch(laser_status |= VerifyTimeConsistency_OneLaser(SlaveData.t, time))
 	{
 	case ERR_LASER_FATAL:
-	  return ERR_LASER_FATAL;
+	case (ERR_LASER_FATAL | MASTER_NOT_STARTED):
+	  d = NULL;
+	  return laser_status;
 	default:
 	  laser_status |= VerifyMeasureConsistency_OneLaser(&SlaveData);
 	  //printf("laser_status 2 = %x\n", laser_status);
@@ -953,12 +952,15 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
   else
     {
       printf("Laser_GetData internal error var l->ready_for_analyse\n");
-      return ERR_LASER_FATAL;
+      exit(EXIT_FAILURE);//return ERR_LASER_FATAL;
     }
 //printf("laser_status 3= %x\n", laser_status);
   switch(laser_status)
     {
     case ERR_LASER_FATAL:
+    case (ERR_LASER_FATAL | MASTER_NOT_STARTED):
+    case (ERR_LASER_FATAL | SLAVE_NOT_STARTED):
+    case (ERR_LASER_FATAL | (MASTER_NOT_STARTED | SLAVE_NOT_STARTED)):
       printf("Case ERR_LASER_FATAL\n");
       MasterControl = 1;
       d = NULL;
@@ -990,14 +992,6 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
       *d = MasterData;
       break;
     }
-
-
-  if(master->ready_for_analyse!=1 && slave->ready_for_analyse==1)
-    laser_status |= MASTER_NOT_STARTED;
-  else if(master->ready_for_analyse==1 && slave->ready_for_analyse!=1)
-    laser_status |= SLAVE_NOT_STARTED;
-
-
   //printf("laser_status = %x\n",laser_status);
   return laser_status;
 }
@@ -1026,9 +1020,9 @@ unsigned int Laser_Init2Laser(laser * ml, laser * sl)
         printf("Master Laser closed\n");
         returnval |= LASER_MASTER_INIT_ERROR;
         }
-    for (i=0;i<10;i++)
+    /*for (i=0;i<10;i++)
         printf("isopen[%d] = %d", i, isopen[i]);
-    printf("\n");
+    printf("\n");*/
     if((res = Laser_Init(sl))<0){
         printf("Init slave laser failed\n");
         if(res == -1){
@@ -1046,7 +1040,7 @@ unsigned int Laser_Init2Laser(laser * ml, laser * sl)
 
   return returnval;
 }
-
+//attention. Fixe l'offset de pos à 0. Ne pas utiliser pour lancer 2 laser.
 unsigned int Laser_Start1Laser(laser * l)
 {
     int returnval = 0;
@@ -1064,6 +1058,8 @@ unsigned int Laser_Start1Laser(laser * l)
       printf("Laser failed to start\n");
       return 1;
     }
+
+   PositionOffset = 0;
 
     pthread_mutex_lock(&(l->mutex));
     LastLaserData = l->laser_dat[0];
@@ -1088,8 +1084,7 @@ unsigned int Laser_Start2Laser(laser * ml, laser * sl)
           returnval |= LASER_MASTER_START_ERROR;
         }
     }
-  //else
-    //printf("Master Laser ready\n");
+
 
   if(Laser_Recv_Start(sl)<0 )
     {
@@ -1103,18 +1098,14 @@ unsigned int Laser_Start2Laser(laser * ml, laser * sl)
           returnval |= LASER_SLAVE_START_ERROR;
         }
     }
-  //else
-    //printf("Slave Laser Ready\n");
-  if(!(((returnval & 0x0F) & LASER_MASTER_START_ERROR) && ((returnval & 0x0F) & LASER_SLAVE_START_ERROR))){
+
+  if(returnval == 0){
       if(Laser_GetPositionOffset(ml, sl)<0)
         {
           printf("Laser_GetPositionOffset error\n");
           returnval |= LASER_GETPOSOFFSET_ERROR;
         }
-    }
-  //else
-  //printf("GetPositionOffset Ok\n");
-  //printf("returnval = %x\n", returnval);
+    } else PositionOffset = 0;
 
   if((((returnval & 0x0F) & LASER_MASTER_START_ERROR) && ((returnval & 0x0F) & LASER_SLAVE_START_ERROR)) || ((returnval & 0x0F) & LASER_GETPOSOFFSET_ERROR))
     return ERR_LASER_INIT_FATAL;
@@ -1325,6 +1316,9 @@ int main(void)
   unsigned int laser_status;
   int count = 0;
   unsigned long t0, t1;
+  FILE * f;
+  const char * filename = "testSPiralling210116.dat";
+  f = fopen(filename, "w");
   printf("date = %lu\n", GetDate_us());
   init_laser_data(&l1);
   //initialise mesures laser
@@ -1352,6 +1346,7 @@ int main(void)
 	      t1 = GetDate_us();
 	      printf("delta t = %lu\n", t1-t0);
 	      printf("\nData measured: mes = %lu, t = %lu, v = %ld\n\n", d.mes, d.t, d.vitesse);
+	      fprintf(f, "mes = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
 	      usleep(200000);
 	    }
 	  printout_status(laser_status);
@@ -1379,6 +1374,7 @@ int main(void)
     printf("Laser closed\n");
 
   printf("date = %lu\n", GetDate_us());
+  fclose(f);
   return 0;
 }
 #endif//STAND_ALONE_TEST

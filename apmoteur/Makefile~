@@ -24,63 +24,42 @@
 CC = gcc
 CXX = g++
 LD = g++
-GTK_CFLAGS = $$(pkg-config --cflags gtk+-2.0)
-GTK_LDFLAGS = $$(pkg-config --libs gtk+-2.0)
+GTK_CFLAGS = $$(pkg-config --cflags gtk+-3.0)
+GTK_LDFLAGS = $$(pkg-config --libs gtk+-3.0)
 OPT_CFLAGS = -O2
-CFLAGS = $(OPT_CFLAGS) 
-LDFLAGS = $(OPT_CFLAGS) 
-PROG_CFLAGS =  -fPIC
-EXE_CFLAGS =  -lpthread -lrt -ldl $(GTK_LDFLAGS)
+CFLAGS = $(OPT_CFLAGS) $(GTK_CFLAGS)
+LDFLAGS = $(OPT_CFLAGS)
+PROG_CFLAGS =  -fPIC -DCO_ENABLE_LSS
+EXE_CFLAGS =  -lpthread -lrt -ldl $(GTK_LDFLAGS) -lX11
 OS_NAME = Linux
 ARCH_NAME = x86_64
 PREFIX = /usr/local
 TARGET = unix
 CAN_DRIVER = can_virtual
 TIMERS_DRIVER = timers_unix
-APMOTEUR = "Apmoteur"
+APMOTEUR = "SpirallingControl"
+FUNCVAR = slave.o master.o gtksig.o gui.o strtools.o cantools.o lsstools.o od_callback.o keyword.o motor.o errgen.o profile.o serialtools.o laser/laser.o laser/laser_asserv.o laser/laser_simulation.o
 
-INCLUDES = -I../../include -I../../include/$(TARGET) -I../../include/$(CAN_DRIVER) -I../../include/$(TIMERS_DRIVER)
+INCLUDES = -I./laser -I. -I../include -I../include/$(TARGET) -I../include/$(CAN_DRIVER) -I../include/$(TIMERS_DRIVER)
 
-MASTER_OBJS = moteur_translation_1.o moteur_translation_2.o TestMaster.o Apmoteur.o Slave.o Master.o
+MASTER_OBJS = SpirallingMaster.o SpirallingControl.o $(FUNCVAR)
 
-OBJS = $(MASTER_OBJS) ../../src/libcanfestival.a ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a
+OBJS = $(MASTER_OBJS) ../src/libcanfestival.a ../drivers/$(TARGET)/libcanfestival_$(TARGET).a
 
-ifeq ($(TARGET),win32)
-	APMOTEUR = "Apmoteur.exe"
-endif
-
-ifeq ($(TIMERS_DRIVER),timers_win32)
-	EXE_CFLAGS =
-endif
-
-ifeq ($(TIMERS_DRIVER),timers_xeno)
-	PROGDEFINES = -DUSE_XENO
-endif
-
-ifeq ($(TIMERS_DRIVER),timers_rtai)
-	PROGDEFINES = -DUSE_RTAI
-endif
 
 Debug: $(APMOTEUR)
 
-../../drivers/$(TARGET)/libcanfestival_$(TARGET).a:
-	$(MAKE) -C  ../../drivers/$(TARGET) libcanfestival_$(TARGET).a
+../drivers/$(TARGET)/libcanfestival_$(TARGET).a:
+	$(MAKE) -C  ../drivers/$(TARGET) libcanfestival_$(TARGET).a
 
 
 $(APMOTEUR): $(OBJS)
 	$(LD) $(LDFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES) -o $@ $(OBJS) $(EXE_CFLAGS)
 
-moteur_translation_1.c: moteur_translation_1.od
-	$(MAKE) -C /home/jalil/Documents/programmation/python/objedit/ gnosis
-	python /home/jalil/Documents/programmation/python/objedit/objdictgen.py moteur_translation_1.od moteur_translation_1.c _v3
 
-moteur_translation_2.c: moteur_translation_2.od
-	$(MAKE) -C /home/jalil/Documents/programmation/python/objedit/ gnosis
-	python /home/jalil/Documents/programmation/python/objedit/objdictgen.py moteur_translation_2.od moteur_translation_2.c _v2
-
-TestMaster.c: TestMaster.od
-	$(MAKE) -C /home/jalil/Documents/programmation/python/objedit/ gnosis
-	python /home/jalil/Documents/programmation/python/objedit/objdictgen.py TestMaster.od TestMaster.c
+SpirallingMaster.c: SpirallingMaster.od
+	$(MAKE) -C ../objedit/ gnosis
+	python ../objedit/objdictgen.py SpirallingMaster.od SpirallingMaster.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES)  -o $@ -c $<
@@ -90,9 +69,7 @@ clean:
 	rm -f $(APMOTEUR)
 
 mrproper: clean
-	rm -f moteur_translation_1.c
-	rm -f moteur_translation_2.c
-	rm -f TestMaster.c
+	rm -f SpirallingMaster.c
 
 install: Apmoteur
 	mkdir -p $(DESTDIR)$(PREFIX)/bin/
@@ -100,6 +77,3 @@ install: Apmoteur
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/apmoteur
-
-
-

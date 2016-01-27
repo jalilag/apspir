@@ -31,6 +31,11 @@ GtkWindow {
     border: 0;
     font-weight: bold;
 }
+.butPurple {
+    background: #5C3661;
+    box-shadow: inset 0em 0em 1em #3E2242;
+}
+.butPurple:hover {background: #973AA4;}
 
 .butGreen {
     background: #39A036;
@@ -58,12 +63,14 @@ GtkWindow {
     box-shadow: inset 0em 0em 1em #10516D;
 }
 .butBlue:hover{background: #399EC9;}
-
-
-
+.butBlack2 {
+    background: #2E2E2E;
+    box-shadow: inset 0em 0em 1em #212121;
+}
+.butBlack2:hover{background: #3C3C3C;}
+.butBlack2 GtkLabel {color:#fff;}
 .fontBig{font-size: 1.1em;}
-
-
+.fontBBig{font-size: 1.2em;}
 
 .box{border-radius:1em 1em 0 0;}
 .blackBox {
@@ -145,11 +152,15 @@ GtkWindow {
     font-size:1.1em;
 }
 .black {background:-gtk-gradient(linear,left top, left bottom, from(#525252), to(#000));}
+.blue {background:-gtk-gradient(linear,left top, left bottom, from(#0D739F), to(#0D739F));}
 .green {background:-gtk-gradient(linear,left top, left bottom, from(#246F20), to(#60995F));}
+.greenLight {background:-gtk-gradient(linear,left top, left bottom, from(#60995F), to(#6ED86C));}
 .purple {background:-gtk-gradient(linear,left top, left bottom, from(#5C3661), to(#973AA4));}
+.purpleLight {background:-gtk-gradient(linear,left top, left bottom, from(#973AA4), to(#E35CF5));}
 .brown {background:-gtk-gradient(linear,left top, left bottom, from(#78520F), to(#B08B49));}
 .red {background:-gtk-gradient(linear,left top, left bottom, from(#C93636), to(#F56060));}
-
+.redColor {color:#C93636;}
+.greenColor{color:#246F20;}
 
 .Wtitle {
     border-radius:0 0 1em 1em;

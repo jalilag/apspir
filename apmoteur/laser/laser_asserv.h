@@ -1,6 +1,5 @@
-#include "laser.h"
 #include "canfestival.h"
-
+#include "laser.h"
 
 #include "laser_asserv_cst.h"
 
@@ -32,9 +31,9 @@ extern struct Helix_User_Data HelixUserData;
 //données ext à fournir. Sinon utilisation des valeurs par défault.
 unsigned int laser_asserv_GetPipeLength(laser * ml, laser * sl);
 unsigned int laser_asserv_GetStartPosition(laser * ml, laser * sl);//position machine
-extern unsigned int User_Tolerance;// = 200 par défault//en dixieme de mm.
+extern unsigned int User_Tolerance;// = 100 par défault//en dixieme de mm.
 extern INTEGER32 MotRot_Ref_Position;// default value = 0. pos au démarrage du moteur
-extern unsigned long Start_Distance;//default value = 0;
+unsigned long Laser_Asserv_GetStartDistance(void);//default value = 300000;//dmm
 extern unsigned long Pipe_Length;//default value = 30000;
 
 
@@ -51,13 +50,13 @@ int laser_asserv_lance(void);
 int laser_asserv_lance_simu(void);
 int laser_asserv_stop(void);
 
+//changement consigne de vitesse de translation par l'utilisateur
+unsigned int laser_asserv_User_Velocity_Change(laser * ml, laser * sl, INTEGER32 v_cons_mt);
 
 /*
 
 unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long * next_Sync_call_Nr, unsigned long * SyncTimeInterval);
 unsigned int laser_asserv_Follow_Consigne(laser * ml, laser * sl);
-
-unsigned int laser_asserv_User_Velocity_Change(laser * ml, laser * sl, INTEGER32 v_cons_mt);
 
 //donner une valeur aux variables globales (à définir par l'utilisateur)
 unsigned int laser_asserv_GetPipeLength(laser * ml, laser * sl);

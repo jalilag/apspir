@@ -60,5 +60,9 @@ extern INTEGER32 Vel2Send_2;		/* Mapped at index 0x202C, subindex 0x00*/
 extern INTEGER32 Vel2Send_3;		/* Mapped at index 0x202D, subindex 0x00*/
 extern INTEGER32 Vel2Send_4;		/* Mapped at index 0x202E, subindex 0x00*/
 extern INTEGER32 Vel2Send_5;		/* Mapped at index 0x202F, subindex 0x00*/
+extern INTEGER16 ConsCoupl_R;		/* Mapped at index 0x2030, subindex 0x00*/
+extern INTEGER16 ConsCoupl_T;		/* Mapped at index 0x2031, subindex 0x00*/
+extern INTEGER16 CaptCoupl_R;		/* Mapped at index 0x2032, subindex 0x00*/
+extern INTEGER16 CaptCoupl_T;		/* Mapped at index 0x2033, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H

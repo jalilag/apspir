@@ -4,8 +4,8 @@
 struct laser_data
 {
   unsigned long mes;//d n dixieme de mm
-  long int vitesse;
-  long int vitesse_1s;
+  long int vitesse;//dmm/s
+  long int vitesse_1s;//dmm/s
   unsigned long t;//tabs en micro s
 };
 

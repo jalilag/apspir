@@ -6,6 +6,8 @@
 
 #include "laser_simulation.h"
 
+#define DEFAULT_START_DISTANCE 30000
+
 int laser_simu = 0;
 static INTEGER32 VelincSimuTrans = 0;
 static INTEGER32 vel_err = 0, const_err = 0;
@@ -46,9 +48,7 @@ void * laser_simulation_SimuThread_func(void * arg)
 
   Laser_Init_Simu(&lsim);
 
-  //Fixation artificielle Laser Start Position
-  laser_asserv_GetStartPosition(&lsim, NULL);
-  dat = (double)Start_Distance;
+  dat = (double)DEFAULT_START_DISTANCE;
 
   if((fd = fopen(FileName, "w"))==NULL) {
     printf("ERROR opening Sim File\n");

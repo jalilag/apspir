@@ -1,4 +1,24 @@
+/*
+This file is part of CanFestival, a library implementing CanOpen Stack.
 
+Copyright (C): Edouard TISSERANT and Francis DUPIN
+
+See COPYING file for copyrights details.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #include "master.h"
 #include "slave.h"
 #include <stdio.h>
@@ -12,10 +32,16 @@
 #include "gui.h"
 #include "od_callback.h"
 #include "errgen.h"
+#include "od_callback.h"
+
+// ajout 220116
 #include "profile.h"
-extern int SLAVE_NUMBER;
+//fin ajout 220116
+
 extern s_BOARD MasterBoard;
 char* baud_rate="1M";
+extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+extern int SLAVE_NUMBER;
 
 /*****************************************************************************/
 
@@ -48,6 +74,9 @@ static int master_start_sync(int start) {
 static int master_config() {
     UNS32 dat;
     int i = 0;
+    //ajout 260116
+    od_callback_define();
+    //fin ajout 260116
     /** SYNC PERIOD **/
     if(!master_start_sync(0)) { // Arret de la synchro
         errgen_set(ERR_MASTER_START_SYNC,NULL);
@@ -66,19 +95,17 @@ static int master_config() {
             return 0;
         }
     }
-    /** PDOR et PDOT CONFIGURATION **/
+    /** PDOR CONFIGURATION **/
     int j;
     UNS8 trans =0xFF;
     for (i=0; i < SLAVE_NUMBER; i++) {
         for (j=0; j<4; j++){
-        //reception
             dat = 0x40000180 + 0x100*j  + slave_get_node_with_index(i);
             if (!cantools_write_local(0x1400+(4*i+j),0x01,&dat,sizeof(UNS32))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOR,NULL);
                 printf("dat %x\n",dat);
                 return 0;
             }
-            //transmission
             dat = 0x40000200 + 0x100*j  + slave_get_node_with_index(i);
             if (!cantools_write_local(0x1800+(4*i+j),0x01,&dat,sizeof(UNS32))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
@@ -91,6 +118,7 @@ static int master_config() {
                 return 0;
             }
         }
+        //debut ajout 220116
         int l = slave_get_profile_with_index(i);
         if (l == PROF_VITROT){
             //mapping PDOT maitre
@@ -104,19 +132,7 @@ static int master_config() {
                 errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
                 return 0;
             }
-            //params PDOR maitre specifique profil
-            UNS16 inhibit = 0;
-            UNS16 event = 50000;
-            if (!cantools_write_local(0x1800+(4*i),0x03,&inhibit,sizeof(UNS16))) {
-                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
-                printf("inhibit rot %x\n",inhibit);
-                return 0;
-            }
-            if (!cantools_write_local(0x1800+(4*i),0x05,&event,sizeof(UNS16))) {
-                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
-                printf("event rot %x\n",event);
-                return 0;
-            }
+
         } else if (l == PROF_VITTRANS){
             //mapping PDOT maitre
              if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20190020,0)){
@@ -128,40 +144,50 @@ static int master_config() {
                 errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
                 return 0;
             }
+
+         } else if (l == PROF_COUPLROT){
+            //mapping PDOT maitre
+            if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20300010,0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            //mapping PDOR maitre
+            if(!cantools_PDO_map_local_config( 0x1601+4*i, 0x20320010, 0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+         } else if (l == PROF_COUPLTRANS){
+            //mapping PDOT maitre
+            if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20310010,0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+            //mapping PDOR maitre
+            UNS32 velIndex = 0x20260020 + 0x10000*i;
+            if(!cantools_PDO_map_local_config( 0x1601+4*i,velIndex,0x20330010,0)){
+                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                return 0;
+            }
+         } else if (l == PROF_LIBRE){
+         }
+         //config PDOT1 pour chaque moteur
+         if( l == PROF_VITROT || l == PROF_VITTRANS || l == PROF_COUPLROT || l == PROF_COUPLTRANS){
             UNS16 inhibit = 0;
-            UNS16 event = 50000;
+            UNS16 event = 5000;
             if (!cantools_write_local(0x1800+(4*i),0x03,&inhibit,sizeof(UNS16))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
-                printf("inhibit trans %x\n",inhibit);
+                printf("inhibit rot %x\n",inhibit);
                 return 0;
             }
             if (!cantools_write_local(0x1800+(4*i),0x05,&event,sizeof(UNS16))) {
                 errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
-                printf("event trans %x\n",event);
-                return 0;
-            }
-         } else if (l == PROF_COUPLROT){
-         } else if (l == PROF_COUPLTRANS){
-         } else if (l == PROF_LIBRE){
-         }
-
-
-    }
-    /**mise en 0xFF des PDO inutiles**/
-    trans = 0xFF;
-    for (i=SLAVE_NUMBER; i<SLAVE_NUMBER_LIMIT; i++){
-        for (j=0; j<4; j++){
-            if(!cantools_write_local(0x1800+4*i+j, 0x02, &trans, sizeof(UNS8))){
-                errgen_set(ERR_MASTER_CONFIG_PDOT,NULL);
-                printf("dat %x\n",dat);
+                printf("event rot %x\n",event);
                 return 0;
             }
         }
+        //fin ajout 220116
     }
-
     return 1;
-
-    /**PDOT map CONFIGURATION (de base: rien)**/
 }
 
 
@@ -185,7 +211,7 @@ void SpirallingMaster_preOperational(CO_Data* d) {
     }
     for (i=0; i<SLAVE_NUMBER; i++) {
         printf("%d",i);
-        if (slave_get_param_in_num("Active",i));
+        if (slave_get_param_in_num("Active",i))
             slave_set_param("State",i,STATE_LSS_CONFIG);
     }
 }
@@ -199,7 +225,7 @@ void SpirallingMaster_stopped(CO_Data* d) {
 }
 
 void SpirallingMaster_post_sync(CO_Data* d) {
-     //sendPDOevent(d);
+     sendPDOevent(d);
 }
 
 void SpirallingMaster_post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg) {
@@ -240,20 +266,34 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
         break;
     }
 }
+//ajout 220116
 static unsigned long MasterSyncCount = 0;
+extern unsigned long CaptPos_R_Time;
+//fin ajout 220116
 void SpirallingMaster_post_TPDO(CO_Data* d) {
-    if (MasterSyncCount%10 == 0){
+
+//ajout 220116
+if (MasterSyncCount%10 == 0){
         printf("\nSpirallingMaster_post_TPDO MasterSyncCount = %lu \n", MasterSyncCount);
-
-        printf("MotRotVars :ConsigneVitesse = %d, CaptureVitesse = %d, CapturePosition = %d, Acceleration = %u, Deceleration = %u\n",
-            ConsVit_R, CaptVit_R, CaptPos_R, CaptAccel_R, CaptDecel_R);
-
-        printf("MotTransVars :ConsigneVitesse = %d, CaptureVitesse = %d, Acceleration = %u, Deceleration = %u\n",
-            ConsVit_T, CaptVit_T, CaptAccel_T, CaptDecel_T);
+        if(slave_profile_exist(PROF_VITROT)){
+            printf("MotRotVars :ConsigneVitesse = %d, CaptureVitesse = %d, CapturePosition = %d, TimePositionCapture = %lu, Acceleration = %u, Deceleration = %u\n",
+                ConsVit_R, CaptVit_R, CaptPos_R, CaptPos_R_Time, CaptAccel_R, CaptDecel_R);
+        }
+        if(slave_profile_exist(PROF_COUPLROT)){
+            printf("MotRotCoupl : Consigne Couple: %d, Capture Couple: %d\n", ConsCoupl_R, CaptCoupl_R);
+        }
+        if(slave_profile_exist(PROF_VITTRANS)){
+            printf("MotTransVars :ConsigneVitesse = %d, CaptureVitesse = %d, Acceleration = %u, Deceleration = %u\n",
+                ConsVit_T, CaptVit_T, CaptAccel_T, CaptDecel_T);
+        }
+        if(slave_profile_exist(PROF_COUPLTRANS)){
+            printf("MotTransCoupl : Consigne Couple: %d, Capture Couple: %d, Capture Vitesse: %d\n", ConsCoupl_T, CaptCoupl_T,
+                slave_get_param_in_num("Velocity",slave_get_index_with_node(slave_get_node_with_profile(PROF_COUPLTRANS))));
+        }
+        printf("\n");
     }
-
     MasterSyncCount++;
-
+//fin ajout 220116
 }
 
 void SpirallingMaster_post_SlaveBootup(CO_Data* d, UNS8 nodeid) {

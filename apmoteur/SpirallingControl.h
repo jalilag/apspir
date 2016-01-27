@@ -2,16 +2,20 @@
 #define _SPIRALLING_CONTROL_H
 #include "canfestival.h"
 // DONNEE PROGRAMME
-#define SLAVE_NUMBER_LIMIT 5 // Nombre d'esclave
+#define SLAVE_NUMBER_LIMIT 10 // Nombre d'esclave
 #define PROFILE_NUMBER 5 // Nombre de profile
-#define PARAM_NUMBER 18 // Nombre max de profile
+#define PARAM_NUMBER 22 // Nombre max de profile
+//modif 220116 18 à 19
 #define VAR_NUMBER 19
-#define CYCLE_PERIOD 150000//0x0007A120 // Sync tou les 50000us = 50ms
+//fin modifs 220117
+#define CYCLE_PERIOD 0x0007A120 // Sync tou les 50000us = 50ms
 #define HB_CONS_BASE 0x000003E8 // Verification du heartbeat tout les 1000ms
 #define HB_CONS_BASE_OFFSET 0x00000032 // Décalage de vérification 50ms
 #define HB_PROD 0x01F4 // Hearbeat esclave envoyé tout les 500ms
 #define FILE_SLAVE_CONFIG "slave_config.txt"
-
+#define FILE_HELIX_CONFIG "helix_config.txt"
+#define TIME_SET_LIMIT 300
+#define STEP_LIMIT 6
 // PROFILE
 void catch_signal(int sig);
 void Exit(int type);

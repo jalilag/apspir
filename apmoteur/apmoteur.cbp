@@ -77,10 +77,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="errgen.h" />
-		<Unit filename="getopt.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="getopt.h" />
 		<Unit filename="gtksig.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -94,6 +90,7 @@
 		</Unit>
 		<Unit filename="keyword.h" />
 		<Unit filename="laser/Laser_Close_Cfile_gen.h" />
+		<Unit filename="laser/err_laser_stop.sh" />
 		<Unit filename="laser/errgen_laser.h" />
 		<Unit filename="laser/laser.c">
 			<Option compilerVar="CC" />
@@ -108,12 +105,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="laser/laser_simulation.h" />
-		<Unit filename="laser/laser_stop.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="laser/main_test.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="laser/struct_laser.h" />
 		<Unit filename="lsstools.c">
 			<Option compilerVar="CC" />

@@ -17,8 +17,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ARRET "Arret"
 #define BACKWARD "Arrière"
 #define BOX_TRANS_TITLE "Pilotage de la translation"
+#define BOX_SETUP_TITLE "Mise en place"
 #define COBID "COB ID"
 #define CONFIGURE "Configuration"
+#define CONTROL_WORD "Control word"
 #define COUPLE "Couple (%)"
 #define COUPLE_SLOPE "Pente de couple (pour mille/s)"
 #define CURRENT "Courant électrique"
@@ -45,6 +47,9 @@ gboolean keyword_active_maj(gpointer data);
 #define GO "Go"
 #define HALT "Actif"
 #define HELIX_STEP "Pas d'hélice"
+#define HELIX_STEP_TITLE "Pas d'hélice (en m)"
+#define HELIX_LENGTH "Longueur (en m)"
+#define HELIX_PARAM_TITLE "Définition des pas d'hélice"
 #define IMMEDIATE "Immédiat"
 #define LAB_INIT_ERROR "Le passage en mode OPERATIONEL a échoué pour l'élémént"
 #define LASER "Laser"
@@ -52,6 +57,8 @@ gboolean keyword_active_maj(gpointer data);
 #define LASERD "Laser Droit"
 #define LASER_DIST "Distance en m"
 #define LASER_TITLE "Lecture Laser"
+#define LENGTH_DEFINED "Distance définie (en m)"
+#define LENGTH_ERROR "Distance incorrecte"
 #define LOCAL_WRITING_SUCCESS "Configuration PDOr du maitre avec succès"
 #define LOCAL_WRITING_ERROR "Configuration PDOr du maitre échouée"
 #define LSS_ERROR "Erreur de configuration LSS"
@@ -61,7 +68,6 @@ gboolean keyword_active_maj(gpointer data);
 #define LSS_VENDOR_ID_SUCCESS "LSS Vendor ID Success"
 #define MAX_VELOCITY "Vitesse Maximale"
 #define MOTOR_ID "Veuillez entrer les identifiants moteurs."
-
 #define MOTOR_PARAM_TITLE "Définition des moteurs"
 #define MOTOR_TRANS_1 "Moteur translation 1"
 #define MOTOR_TRANS_2 "Moteur translation 2"
@@ -74,6 +80,8 @@ gboolean keyword_active_maj(gpointer data);
 #define NOW "En cours"
 #define ON "Start"
 #define OFF "OFF"
+#define PIPE_LENGTH "Longueur du pipe"
+#define PIPE_LENGTH_ERROR "La longueur de pipe entrée est incorrecte"
 #define PDOR1 "PDOR 1"
 #define PDOR2 "PDOR 2"
 #define PDOR3 "PDOR 3"
@@ -87,8 +95,10 @@ gboolean keyword_active_maj(gpointer data);
 #define POWER_STATE "Etat de marche"
 #define POWER_STATE_ERROR "Erreur de mise en marche"
 #define PRODUCT "Product code"
+#define PROFIL_PARAM_TITLE "Définition des Profils"
 #define PROFILE_MODE "Mode"
 #define PROFILE_NOT_FOUND "Profil moteur introuvable dans le fichier de définition des esclaves"
+#define OVER_LENGTH_ERROR "La distance définie ne peut être supérieure à la longueur du pipe."
 #define READ_ABORT_ERROR "Lecture impossible"
 #define READ_RUNNING "Lecture en cours ..."
 #define READ_SIZE_ERROR "La taille annoncée n'est pas suffisante"
@@ -133,6 +143,7 @@ gboolean keyword_active_maj(gpointer data);
 #define STATUT_BAR "STATUS -> "
 #define STATUT "Statuts des périphériques"
 #define START "Go"
+#define STEP_ERROR "Pas incorrect"
 #define STOP "Stop"
 #define STOP_SUCCESS "Arret des périphériques réussi"
 #define STOP_RUNNING "Arret des périphériques en cours ..."
@@ -145,24 +156,30 @@ gboolean keyword_active_maj(gpointer data);
 #define SWITCH_ON_SUCCESS "Démarrage du périphérique avec succès"
 #define TORQUE_HMT "Control HMT"
 #define TRANSMISSION "Type de transmission"
+#define TRANSLATION "Translation"
 #define TRANSLATION_TITLE "Avancée de la machine"
 #define TRANSLATION_VIT_TITLE "Vitesse en m"
 #define TRANSLATION_READ_INFO "Données moteurs translations"
 #define RESET_APPLICATION_TITLE "Redémarrage"
 #define RESET_APPLICATION_CONTENT "L'application va maintenant redémarrer."
+#define ROTATION "Rotation"
 #define ROTATION_CONTROL_TITLE "Controle de la rotation"
 #define ROTATION_READ_INFO "Données moteur rotation"
 #define TARGET_PROFILE "Incrementation"
+#define TARGET_POSITION "Position"
 #define TARGET_TORQUE "Couple"
 #define TARGET_VELOCITY "Vitesse"
 #define TEMPERATURE "Température"
+#define TIME_2_SET "Temps de pose (en s)"
 #define TIME "Durée"
-#define TORQUE_RAMP "Torque slope (0x6087)"
-#define TORQUE_VELOCITY "Torque velocity (0x2704)"
-#define TORQUE_VELOCITY_MAKEUP "Make up velocity (0x2703)"
-#define TORQUE_HMT_ACTIVATE "hMTechnology enable (0x2701)"
-#define TORQUE_HMT_CONTROL "hMTechnologie configuration (0x2702)"
-#define TORQUE "Target Torque (0x6071)"
+#define TIME_MIN_ERROR "Le temps que vous avez entré est trop court, celui-ci doit être supérieur à"
+#define TIME_ERROR "Le temps que vous avez entré est incorrect"
+#define TORQUE_RAMP "Torque ramp"
+#define TORQUE_VELOCITY "Ratio Vitesse (couple)"
+#define TORQUE_VELOCITY_MAKEUP "Vitesse max (couple)"
+#define TORQUE_HMT_ACTIVATE "Activation HMT"
+#define TORQUE_HMT_CONTROL "Control HMT"
+#define TORQUE "Couple"
 #define VALUE "Valeur"
 #define VENDOR "Vendeur ID"
 #define VOLTAGE "Tension"
@@ -176,6 +193,7 @@ gboolean keyword_active_maj(gpointer data);
 #define YES "Oui"
 #define WARNING "Attention"
 
+//ajout 220116
 //LASER LABEL SET
 
 #define LASER_STATUS_OK_LABEL "Laser Status OK"
@@ -192,6 +210,8 @@ gboolean keyword_active_maj(gpointer data);
 #define LAB_R_START "rotation"
 #define LAB_LASER_SIMU "simulation laser"
 
+
+//fin ajout 220116
 // Motor powor state
 #define NR2SON 0x01
 #define SOND 0x02
@@ -320,6 +340,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_READ_TORQUE_VELOCITY_MAKEUP_TITLE "Lecture vitesse make-up (couple)"
 #define ERR_READ_HMT_ACTIVATE_TITLE "Lecture activation HMT"
 #define ERR_READ_HMT_CONTROL_TITLE "Lecture controle HMT a échoué"
+#define ERR_READ_VITESSE_MAX_TITLE "Lecture vitesse max a échoué"
 
 #define ERR_SET_ACCELERATION_TITLE "Accélération"
 #define ERR_SET_DECELERATION_TITLE "Décélération"
@@ -334,6 +355,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SET_HMT_ACTIVATE_TITLE "Saisie activation HMT"
 #define ERR_SET_HMT_CONTROL_TITLE "Saisie controle HMT a échoué"
 #define ERR_SET_PDO_TITLE "Saisie mapping PDO"
+#define ERR_SET_VITESSE_MAX_TITLE "Saisie vitesse max a échoué"
 
 #define ERR_SAVE_ACCELERATION_TITLE "Accélération"
 #define ERR_SAVE_DECELERATION_TITLE "Décélération"
@@ -346,6 +368,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SAVE_TORQUE_VELOCITY_MAKEUP_TITLE "Sauvegarde vitesse make-up (couple)"
 #define ERR_SAVE_HMT_ACTIVATE_TITLE "Sauvegarde activation HMT"
 #define ERR_SAVE_HMT_CONTROL_TITLE "Sauvegarde controle HMT a échoué"
+#define ERR_SAVE_VITESSE_MAX_TITLE "Sauvegarde vitesse max a échoué"
 
 #define ERR_MOTOR_PAUSE_TITLE "Mise en pause du moteur"
 #define ERR_MOTOR_RUN_TITLE "Mise en mouvement du moteur"
@@ -353,8 +376,8 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MOTOR_FORWARD_TITLE "Changement de sens"
 #define ERR_MOTOR_BACKWARD_TITLE "Changement de sens"
 #define ERR_MOTOR_LOW_VOLTAGE_TITLE "Baisse de tension"
-#define ERR_CLEAR_LOCKED_ROTOR_TITLE "Rotor lock"
 
+//ajout 220116
 //laser
 #define ERR_LASER_FATAL_TITLE "Laser en fonctionnement"
 #define ERR_LASER_INIT_FATAL_TITLE "Laser demarrage"
@@ -369,7 +392,6 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_GETPOSOFFSET_ERROR_TITLE "Delta laser 1 laser 2"
 #define ERR_LASER_MASTER_EXIT_TITLE "Laser 1 exit"
 #define ERR_LASER_SLAVE_EXIT_TITLE "Laser 2 exit"
-#define ERR_LASER_REINIT_TITLE "Laser Reinit"
 #define ERR_LASER_SERIAL_CONFIG_TITLE "Serial configuration"
 #define ERR_LASER_STARTCHECKTHREAD_TITLE "Laser data verification thread"
 
@@ -377,6 +399,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_ASSERV_TITLE "Asservissement rotation"
 #define ERR_LASER_SIMU_TITLE "Erreur simulation laser"
 #define ERR_ROT_TITLE "Erreur moteur rotation"
+
+#define ERR_HELIX_PROFILE_TITLE "definition de l'hélice"
+
+//fin ajout 220116
 
 // ERROR CONTENT
 #define ERR_DRIVER_UP_CONTENT "Le chargement du driver SOCKET CAN a échoué"
@@ -400,7 +426,6 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MASTER_CONFIG_PDOR_CONTENT "La configuration de la PDO récepteur du maitre a échoué"
 #define ERR_MASTER_CONFIG_PDOT_CONTENT "La configuration de la PDO transmetteur du maitre a échoué"
 #define ERR_MASTER_CONFIG_CONTENT "La configuration du maitre a échoué"
-#define ERR_MASTER_CONFIG_MAP_CONTENT "La configuration du mapping transmission local à échoué"
 
 #define ERR_SLAVE_CONFIG_CONTENT "La configuration d'un esclave a échoué"
 #define ERR_SLAVE_CONFIG_LSS_CONTENT "La configuration LSS a échoué"
@@ -433,6 +458,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_READ_TORQUE_VELOCITY_MAKEUP_CONTENT "La lecture de la vitesse make-up (couple) a échoué"
 #define ERR_READ_HMT_ACTIVATE_CONTENT "La lecture de l'activation HMT a échoué"
 #define ERR_READ_HMT_CONTROL_CONTENT "La lecture du controle HMT a échoué"
+#define ERR_READ_VITESSE_MAX_CONTENT "La lecture de la vitesse max a échoué"
 
 #define ERR_SET_ACCELERATION_CONTENT "L'accélération saisie est invalide"
 #define ERR_SET_DECELERATION_CONTENT "La deceleration saisie est invalide"
@@ -447,6 +473,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SET_TORQUE_VELOCITY_MAKEUP_CONTENT "La saisie de la vitesse make-up (couple) est invalide"
 #define ERR_SET_HMT_ACTIVATE_CONTENT "La saisie de l'activation HMT est invalide"
 #define ERR_SET_HMT_CONTROL_CONTENT "La saisie du controle HMT a échoué"
+#define ERR_SET_VITESSE_MAX_CONTENT "La saisie de la vitesse max a échoué"
 
 #define ERR_SAVE_ACCELERATION_CONTENT "La sauvegarde de l'accélération a échoué"
 #define ERR_SAVE_DECELERATION_CONTENT "La sauvegarde de la décélération a échoué"
@@ -459,6 +486,7 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_SAVE_TORQUE_VELOCITY_MAKEUP_CONTENT "La sauvegarde de la vitesse make-up (couple) a échoué"
 #define ERR_SAVE_HMT_ACTIVATE_CONTENT "La sauvegarde de l'activation HMT  a échoué"
 #define ERR_SAVE_HMT_CONTROL_CONTENT "La sauvegarde du controle HMT a échoué"
+#define ERR_SAVE_VITESSE_MAX_CONTENT "La sauvegarde de la vitesse max a échoué"
 
 #define ERR_MOTOR_PAUSE_CONTENT "La mise en pause d'un 'des moteurs a échoué"
 #define ERR_MOTOR_RUN_CONTENT "La mise en mouvement d'un des moteurs a échoué"
@@ -467,8 +495,9 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_MOTOR_BACKWARD_CONTENT "Le changement de sens du moteur vers l'arrière a échoué"
 #define ERR_MOTOR_LOW_VOLTAGE_CONTENT "Un moteur a subi une baisse de tension ou a été débranché. Le moteur a été désactivé."
 
+//debut ajout 220116
 //laser
-#define ERR_LASER_FATAL_CONTENT "Aucuns des lasers ne fournit plus de mesure viable"
+#define ERR_LASER_FATAL_CONTENT "Aucuns des lasers ne fournit plus de mesure viable. Les lasers vont être éteinds"
 #define ERR_MASTER_NOT_STARTED_CONTENT "Laser 1 Erreur Fatale. Laser pas démarré"
 #define ERR_SLAVE_NOT_STARTED_CONTENT "Laser 2 Erreur Fatale. Laser pas démarré"
 #define ERR_LASER_INIT_FATAL_CONTENT "Aucuns des lasers n'a pu être initialisé correctement"
@@ -481,11 +510,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_GETPOSOFFSET_ERROR_CONTENT "Le delta entre les mesures laser n'a pas pu être obtenu"
 #define ERR_LASER_MASTER_EXIT_CONTENT "Erreur lors de la fermeture laser 1. Lors du redémarrage débrancher puis rebrancher le laser"
 #define ERR_LASER_SLAVE_EXIT_CONTENT "Erreur lors de la fermeture laser 2. Lors du redémarrage débrancher puis rebrancher le laser"
-#define ERR_LASER_REINIT_CONTENT "La reinitialisation des laser a échoué. Verifier les branchements: alim et usb"
 #define ERR_LASER_SERIAL_CONFIG_CONTENT "Serial acces permission problem. Try running the code with sudo"
 #define ERR_LASER_STARTCHECKTHREAD_CONTENT "Laser data consistency verification thread start error"
 
-
+//laser asserv
 #define ERR_LASER_ASSERV_START_CONTENT "Erreur au démarrage de l'asservissement"
 #define ERR_LASER_ASSERV_STOP_CONTENT "Erreur à l'arrêt de l'asservissement"
 #define ERR_LASER_SIMU_START_CONTENT "le démarrage de la simulation laser a échoué"
@@ -494,11 +522,17 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_ROT_WRITE_ACCEL_CONTENT "L'acceleration de consigne du moteur rotation n'a pas été transmise au moteur"
 #define ERR_ROT_GET_ACCEL_CONTENT "L'accéleration du moteur rotation n'a pas pu être obtenue"
 #define ERR_ROT_GET_DECEL_CONTENT "La déceleration du moteur rotation n'a pas pu être obtenue"
+#define ERR_SLAVE_CONFIG_ROT_REFPOS_CONTENT "La récupération de la position initiale moteur rotation vitesse a échoué"
 
 #define ERR_LASER_ASSERV_2_VELMOTROTDEFINED_CONTENT "Deux moteurs vitesse rotation sont défini. N'en mettre qu'un avec des moteurs couples"
 #define ERR_LASER_ASSERV_READMOTROTDATA_CONTENT "Erreur de lecture. Cherche à lire une variable mapper qui n'existe pas"
 #define ERR_LASER_ASSERV_GETINDEXROT_CONTENT "Soit aucun moteurs vitesse rotation n'est défini, soit vous en avez défini plusieurs"
-#define ERR_LASER_ASSERV_GETINDEXTRANS_CONTENT "Soit aucun moteurs vitesse translation n'est défini, soit vous en avez défini plusieurs"
+#define ERR_LASER_ASSERV_GETINDEXTRANS_CONTENT "Aucun moteurs vitesse translation n'est défini."
 #define ERR_LASER_ASSERV_MOTROT_CONTENT "Impossible de lancer la rotation. Une erreur dans la config du moteur rotation subsiste"
+#define ERR_LASER_ASSERV_SENS_CONTENT "Impossible de partir dans ce sens"
+#define ERR_LASER_ASSERV_GETSTARTPOS_CONTENT "Les laser ne sont pas démarré. Impossible de démarrer la pose"
+
+#define ERR_HELIX_PROFILE_CONTENT "Erreur lecture consigne hélice"
+//fin ajout 220116
 
 #endif // _SIGNAUX_H

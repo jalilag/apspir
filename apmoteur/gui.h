@@ -3,11 +3,11 @@
 #include "canfestival.h"
 #include <gtk/gtk.h>
 
-typedef struct GUIELEM GUIELEM;
-struct GUIELEM {
-    char* id;
-    char* title;
-};
+//typedef struct GUIELEM GUIELEM;
+//struct GUIELEM {
+//    char* id;
+//    char* title;
+//};
 
 void gui_label_set(gchar* lab_id, gchar* lab_title);
 void gui_label_set_objs(char* lab_title, char* lab_id, ... );
@@ -21,11 +21,12 @@ void gui_local_image_set(gchar* img_id, char* icon_name, int iconsize,char* par_
 int gui_switch_is_active(char* labid);
 const gchar* gui_entry_get(gchar* ent_id);
 void gui_push_state(char * txtState);
-int but_is_checked(char* labid); // Savoir si un bouton est coché
+int gui_but_is_checked(char* labid); // Savoir si un bouton est coché
 gint64 gui_str2num(const gchar *txtdata); // Convertit str en double
 void gui_widget2show(char* s1,...); // Affiche les widget en arg
 void gui_widget2hide(char* s1,...);
 void gui_info_box(char* boxTitle, char* boxContent, char* icon);
+void gui_info_popup(char* boxContent, char* icon);
 void gui_init();
 gpointer gui_main(gpointer data);
 void gui_gen_param (gchar* labID, gchar* entID, gchar* labtxt,GtkGrid* grid, int gridLine);
@@ -34,6 +35,7 @@ void gui_local_entry_set(gchar * parentID, gchar * entID, gchar* labtxt);
 GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* color);
 GtkBox* gui_get_box(gchar* labid);
 GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...);
+int gui_spinner_is_active(char* labid);
 
 GObject* gui_get_object(gchar* labid); // Renvoie l'objet gtk
 GtkWindow* gui_get_window(gchar* labid);
@@ -46,4 +48,5 @@ GtkMenu* gui_get_menu(gchar* labid);
 GtkDialog* gui_get_dialog(gchar* labid);
 GtkSwitch* gui_get_switch(gchar* labid);
 GtkGrid* gui_get_grid(gchar* labid);
+GtkSpinner* gui_get_spinner(gchar* labid);
 #endif

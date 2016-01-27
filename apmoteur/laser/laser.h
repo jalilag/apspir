@@ -5,7 +5,7 @@
 //REGLAGES
 //constantes
 #define NUM_READPORT_ERROR_TOL 40
-#define TIMECONSISTENCY_VAL 500000 // in micro s
+#define TIMECONSISTENCY_VAL 1000000 // in micro s
 #define POSITIONCONSISTENCY_VAL 60 // en 10eme de mm
 #define MESCONSISTENCY_VAL(vitesse_machine) (/*POSITIONCONSISTENCY_VAL*/60+labs(vitesse_machine)/2)//vitesse_machine en 10eme de mm/s
 #define CONVERT_MUS_S(t) ((double)(t)/1000000)
@@ -13,6 +13,10 @@
 
 #define TIME_VITESSE_CALC 1000000 //en micro sec. attente entre deux mesures de position
 #define TIME_ERROR_VAL_VITESSE 50//micro sec: temps de récup des données
+
+/****/
+void Laser_Init_Minimal(laser * l);
+
 /*****************configuration des droits d'accès aux ports*****************************************/
 
 int Laser_serial_config(void);
@@ -65,4 +69,5 @@ unsigned int Laser_GetVitesse(laser * master, laser * slave, struct laser_data *
 
 /**Laser Simulation**/
 void Laser_Init_Simu(laser * l);
+void Save_Data_Laser(laser * l, unsigned long mes, unsigned long t);
 unsigned long GetDate_us(void);

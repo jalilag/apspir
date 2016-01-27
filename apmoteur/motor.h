@@ -2,13 +2,15 @@
 #define _MOTOR_H
 #include "canfestival.h"
 
+//ajout 220116
 //only for simulation if no trans motor is defined
 #define MOTOR_DEFAULT_MOTTRANSACCEL 500000
 //parametre pour application du couple (voir cantools.c cantools_ApplyVitRot, cantools_ApplyVitTrans)
-#define MOTOR_TRANS_MAX_VEL 400000
-#define MOTOR_ROT_MAX_VEL 400000
-#define MOTOR_TRANS_COUPL_DEFAULT 300
-#define MOTOR_ROT_COUPL_DEFAULT 300
+#define MOTOR_TRANS_MAX_VEL 300000
+#define MOTOR_ROT_MAX_VEL 300000
+#define MOTOR_TRANS_COUPL_DEFAULT 0
+#define MOTOR_ROT_COUPL_DEFAULT 0
+//fin ajout 220116
 
 typedef struct PARAM PARAM;
 struct PARAM {
@@ -28,8 +30,9 @@ struct PARAM {
 UNS8 motor_get_state(UNS16 state);
 char* motor_get_state_title(UNS8 key);
 char* motor_get_error_title(UNS16 data);
+int motor_get_target(UNS16 state);
 int motor_switch_on(UNS8 node);
-int switch_motor_off(UNS8 node);
+int motor_switch_off(UNS8 node);
 int motor_start(UNS8 node,int start); // SON -> OP
 int motor_forward(UNS8 node,int polar ); // Polarity
 
@@ -38,4 +41,8 @@ int motor_get_param(UNS8 node,char* id,INTEGER32* dat);
 char* motor_get_param_title(char* id);
 int motor_get_param_index(char* id);
 UNS8 motor_get_param_type(char* id);
+INTEGER16 motor_get_couple(INTEGER32 vel);
+//ajout 220116
+void motor_set_MotRot_Accel(void);
+//fin ajout 220116
 #endif

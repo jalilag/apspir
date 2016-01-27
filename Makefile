@@ -23,6 +23,9 @@
 
 all: objdictedit canfestival
 
+examples: canfestival driver
+	$(MAKE) -C all
+
 documentation:
 	$(MAKE) -C doc/doxygen
 
@@ -47,6 +50,7 @@ install: canfestival driver
 uninstall:
 	$(MAKE) -C drivers $@
 	$(MAKE) -C src $@
+	$(MAKE) -C examples $@
 	$(MAKE) -C objdictgen $@
 
 clean:

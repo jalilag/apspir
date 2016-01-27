@@ -1,14 +1,26 @@
 #include "errgen.h"
+#include "SpirallingControl.h"
 #include <stdlib.h>
+#include <glib.h>
+#include <gtk/gtk.h>
 #include "gui.h"
 #include "keyword.h"
 #include "strtools.h"
 #include "gtksig.h"
-
-UNS8 errgen_laserState = 0x00;
-
+//ajout 220116
+UNS8 errgen_laserState = MASTER_NOT_STARTED | SLAVE_NOT_STARTED;
+//fin ajout 220116
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
+extern UNS16 errgen_state;
+extern char* errgen_aux;
+
+GSourceFunc errgen_set_safe(gpointer data) {
+    errgen_set(errgen_state,errgen_aux);
+    errgen_state = 0x0000;
+    errgen_aux = NULL;
+    return FALSE;
+}
 
 void errgen_set(UNS16 dat, char* op) {
     char* title = strtools_concat(ERROR, " : ", strtools_gnum2str(&dat,0x06)," ",errgen_get_title(dat), NULL);
@@ -82,7 +94,9 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_MASTER_CONFIG_PDOR) return ERR_MASTER_CONFIG_PDOR_TITLE;
     else if (dat == ERR_MASTER_CONFIG_PDOT) return ERR_MASTER_CONFIG_PDOT_TITLE;
     else if (dat == ERR_MASTER_CONFIG) return ERR_MASTER_CONFIG_TITLE;
+    //ajout 220116
     else if (dat == ERR_MASTER_CONFIG_MAP) return ERR_MASTER_CONFIG_TITLE;
+    //fion ajout 220116
 
     else if (dat == ERR_SLAVE_CONFIG) return ERR_SLAVE_CONFIG_TITLE;
     else if (dat == ERR_SLAVE_CONFIG_LSS) return ERR_SLAVE_CONFIG_LSS_TITLE;
@@ -150,6 +164,7 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_MOTOR_BACKWARD) return ERR_MOTOR_BACKWARD_TITLE;
     else if (dat == ERR_MOTOR_LOW_VOLTAGE) return ERR_MOTOR_LOW_VOLTAGE_TITLE;
 
+    //debut ajout 220116
     //laser
     else if (dat == ERR_LASER_INIT_FATAL) return ERR_LASER_INIT_FATAL_TITLE;
     else if (dat == LASER_ERROR(ERR_LASER_FATAL)) return ERR_LASER_FATAL_TITLE;
@@ -164,11 +179,15 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == LASER_ERROR(LASER_GETPOSOFFSET_ERROR)) return ERR_LASER_GETPOSOFFSET_ERROR_TITLE;
     else if (dat == LASER_ERROR(LASER_MASTER_EXIT_ERROR)) return ERR_LASER_MASTER_EXIT_TITLE;
     else if (dat == LASER_ERROR(LASER_MASTER_EXIT_ERROR)) return ERR_LASER_MASTER_EXIT_TITLE;
-    else if (dat == ERR_LASER_REINIT) return ERR_LASER_REINIT_TITLE;
     else if (dat == ERR_LASER_SERIAL_CONFIG) return ERR_LASER_SERIAL_CONFIG_TITLE;
     else if (dat == ERR_LASER_STARTCHECKTHREAD) return ERR_LASER_STARTCHECKTHREAD_TITLE;
 
-
+    else if (dat == ERR_ROT_CALC_ACCEL) return ERR_ROT_TITLE;
+    else if (dat == ERR_ROT_WRITE_ACCEL) return ERR_ROT_TITLE;
+    else if (dat == ERR_ROT_GET_ACCEL) return ERR_ROT_TITLE;
+    else if (dat == ERR_ROT_GET_DECEL) return ERR_ROT_TITLE;
+    else if (dat == ERR_SLAVE_CONFIG_ROT_REFPOS) return ERR_ROT_TITLE;
+    else if (dat == ERR_LASER_ASSERV_GETSTARTPOS) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_START) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_STOP) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_2_VELMOTROTDEFINED) return ERR_LASER_ASSERV_TITLE;
@@ -176,14 +195,12 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_LASER_ASSERV_GETINDEXROT) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_GETINDEXTRANS) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_MOTROT) return ERR_LASER_ASSERV_TITLE;
-
+    else if (dat == ERR_LASER_ASSERV_SENS) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_SIMU_START) return ERR_LASER_SIMU_TITLE;
-    else if (dat == ERR_LASER_SIMU_STOP) return ERR_LASER_SIMU_TITLE;
-    else if (dat == ERR_ROT_CALC_ACCEL) return ERR_ROT_TITLE;
-    else if (dat == ERR_ROT_WRITE_ACCEL) return ERR_ROT_TITLE;
-    else if (dat == ERR_ROT_GET_ACCEL) return ERR_ROT_TITLE;
-    else if (dat == ERR_ROT_GET_DECEL) return ERR_ROT_TITLE;
+    else if (dat == ERR_LASER_SIMU_STOP) return ERR_LASER_SIMU_TITLE;    
 
+    else if (dat == ERR_HELIX_PROFILE) return ERR_HELIX_PROFILE_TITLE;
+    //fin ajout 220116
     else return DEFAULT;
 }
 
@@ -209,7 +226,9 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_MASTER_CONFIG_PDOR) return ERR_MASTER_CONFIG_PDOR_CONTENT;
     else if (dat == ERR_MASTER_CONFIG_PDOT) return ERR_MASTER_CONFIG_PDOT_CONTENT;
     else if (dat == ERR_MASTER_CONFIG) return ERR_MASTER_CONFIG_CONTENT;
+    //ajout 220116
     else if (dat == ERR_MASTER_CONFIG_MAP) return ERR_MASTER_CONFIG_CONTENT;
+    //fin ajout 220116
 
     else if (dat == ERR_SLAVE_CONFIG) return ERR_SLAVE_CONFIG_CONTENT;
     else if (dat == ERR_SLAVE_CONFIG_LSS) return ERR_SLAVE_CONFIG_LSS_CONTENT;
@@ -273,7 +292,7 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_MOTOR_BACKWARD) return ERR_MOTOR_BACKWARD_CONTENT;
     else if (dat == ERR_MOTOR_LOW_VOLTAGE) return ERR_MOTOR_LOW_VOLTAGE_CONTENT;
 
-
+    //ajout 220116
     //laser
     else if (dat == LASER_ERROR(ERR_LASER_FATAL)) return ERR_LASER_FATAL_CONTENT;
     else if (dat == ERR_LASER_INIT_FATAL) return ERR_LASER_INIT_FATAL_CONTENT;
@@ -288,11 +307,10 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == LASER_ERROR(LASER_SLAVE_START_ERROR)) return ERR_LASER_SLAVE_START_ERROR_CONTENT;
     else if (dat == LASER_ERROR(LASER_MASTER_EXIT_ERROR)) return ERR_LASER_MASTER_EXIT_CONTENT;
     else if (dat == LASER_ERROR(LASER_SLAVE_EXIT_ERROR)) return ERR_LASER_SLAVE_EXIT_CONTENT;
-    else if (dat == ERR_LASER_REINIT) return ERR_LASER_REINIT_CONTENT;
     else if (dat == ERR_LASER_SERIAL_CONFIG) return ERR_LASER_SERIAL_CONFIG_CONTENT;
+    else if (dat == ERR_LASER_STARTCHECKTHREAD) return ERR_LASER_STARTCHECKTHREAD_CONTENT;
 
-
-
+    //laser asserv
     else if (dat == ERR_LASER_ASSERV_START) return ERR_LASER_ASSERV_START_CONTENT;
     else if (dat == ERR_LASER_ASSERV_STOP) return ERR_LASER_ASSERV_STOP_CONTENT;
     else if (dat == ERR_LASER_SIMU_START) return ERR_LASER_SIMU_START_CONTENT;
@@ -302,13 +320,19 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_ROT_WRITE_ACCEL) return ERR_ROT_WRITE_ACCEL_CONTENT;
     else if (dat == ERR_ROT_GET_ACCEL) return ERR_ROT_CALC_ACCEL_CONTENT;
     else if (dat == ERR_ROT_GET_DECEL) return ERR_ROT_GET_DECEL_CONTENT;
+    else if (dat == ERR_SLAVE_CONFIG_ROT_REFPOS) return ERR_SLAVE_CONFIG_ROT_REFPOS_CONTENT;
 
-    else if (dat == ERR_LASER_STARTCHECKTHREAD) return ERR_LASER_STARTCHECKTHREAD_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_SENS) return ERR_LASER_ASSERV_SENS_CONTENT;
     else if (dat == ERR_LASER_ASSERV_2_VELMOTROTDEFINED) return ERR_LASER_ASSERV_2_VELMOTROTDEFINED_CONTENT;
     else if (dat == ERR_LASER_ASSERV_READMOTROTDATA) return ERR_LASER_ASSERV_READMOTROTDATA_CONTENT;
     else if (dat == ERR_LASER_ASSERV_GETINDEXROT) return ERR_LASER_ASSERV_GETINDEXROT_CONTENT;
     else if (dat == ERR_LASER_ASSERV_GETINDEXTRANS) return ERR_LASER_ASSERV_GETINDEXTRANS_CONTENT;
     else if (dat == ERR_LASER_ASSERV_MOTROT) return ERR_LASER_ASSERV_MOTROT_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_GETSTARTPOS) return ERR_LASER_ASSERV_GETSTARTPOS_CONTENT;
+
+    else if (dat == ERR_HELIX_PROFILE) return ERR_HELIX_PROFILE_CONTENT;
+
+//fin ajout 220116
 
     else return DEFAULT;
 }

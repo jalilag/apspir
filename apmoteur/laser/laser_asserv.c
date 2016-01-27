@@ -7,8 +7,7 @@
 #include "laser_asserv.h"
 
 #include "SpirallingMaster.h"
-#include "slave.h"
-#include "errgen.h"
+#include "cantools.h"
 
 #define STAND_ALONE_TEST 0
 #if STAND_ALONE_TEST
@@ -21,20 +20,39 @@ int run_asserv = 0;
 static struct laser_asserv_thread lats;
 
 INTEGER32 MotRot_Ref_Position = 0;
-unsigned int User_Tolerance = 200;//en dixieme de mm.
-unsigned long Start_Distance = 0;
+unsigned int User_Tolerance = 100;//en dixieme de mm.
+static unsigned long Start_Distance = 300000;
 unsigned long Pipe_Length = 30000;
 
+static FILE * laser_asserv_report_file;
+static const char* laser_asserv_report_filename = "./laser/work_report/report_laserAsserv.dat";
 
+unsigned long Laser_Asserv_GetStartDistance(void){
+    return Start_Distance;
+}
 
 int d_to_dparcouru(struct laser_data * d)
 {
-    if((d->mes = Start_Distance - d->mes) < 0)
-        return 1;
-    d->vitesse = d->vitesse;
-    d->vitesse_1s = d->vitesse_1s;
+    long int l = Start_Distance-d->mes;
+    if(l <= -LASER_MES_ERROR) return 1;
+    else if ((l<=0) && l >= -LASER_MES_ERROR) d->mes = 0;
+    else d->mes = Start_Distance - (d->mes);
+
+    d->vitesse = -d->vitesse;
+    d->vitesse_1s = -d->vitesse_1s;
+
     return 0;
 }
+
+int laser_asserv_decalage_temp(unsigned long p_capt_time, struct laser_data * d){
+    long int l = (d->vitesse_1s*( (long int)p_capt_time - (long int)d->t ))/1000000 + d->mes;
+    if(l <= -LASER_MES_ERROR) return 1;
+    else if ((l <= 0) && l >= -LASER_MES_ERROR) d->mes = 0;
+    else d->mes = (unsigned long)l;//+= (d->vitesse_1s*( p_capt_time - d->t ))/1000000;
+    d->t = p_capt_time;
+    return 0;
+}
+
 
 unsigned int laser_asserv_GetPipeLength(laser * ml, laser * sl)
 {
@@ -49,15 +67,9 @@ unsigned int laser_asserv_GetPipeLength(laser * ml, laser * sl)
 
 unsigned int laser_asserv_GetStartPosition(laser * ml, laser * sl)
 {
-  unsigned int status_laser = 0;
   struct laser_data d;
 
-  if(ml->isSimu || sl->isSimu){
-    Start_Distance = 300000;
-    return 0;
-  }
-
-  if(((status_laser = Laser_GetData(ml, sl, &d)) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
+  if(((Laser_GetData(ml, sl, &d)) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
     return ERR_LASER_FATAL;
 
   Start_Distance = d.mes;
@@ -173,17 +185,41 @@ int FindConsigne_VitRot(unsigned long * d/*distance mesuree dmm*/, INTEGER32 * v
   //printf("res = %d, p = %ld, v_mtrans = %f\n", *res, p, (float)REL_TRSL_ROT/p * (float)REDUCTION_ROTATION/REDUCTION_TRANS);
   return 0;
 }
+//
+//pas encore testée
+//v_ltrans en dmm/s
+int FindConsigne_VitRot_with_laser(unsigned long * d/*distance mesuree dmm*/, long int * v_ltrans, INTEGER32 * res)
+{
+
+  long int NumInterval;
+  long int p;
+
+  if(Recup_NumInterval(d, &NumInterval))
+    return -1;
+  //printf("d = %lu, Numinterval = %ld\n", *d, NumInterval);
+  p = HelixUserData.p[NumInterval]; //en mm/tour
+  //printf("p = %ld\n", p);
+  if(p == 0)
+    *res = 0;
+  else
+    {
+      *res = (INTEGER32)((*v_ltrans) * STEPS_PER_REV * REDUCTION_ROTATION / p / 10);
+    }
+
+  //printf("res = %d, p = %ld, v_mtrans = %f\n", *res, p, (float)REL_TRSL_ROT/p * (float)REDUCTION_ROTATION/REDUCTION_TRANS);
+  return 0;
+}
 
 //v_cons_mrot en dixieme de mm/s
 unsigned int FindTypeOfMvt(INTEGER32 v_cons_m, INTEGER32 v_capt_m)
 {
 
       //printf("FINDTYPEOFMVT v_capt = %d, v_cons_m = %d, labs(v1-v2) = %d", v_capt_m, v_cons_m, labs(v_capt_m-v_cons_m));
-      if((labs(v_capt_m)>labs(v_cons_m)+LASER_ASSERV_ERR_VITESSE) & ((long long int)v_capt_m*v_cons_m >= 0))
+      if((labs(v_capt_m)>labs(v_cons_m)+LASER_ASSERV_ERR_VITESSE_ROT) & ((long long int)v_capt_m*v_cons_m >= 0))
 	return PHASE_DECEL;
-      else if((labs(v_capt_m)<labs(v_cons_m)-LASER_ASSERV_ERR_VITESSE) & ((long long int)v_capt_m*v_cons_m >= 0))
+      else if((labs(v_capt_m)<labs(v_cons_m)-LASER_ASSERV_ERR_VITESSE_ROT) & ((long long int)v_capt_m*v_cons_m >= 0))
 	return PHASE_ACCEL;
-      else if (labs(v_capt_m - v_cons_m) <= LASER_ASSERV_ERR_VITESSE)
+      else if (labs(v_capt_m - v_cons_m) <= LASER_ASSERV_ERR_VITESSE_ROT)
 	return VITESSE_CONSTANTE;
       else
 	{
@@ -193,9 +229,11 @@ unsigned int FindTypeOfMvt(INTEGER32 v_cons_m, INTEGER32 v_capt_m)
 
 }
 
-void * Thread_Appli_Vitesse(void * vc)
+static struct Laser_x_thread vc;
+
+void * Thread_Appli_Vitesse(void * StructConsigneVitesse)
 {
-  struct Laser_x_thread v = *(struct Laser_x_thread*)vc;
+  struct Laser_x_thread v = *(struct Laser_x_thread*)StructConsigneVitesse;
 
   printf("VITESSE APPLIQUEE -> %d\n",v.cv );
   cantools_ApplyVelRot(v.cv);
@@ -294,11 +332,8 @@ unsigned int CheckAndCorrect_VelocityRelation(unsigned long * d, INTEGER32 * v_c
     {
       printf("ERROR: Maximum velocity rotation reached\n");
       v_cons_calc_mrot = LASER_ASSERV_MAX_MOTROT_VELOCITY;
-      res |= MAX_ROT_VEL_REACHED;
-
+      res = MAX_ROT_VEL_REACHED;
     }
-
-  printf("v_cons_mrot %d, v_cons_calc_mrot %d\n", *v_cons_mrot, v_cons_calc_mrot);
 
   if((*v_cons_mrot) != v_cons_calc_mrot)
     {
@@ -368,14 +403,14 @@ unsigned int laser_asserv_User_Velocity_Change(laser * ml, laser * sl, INTEGER32
 {
   struct laser_data d;
   INTEGER32 v_cons_mrot;
-  unsigned int res = 0;
-  if((res = Laser_GetData(ml, sl, &d))==ERR_LASER_FATAL)
-    return res;
 
-  d_to_dparcouru(&d);
+  if((Laser_GetData(ml, sl, &d) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
+    return 1;
 
-  if((res |= FindConsigne_VitRot(&(d.mes), &v_cons_mt, &v_cons_mrot)) & FIND_CONSIGNE_FAILURE)
-    return res;
+  if(d_to_dparcouru(&d)) return 1;
+
+  if(FindConsigne_VitRot(&(d.mes), &v_cons_mt, &v_cons_mrot) & FIND_CONSIGNE_FAILURE)
+    return 1;
 
   printf("USER VELOCITY CHANGE vconsmt = %d, vconsmrot =%d\n", v_cons_mt, v_cons_mrot);
   cantools_ApplyVelRot(v_cons_mrot);
@@ -390,26 +425,26 @@ unsigned int laser_asserv_Follow_Consigne(laser * ml, laser * sl)
 {
   struct laser_data d;
   INTEGER32 v_cons_mt, v_cons_mrot;
-  unsigned int res = 0;
 
   v_cons_mt = ConsVit_T;
   v_cons_mrot = ConsVit_R;
 
-  if((res |= Laser_GetData(ml, sl, &d))==ERR_LASER_FATAL)
-    return ERR_LASER_FATAL;
+  if((Laser_GetData(ml, sl, &d) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
+    return 1;
 
-  d_to_dparcouru(&d);
+  if(d_to_dparcouru(&d)) return 1;
   //printf("RESULTAT MESURE LASER : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
 
-  if((res |= CheckAndCorrect_VelocityRelation(&(d.mes), &v_cons_mt, &v_cons_mrot)) & FIND_CONSIGNE_FAILURE)
+  if(CheckAndCorrect_VelocityRelation(&(d.mes), &v_cons_mt, &v_cons_mrot) & FIND_CONSIGNE_FAILURE)
     {
       printf("Find Consigne Failure\n");
-      return res;
+      return 1;
     }
 
-  return res;
+  return 0;
 }
 
+extern unsigned long CaptPos_R_Time;
 unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long * next_Sync_call_Nr, unsigned long * SyncTimeInterval/*us*/)
 //variables globale: data moteur rotation
 //"CaptureVitesse_MotRot","CapturePosition_MotRot", "ConsigneVitesse_MotRot", "Status_word_MotRot",  "Control_word_MotRot
@@ -418,6 +453,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
 {
   struct laser_data d;
   INTEGER32 v_capt_mrot, p_capt_mrot, v_cons_mrot;
+  unsigned long p_capt_time;
   INTEGER32 v_cons_mt;
   INTEGER32 temp;
   UNS16 stat_motrot, ctrl_motrot;
@@ -426,7 +462,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
   unsigned int res = 0;
   unsigned int err = 0;
 
-  printf("Laser_Verify_Movement=>");
+  fprintf(laser_asserv_report_file,"Laser_Verify_Movement=>");
 
   //si aucun evenement ou une erreur on rappelle la fonction à la prochaine mesure laser (env 150ms).
   *next_Sync_call_Nr += 1;
@@ -434,49 +470,57 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
   EnterMutex();
   v_capt_mrot = CaptVit_R;
   p_capt_mrot = CaptPos_R;
+  p_capt_time = CaptPos_R_Time;
   v_cons_mrot = ConsVit_R;
   v_cons_mt = ConsVit_T;
   LeaveMutex();
 
-  if(((res |= Laser_GetData(ml, sl, &d)) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
+  if((Laser_GetData(ml, sl, &d) & ERR_LASER_FATAL)==ERR_LASER_FATAL)
     return ERR_LASER_FATAL;
 
   //v_cons_mt = (INTEGER32)d.vitesse_1s;
 
-  printf("RESULTAT MESURE LASER : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
+  fprintf(laser_asserv_report_file,"RESULTAT MESURE LASER : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
 
-  if(d_to_dparcouru(&d))
+  if(d_to_dparcouru((struct laser_data *)&d))
     return DPARC_CALC_ERROR;
 
-  //printf("RESULTAT CALC D PARCOURU : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
-  //TODOFaire les vérif : moins de la pos initiale ou plus que pos finale->déclencher arrêt (Utilise d, Start_Distance, Pipe_Length).
+  fprintf(laser_asserv_report_file,"RESULTAT CALC D PARCOURU : d = %lu, t = %lu, v = %ld\n", d.mes, d.t, d.vitesse);
+  //TODO: Faire les vérif : moins de la pos initiale ou plus que pos finale->déclencher arrêt (Utilise d, Start_Distance, Pipe_Length).
 
   temp = v_cons_mrot;
-  if((res |= CheckAndCorrect_VelocityRelation(&(d.mes), &v_cons_mt, &v_cons_mrot)) & FIND_CONSIGNE_FAILURE)
+  if((res = CheckAndCorrect_VelocityRelation(&(d.mes), &v_cons_mt, &v_cons_mrot)) & FIND_CONSIGNE_FAILURE)
     return res;
   //s'il y a eu correction sortir et attendre le prochain sync
   if(temp!=v_cons_mrot)
     {
-      printf("CheckAndCorrect_VelRel v_cons_mrot = %d\n", v_cons_mrot);
+      fprintf(laser_asserv_report_file,"CheckAndCorrect_VelRel v_cons_mrot = %d\n", v_cons_mrot);
       return res;
     }
 
+  //ajouter correction de décalage temporel.
+  if(laser_asserv_decalage_temp(p_capt_time, &d)){
+    return ERR_DECAL_TEMPS;
+  }
+
+  fprintf(laser_asserv_report_file,"RESULTAT CALC D PARCOURU + TIME CORRECTION : d = %lu, t moteur = %lu, v_1s = %ld\n", d.mes, d.t, d.vitesse_1s);
+
+
   if(FindConsigne_PosRot(&(d.mes), &cp))
-    return (res | FIND_CONSIGNE_FAILURE);
+    return FIND_CONSIGNE_FAILURE;
 
-  printf("CONSIGNE POSROT = %ld, POSITION MESUREE = %d\n", cp, p_capt_mrot);
-  printf("cp - p_capt_mrot = %ld\n", cp - p_capt_mrot);
-
+  fprintf(laser_asserv_report_file,"CONSIGNE POSROT = %ld, POSITION MESUREE = %d\n", cp, p_capt_mrot);
+  fprintf(laser_asserv_report_file,"cp - p_capt_mrot = %ld\n", cp - p_capt_mrot);
 
   if((TypeOfMvt = FindTypeOfMvt(v_cons_mrot, v_capt_mrot)) & TYPE_OF_MVT_FAILURE)
-    return (res | TYPE_OF_MVT_FAILURE);
+    return TYPE_OF_MVT_FAILURE;
 
-  printf("TYPE OF MOVEMENT = %u\n", TypeOfMvt);
+  fprintf(laser_asserv_report_file,"TYPE OF MOVEMENT = %u\n", TypeOfMvt);
 
   if(labs(cp-p_capt_mrot)<LASER_ASSERV_MOTROT_POS_INCERTITUDE)
     {
-      printf("POSITION OK\n");
-      return (res | MOVEMENT_OK);
+      fprintf(laser_asserv_report_file,"POSITION OK\n");
+      return MOVEMENT_OK;
     }
   else
     {
@@ -485,8 +529,7 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
 	case VITESSE_CONSTANTE:
 	  {
 	    pthread_t thread_v_const;
-	    struct Laser_x_thread vc;
-	    printf("VITESSE CONSTANTE + erreur pos\n");
+	    fprintf(laser_asserv_report_file,"VITESSE CONSTANTE + erreur pos\n");
 
 	    laser_asserv_estim_error_dmm((INTEGER32)(cp-p_capt_mrot), &err);
 
@@ -494,34 +537,30 @@ unsigned int laser_asserv_Verify_Movement(laser * ml, laser * sl, unsigned long 
 	      {
 		if(Find_Asserv_Params2(&cp, &p_capt_mrot, &v_cons_mrot/*entrees*/, &vc/*sortie*/))
 		  {
-		    printf("ERROR in Find Asserv_Params\n");
-		    return (res | ASSERV_FAILURE);
+		    fprintf(laser_asserv_report_file,"ERROR in Find Asserv_Params\n");
+		    return ASSERV_FAILURE;
 		  }
 		else
 		  {
-		    printf("ASSERV PARAMS time = %lu, cv = %d, dv = %d\n", vc.time, vc.cv, vc.dv);
+		    fprintf(laser_asserv_report_file,"ASSERV PARAMS time = %lu, cv = %d, dv = %d\n", vc.time, vc.cv, vc.dv);
 		    *next_Sync_call_Nr += vc.time/(*SyncTimeInterval);
 		    if(pthread_create(&thread_v_const, NULL, Thread_Appli_Vitesse, &vc))
 		      {
-			printf("ERROR in correction thread create. Laser_verify_mvt\n");
-			return (res | ASSERV_FAILURE);
+			fprintf(laser_asserv_report_file,"ERROR in correction thread create. Laser_verify_mvt\n");
+			return ASSERV_FAILURE;
 		      }
 		  }
 	      }
 	    else
 	      {
-		printf("USER POSITION TOLERANCE ERROR. ERROR = %u\n", err);
-		res |= USER_POS_TOL_ERROR;
-		return res;
+		return USER_POS_TOL_ERROR;
 	      }
 
 	    break;
 	  }
 	case PHASE_ACCEL:
 	case PHASE_DECEL:
-	case QUICKSTOP:
-	case STOPPED:
-	  printf("PHASE ACCEL/DECEl/STOPPED OR QUICKSTOP\n");
+	  fprintf(laser_asserv_report_file,"PHASE ACCEL/DECEl\n");
 	default:
 	  //rien
 	  break;
@@ -539,19 +578,49 @@ void * laser_asserv_Boucle_Asservissement(void * arg)
  unsigned long SyncTime = LASER_ASSERV_SYNC_TIME;
 
  run_asserv = 1;
+ laser_asserv_report_file = fopen(laser_asserv_report_filename, "w");
 
  while(run_asserv)
     {
-
         if(sync_count == next_sync){
-            if((res = laser_asserv_Verify_Movement(&ml, &sl, &next_sync, &SyncTime))){
-                printf("RESULT of Laser_Verify_Mvt: %x\n", res);
+            res = laser_asserv_Verify_Movement(&ml, &sl, &next_sync, &SyncTime);
+            fprintf(laser_asserv_report_file,"RESULT of Laser_Verify_Mvt: %x\n", res);
+            switch (res){
+                case MOVEMENT_OK: break;
+                case MAX_ROT_VEL_REACHED:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV WARNING: Maximum rotation velocity reached\n"); break;
+                case ASSERV_ERR_PATINAGE:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV WARNING: Patinage detecté\n"); break;
+                case 0:
+                    fprintf(laser_asserv_report_file, "LASER_ASSERV. Une correction est en cours\n"); break;
+                case ASSERV_FAILURE:
+                case TYPE_OF_MVT_FAILURE:
+                case FIND_CONSIGNE_FAILURE:
+                case FIND_CONSIGNE_FAILURE | MAX_ROT_VEL_REACHED:
+                case DPARC_CALC_ERROR:
+                case ERR_DECAL_TEMPS:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV INTERNAL ERROR. ErrorCode = %x\n", res); break;
+                case ERR_LASER_FATAL:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV LASER ERROR.\n"); break;
+                case USER_POS_TOL_ERROR:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV USER POSITION TOLERANCE ERROR\n");break;
+                default:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV UNKNOWN ERROR, res = %x\n", res);
+            }
+            if((res & USER_POS_TOL_ERROR) || (res & ERR_LASER_FATAL) || (res & LASER_ASSERV_INTERNAL_ERR)){
+
+                while(){
+                    cantools_ApplyVelRot(0);
+                    cantools_ApplyVelTrans(0);
+                }
+                run_asserv = 0;
+                break;
             }
         }
         sync_count++;
         usleep(SyncTime);
     }
-
+    fclose(laser_asserv_report_file);
     pthread_exit(NULL);
 
 }
@@ -564,19 +633,48 @@ void * laser_asserv_Boucle_Asservissement_Simu(void * arg)
  unsigned long SyncTime = LASER_ASSERV_SYNC_TIME;//150000;
 
  run_asserv = 1;
+ laser_asserv_report_file = fopen(laser_asserv_report_filename, "w");
 
  while(run_asserv)
     {
 
         if(sync_count == next_sync){
-            if((res = laser_asserv_Verify_Movement(&lsim, NULL, &next_sync, &SyncTime))){
-                printf("RESULT of Laser_Verify_Mvt: %x\n", res);
+            res = laser_asserv_Verify_Movement(&lsim, NULL, &next_sync, &SyncTime);
+            fprintf(laser_asserv_report_file,"RESULT of Laser_Verify_Mvt: %x\n", res);
+            switch (res){
+                case MOVEMENT_OK: break;
+                case MAX_ROT_VEL_REACHED:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV WARNING: Maximum rotation velocity reached\n"); break;
+                case ASSERV_ERR_PATINAGE:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV WARNING: Patinage detecté\n"); break;
+                case 0:
+                    fprintf(laser_asserv_report_file, "LASER_ASSERV. Une correction est en cours\n"); break;
+                case ASSERV_FAILURE:
+                case TYPE_OF_MVT_FAILURE:
+                case FIND_CONSIGNE_FAILURE:
+                case FIND_CONSIGNE_FAILURE | MAX_ROT_VEL_REACHED:
+                case DPARC_CALC_ERROR:
+                case ERR_DECAL_TEMPS:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV INTERNAL ERROR. ErrorCode = %x\n", res); break;
+                case ERR_LASER_FATAL:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV LASER ERROR.\n"); break;
+                case USER_POS_TOL_ERROR:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV USER POSITION TOLERANCE ERROR\n");break;
+                default:
+                    fprintf(laser_asserv_report_file,"LASER_ASSERV UNKNOWN ERROR\n");
+            }
+            if(res & USER_POS_TOL_ERROR){
+                cantools_ApplyVelRot(0);
+                cantools_ApplyVelTrans(0);
+                run_asserv = 0;
+                fprintf(laser_asserv_report_file,"USER POSITION TOLERANCE ERROR\n");
+                break;
             }
         }
         sync_count++;
         usleep(SyncTime);
     }
-
+    fclose(laser_asserv_report_file);
     pthread_exit(NULL);
 
 }
@@ -584,14 +682,9 @@ void * laser_asserv_Boucle_Asservissement_Simu(void * arg)
 
 int laser_asserv_lance(void)
 {
-    if(laser_asserv_GetStartPosition(&ml, &sl) == ERR_LASER_FATAL){
-        return 1;
-    }
-
     if(pthread_create(&(lats.thread_Nr), NULL, laser_asserv_Boucle_Asservissement, NULL)){
         return 1;
     }
-
     return 0;
 }
 

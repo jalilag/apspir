@@ -1,16 +1,20 @@
 #ifndef _ERRGEN_H
 #define _ERRGEN_H
 #include "data.h"
-
-extern UNS8 errgen_laserState;
+#include <gtk/gtk.h>
 
 void errgen_set(UNS16 dat,char* op);
+GSourceFunc errgen_set_safe(gpointer data);
+
 static char* errgen_get_title(UNS16 dat);
 static char* errgen_get_content(UNS16 dat);
 
+//ajout 220116
+
+extern UNS8 errgen_laserState;
+
 #include "errgen_laser.h"
 #define LASER_ERROR(err)                    (0x80 | err)
-#define ERR_LASER_REINIT                     0x0500
 #define ERR_LASER_SERIAL_CONFIG              0x0501
 #define ERR_LASER_STARTCHECKTHREAD           0x0502
 
@@ -25,11 +29,17 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_ROT_GET_ACCEL                    0x0518
 #define ERR_ROT_GET_DECEL                    0x0519
 
-#define ERR_LASER_ASSERV_2_VELMOTROTDEFINED  0x0540
-#define ERR_LASER_ASSERV_READMOTROTDATA      0x0541
-#define ERR_LASER_ASSERV_GETINDEXROT         0x0542
-#define ERR_LASER_ASSERV_GETINDEXTRANS       0x0543
-#define ERR_LASER_ASSERV_MOTROT              0x0544
+#define ERR_LASER_ASSERV_2_VELMOTROTDEFINED  0x0520
+#define ERR_LASER_ASSERV_READMOTROTDATA      0x0521
+#define ERR_LASER_ASSERV_GETINDEXROT         0x0522
+#define ERR_LASER_ASSERV_GETINDEXTRANS       0x0523
+#define ERR_LASER_ASSERV_MOTROT              0x0524
+#define ERR_LASER_ASSERV_SENS		     0x0525
+#define ERR_LASER_ASSERV_GETSTARTPOS	     0x0526
+
+#define ERR_HELIX_PROFILE                    0x0540
+
+//fin ajout 220116
 
 #define ERR_DRIVER_UP                        0x0001
 #define ERR_DRIVER_LOAD                      0x0002
@@ -44,46 +54,54 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_FILE_PROFILE                     0x000A
 #define ERR_FILE_PROFILE_INVALID_PARAM       0x000B
 
-#define ERR_MASTER_CONFIG                    0x0010
-#define ERR_MASTER_STOP_SYNC                 0x0011
-#define ERR_MASTER_START_SYNC                0x0012
-#define ERR_MASTER_SET_PERIOD                0x0013
-#define ERR_MASTER_SET_HB_CONS               0x0014
-#define ERR_MASTER_CONFIG_PDOR               0x0015
-#define ERR_MASTER_CONFIG_PDOT               0x0016
-#define ERR_MASTER_CONFIG_MAP                0x0017
+#define ERR_MASTER_CONFIG                    0x0040
+#define ERR_MASTER_STOP_SYNC                 0x0041
+#define ERR_MASTER_START_SYNC                0x0042
+#define ERR_MASTER_SET_PERIOD                0x0043
+#define ERR_MASTER_SET_HB_CONS               0x0044
+#define ERR_MASTER_CONFIG_PDOR               0x0045
+#define ERR_MASTER_CONFIG_PDOT               0x0046
+//ajout 220116
+#define ERR_MASTER_CONFIG_MAP                0x0047
+//fin ajout 220116
+//modifié numéro 220116 passage 8x à 5x
+#define ERR_SLAVE_CONFIG                     0x0050
+#define ERR_SLAVE_CONFIG_LSS                 0x0051
+#define ERR_SLAVE_CONFIG_HB                  0x0052
+#define ERR_SLAVE_CONFIG_PDOT                0x0053
+#define ERR_SLAVE_CONFIG_PDOR                0x0056
+#define ERR_SLAVE_CONFIG_ACTIVE_PDO          0x0057
+#define ERR_SLAVE_CONFIG_CURRENT             0x0058
+#define ERR_SLAVE_CONFIG_PROFILE             0x0059
+#define ERR_SLAVE_CONFIG_MAX_VELOCITY        0x005A
+#define ERR_SLAVE_CONFIG_ACCELERATION        0x005B
+#define ERR_SLAVE_CONFIG_DECELERATION        0x005C
+#define ERR_SLAVE_CONFIG_DECELERATION_QS     0x005D
+#define ERR_SLAVE_CONFIG_TORQUE              0x005E
+#define ERR_SLAVE_CONFIG_TORQUE_SLOPE        0x005F
+//fin modif 220116
+#define ERR_SLAVE_CONFIG_TORQUE_MAX_VELOCITY 0x0090
+#define ERR_SLAVE_CONFIG_MOTOR_SON           0x0091
+#define ERR_SLAVE_SAVE_CONFIG                0x0092
+#define ERR_SLAVE_LOAD_CONFIG                0x0093
+#define ERR_SLAVE_LOAD_INTERFACE             0x0094
 
-#define ERR_SLAVE_CONFIG                     0x0020
-#define ERR_SLAVE_CONFIG_LSS                 0x0021
-#define ERR_SLAVE_CONFIG_HB                  0x0022
-#define ERR_SLAVE_CONFIG_PDOT                0x0023
-#define ERR_SLAVE_CONFIG_PDOR                0x0026
-#define ERR_SLAVE_CONFIG_ACTIVE_PDO          0x0027
-#define ERR_SLAVE_CONFIG_CURRENT             0x0028
-#define ERR_SLAVE_CONFIG_PROFILE             0x0029
-#define ERR_SLAVE_CONFIG_MAX_VELOCITY        0x002A
-#define ERR_SLAVE_CONFIG_ACCELERATION        0x002B
-#define ERR_SLAVE_CONFIG_DECELERATION        0x002C
-#define ERR_SLAVE_CONFIG_DECELERATION_QS     0x002D
-#define ERR_SLAVE_CONFIG_TORQUE              0x002E
-#define ERR_SLAVE_CONFIG_TORQUE_SLOPE        0x002F
-#define ERR_SLAVE_CONFIG_TORQUE_MAX_VELOCITY 0x0030
-#define ERR_SLAVE_CONFIG_MOTOR_SON           0x0031
-#define ERR_SLAVE_SAVE_CONFIG                0x0032
-#define ERR_SLAVE_LOAD_CONFIG                0x0033
-#define ERR_SLAVE_LOAD_INTERFACE             0x0034
+#define ERR_READ_ACCELERATION                0x00C0
+#define ERR_READ_DECELERATION                0x00C1
+#define ERR_READ_DECELERATION_QS             0x00C2
+#define ERR_READ_TORQUE                      0x00C3
+#define ERR_READ_TORQUE_SLOPE                0x00C4
+#define ERR_READ_TORQUE_VELOCITY             0x00C5
+#define ERR_READ_CURRENT                     0x00C6
+#define ERR_READ_PROFILE                     0x00C7
+#define ERR_READ_TORQUE_VELOCITY_MAKEUP      0x00C8
+#define ERR_READ_HMT_ACTIVATE                0x00C9
+#define ERR_READ_HMT_CONTROL                 0x00CA
+#define ERR_READ_VELOCITY                    0x00CB
+#define ERR_READ_POSITION                    0x00CC
+#define ERR_READ_CONTROL                     0x00CD
+#define ERR_READ_VELOCITY_MAX                0x00CE
 
-#define ERR_READ_ACCELERATION                0x0040
-#define ERR_READ_DECELERATION                0x0041
-#define ERR_READ_DECELERATION_QS             0x0042
-#define ERR_READ_TORQUE                      0x0043
-#define ERR_READ_TORQUE_SLOPE                0x0044
-#define ERR_READ_TORQUE_VELOCITY             0x0045
-#define ERR_READ_CURRENT                     0x0046
-#define ERR_READ_PROFILE                     0x0047
-#define ERR_READ_TORQUE_VELOCITY_MAKEUP      0x0048
-#define ERR_READ_HMT_ACTIVATE                0x0049
-#define ERR_READ_HMT_CONTROL                 0x004A
 #define ERR_SET_ACCELERATION                 0x0100
 #define ERR_SET_DECELERATION                 0x0101
 #define ERR_SET_DECELERATION_QS              0x0102
@@ -97,6 +115,10 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_SET_TORQUE_VELOCITY_MAKEUP       0x010A
 #define ERR_SET_HMT_ACTIVATE                 0x010B
 #define ERR_SET_HMT_CONTROL                  0x010C
+#define ERR_SET_VELOCITY                     0x010D
+#define ERR_SET_POSITION                     0x010E
+#define ERR_SET_CONTROL                      0x010F
+#define ERR_SET_VELOCITY_MAX                 0x0110
 
 #define ERR_SAVE_ACCELERATION                0x0140
 #define ERR_SAVE_DECELERATION                0x0141
@@ -109,6 +131,10 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_SAVE_TORQUE_VELOCITY_MAKEUP      0x0148
 #define ERR_SAVE_HMT_ACTIVATE                0x0149
 #define ERR_SAVE_HMT_CONTROL                 0x014A
+#define ERR_SAVE_VELOCITY                    0x014B
+#define ERR_SAVE_POSITION                    0x014C
+#define ERR_SAVE_CONTROL                     0x014D
+#define ERR_SAVE_VELOCITY_MAX                0x014F
 
 #define ERR_MOTOR_PAUSE                      0x0180
 #define ERR_MOTOR_RUN                        0x0181
@@ -116,5 +142,4 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_MOTOR_FORWARD                    0x0183
 #define ERR_MOTOR_BACKWARD                   0x0184
 #define ERR_MOTOR_LOW_VOLTAGE                0x0185
-
 #endif // _ERRGEN
