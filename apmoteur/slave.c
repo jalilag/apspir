@@ -607,6 +607,7 @@ int slave_save_param (int index) {
         if (str2build != "") free(str2build);
         gui_widget2hide("windowParams",NULL);
         gui_info_box(SAVE,SAVE_SUCCESS,NULL);
+        g_idle_add(slave_gui_load_visu,NULL);
 
     } else if (index == 3) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
@@ -671,6 +672,7 @@ int slave_save_param (int index) {
         if (str2build != "") free(str2build);
         gui_widget2hide("windowParams",NULL);
         gui_info_box(SAVE,SAVE_SUCCESS,NULL);
+        g_idle_add(slave_gui_load_visu,NULL);
     }
 }
 /**
@@ -1188,7 +1190,6 @@ gboolean slave_gui_load_visu(gpointer data) {
             if (sscanf(chaine,"%19s %d",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
                 conf1.length2pipe = datreflect;
                 valid++;
-                printf("-3\n");
             }
             if (sscanf(chaine,"--%d",&dat3) == 1) {
                 support[i2] = dat3;
@@ -1201,23 +1202,47 @@ gboolean slave_gui_load_visu(gpointer data) {
     // Grid
     if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu"));
-    GtkGrid* grid = gui_local_grid_set("gridVisu",NULL,31,"");
+    GtkGrid* grid = gui_local_grid_set("gridVisu",NULL,conf1.pipeLength,"");
     gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(grid),TRUE,TRUE,0);
     if (valid == 3 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
+        gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
+        gtk_level_bar_set_min_value(GTK_LEVEL_BAR(lev),0);
+        gtk_level_bar_set_max_value(GTK_LEVEL_BAR(lev),100);
+        gtk_level_bar_set_value(GTK_LEVEL_BAR(lev),51);
         gtk_grid_attach(grid,lev,0,0,conf1.pipeLength,1);
-
+        int j,ii=0;
         for (i=0;i<conf1.pipeLength;i++) {
-            if (i<10) {
-                GtkWidget* lab = gui_create_widget("lab",strtools_concat("lab_",strtools_gnum2str(&i,0x04),NULL),strtools_concat(" ",strtools_gnum2str(&i,0x04),NULL),"cell3","bold","black",NULL);
+            j = i+1;
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("lab_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"cell3","bold","black",NULL);
                 gtk_grid_attach(grid,lab,i,1,1,1);
+        }
+        for (i=0; i<conf1.step_size; i++) {
+            j = i+1;
+            if (j%2 == 0) {
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("labStep_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&step[0][i],0x04),"bold","purple",NULL);
+                gtk_grid_attach(grid,lab,ii,2,step[1][i],1);
             } else {
-                GtkWidget* lab = gui_create_widget("lab",strtools_concat("lab_",strtools_gnum2str(&i,0x04),NULL),strtools_gnum2str(&i,0x04),"cell3","bold","black",NULL);
-                gtk_grid_attach(grid,lab,i,1,1,1);
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("labStep_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&step[0][i],0x04),"bold","purpleLight",NULL);
+                gtk_grid_attach(grid,lab,ii,2,step[1][i],1);
+            }
+            ii += step[1][i];
+        }
+        int l;
+        for (i=0; i<conf1.support_size; i++) {
+            l = conf1.length2pipe+conf1.pipeLength-support[i];
+
+            if (l >= 0 && l <= conf1.pipeLength) {
+                j = i+1;
+                GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x04),NULL),"X","bold","blue",NULL);
+                if (l == 0) gtk_grid_attach(grid,lab,l,3,1,1);
+                else if (l == conf1.pipeLength) gtk_grid_attach(grid,lab,l-2,3,2,1);
+                else gtk_grid_attach(grid,lab,l-2,3,3,1);
             }
         }
+        gtk_grid_set_row_homogeneous(grid,TRUE);
+        gtk_grid_set_column_homogeneous(grid,TRUE);
     }
-    gtk_grid_set_row_homogeneous(grid,TRUE);
     gtk_widget_show_all(gui_get_widget("mainWindow"));
     return FALSE;
 }

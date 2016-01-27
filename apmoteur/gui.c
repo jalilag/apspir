@@ -297,8 +297,10 @@ GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* colo
         gtk_grid_attach (grid, lab, 0, 0, numcol, 1);
         gtk_widget_set_hexpand(lab,TRUE);
         gtk_widget_set_halign(lab,GTK_ALIGN_FILL);
-        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "h1");
-        gtk_style_context_add_class (gtk_widget_get_style_context(lab), color);
+        if (color != NULL) {
+            gtk_style_context_add_class (gtk_widget_get_style_context(lab), "h1");
+            gtk_style_context_add_class (gtk_widget_get_style_context(lab), color);
+        }
     }
     gtk_widget_set_halign(GTK_WIDGET(grid),GTK_ALIGN_FILL);
     gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid)), "box");

@@ -111,8 +111,7 @@ GtkWindow {
     padding:0.2em;
     border-radius:0;
     border-left: #000 1px solid;
-    border-top: #000 1px solid;
-    border-bottom: #000 1px solid;
+    border-right: #000 1px solid;
     background:transparent;
     color:#fff;
 }
@@ -161,6 +160,7 @@ GtkWindow {
     font-size:1.1em;
 }
 .black {background:-gtk-gradient(linear,left top, left bottom, from(#525252), to(#000));}
+.blue {background:#0D739F;}
 .green {background:-gtk-gradient(linear,left top, left bottom, from(#246F20), to(#60995F));}
 .greenLight {background:-gtk-gradient(linear,left top, left bottom, from(#60995F), to(#6ED86C));}
 .purple {background:-gtk-gradient(linear,left top, left bottom, from(#5C3661), to(#973AA4));}
