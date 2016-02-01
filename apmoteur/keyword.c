@@ -98,6 +98,7 @@ gboolean keyword_maj(gpointer data) {
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
 
+    slave_gen_plot();
     int l = 0;
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)

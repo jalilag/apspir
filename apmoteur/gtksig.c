@@ -632,7 +632,8 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_forward(slave_get_node_with_index(i),0)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Position",2850000)) return;
+                INTEGER32 val = 71111*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep"));
+                if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
@@ -666,7 +667,8 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_forward(slave_get_node_with_index(i),1)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Position",2850000)) return;
+                INTEGER32 val = 71111*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep"));
+                if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
@@ -689,46 +691,4 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
     motor_running = 1;
 }
 
-void on_butRotInit_clicked (GtkWidget* pEntry) {
-    if(gui_spinner_is_active("chargement")) return;
-//    Exit(0);
-//    int i;
-//    for (i=0; i<SLAVE_NUMBER;i++) {
-//        if (slave_get_param_in_num("Active",i)) {
-//            printf("i : %d node %x Profile %s\n",i,slave_get_node_with_index(i),profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)));
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
-//                if (!motor_forward(slave_get_node_with_index(i),1)) return;
-//                if (!motor_start(slave_get_node_with_index(i),1)) return;
-//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-//                if (!motor_set_param(slave_get_node_with_index(i),"Position",51200)) return;
-//            }
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-//                if (!motor_set_param(slave_get_node_with_index(i),"Couple",300)) return;
-//                if (!motor_forward(slave_get_node_with_index(i),1)) return;
-//                if (!motor_start(slave_get_node_with_index(i),1)) return;
-//            }
-//        }
-//    }
-//    for (i=0; i<SLAVE_NUMBER;i++) {
-//        if (slave_get_param_in_num("Active",i)) {
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
-//                if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",31)) return;
-//                sleep(1);
-//                if (!motor_set_param(slave_get_node_with_index(i),"ControlWord",15)) return;
-//            }
-//        }
-//    }
-//    while (motor_get_target((UNS16)slave_get_param_in_num("Power",i)) == 0) {
-//        printf("Attente\n");
-//        usleep(100000);
-//    }
-//    for (i=0; i<SLAVE_NUMBER;i++) {
-//        if (slave_get_param_in_num("Active",i)) {
-//            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
-//                if (!motor_start(slave_get_node_with_index(i),0)) return;
-//            }
-//        }
-//    }
-}
 

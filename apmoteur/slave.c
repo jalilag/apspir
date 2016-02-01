@@ -7,10 +7,13 @@
 #include "errgen.h"
 #include "gui.h"
 #include "motor.h"
+#include <gtk/gtk.h>
+#include <gtk/gtkx.h>
 #include <glib.h>
 #include "master.h"
 #include "gtksig.h"
 #include "profile.h"
+
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
 extern int SLAVE_NUMBER, run_init;
@@ -1144,6 +1147,7 @@ char* slave_get_param_title (char* parid) {
 }
 
 gboolean slave_gui_load_visu(gpointer data) {
+
     int i,j,valid=0,i1=0,i2=0;
     for (i=0;i<20;i++) {
         for (j=0;j<2;j++){
@@ -1209,8 +1213,8 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
         gtk_level_bar_set_min_value(GTK_LEVEL_BAR(lev),0);
         gtk_level_bar_set_max_value(GTK_LEVEL_BAR(lev),100);
-        gtk_level_bar_set_value(GTK_LEVEL_BAR(lev),51);
-        gtk_grid_attach(grid,lev,0,0,conf1.pipeLength,1);
+        gtk_level_bar_set_value(GTK_LEVEL_BAR(lev),0);
+        gtk_grid_attach(grid,lev,0,4,conf1.pipeLength,1);
         int j,ii=0;
         for (i=0;i<conf1.pipeLength;i++) {
             j = i+1;
@@ -1240,10 +1244,95 @@ gboolean slave_gui_load_visu(gpointer data) {
                 else gtk_grid_attach(grid,lab,l-2,3,3,1);
             }
         }
-        gtk_grid_set_row_homogeneous(grid,TRUE);
         gtk_grid_set_column_homogeneous(grid,TRUE);
+        GtkWidget* labplot = gui_create_widget("img","imgPlot",NULL,NULL);
+        gtk_grid_attach(GTK_GRID(grid),labplot,0,0,conf1.pipeLength,1);
+        slave_gen_plot();
+        gtk_widget_show_all(gui_get_widget("mainWindow"));
     }
-    gtk_widget_show_all(gui_get_widget("mainWindow"));
     return FALSE;
+}
+
+
+int slave_gen_plot(){
+    GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu");
+//    INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
+//    if (wgrid < 10) wgrid = 1;
+    INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
+    char* str2build = "";
+    str2build = strtools_concat(str2build, "set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,10'",NULL);
+    str2build = strtools_concat(str2build, "\nset output 'temp.png'",NULL);
+    str2build = strtools_concat(str2build, "\nset key off",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 2 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 11 lc rgb '#808080' lt 1",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 12 lc rgb '#808080' lt 0 lw 1",NULL);
+    str2build = strtools_concat(str2build, "\nset border 3 back ls 11",NULL);
+    str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
+    str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
+    str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
+    str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
+    str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
+
+    int l,y1=0,y2=0;
+    for (l=0; l<conf1.step_size;l++) {
+        if (l == 0) {
+            y1=0; y2=step[1][l];
+        }else {
+            y1 = y2;
+            y2=y2+step[1][l];
+        }
+        str2build = strtools_concat(str2build, "\ng",strtools_gnum2str(&l,0x02),"(x)=((x>=",strtools_gnum2str(&y1,0x04)," && x<=",strtools_gnum2str(&y2,0x04),") ? 1 : 1/0)",NULL);
+    }
+    y1 = 0;
+    char* k;
+    char* y3="0";
+    for (l=0; l<conf1.step_size;l++) {
+        if (l == 0) {
+            str2build = strtools_concat(str2build,"\n plot ",NULL);
+            k = "0";
+            if (step[0][l] == 0)
+                str2build = strtools_concat(str2build, "sin(0)*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+            else
+                str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l],0x02),
+                "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+        } else {
+            if (step[0][l] == 0) {
+                k == strtools_concat(k,"+0",NULL);
+                str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l-1],0x02),
+                "*",strtools_gnum2str(&y1,0x02),"+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+            } else {
+                if (step[0][l-1] == 0)
+                    k = strtools_concat(k,"+(0-","2*pi/",strtools_gnum2str(&step[0][l],0x02),")*",strtools_gnum2str(&y1,0x02),NULL);
+                else
+                    k = strtools_concat(k,"+(2*pi/",strtools_gnum2str(&step[0][l-1],0x02),"-",
+                "2*pi/",strtools_gnum2str(&step[0][l],0x02),")*",strtools_gnum2str(&y1,0x02),NULL);
+                str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l],0x02),
+                "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+            }
+        }
+        if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);
+        y1 += step[1][l];
+    }
+    if(!strtools_build_file("script.gnu",str2build)) {
+        if (str2build != "") free(str2build);
+        return 0;
+    }
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        printf("A fork error has occurred.\n");
+        exit(-1);
+    } else {
+        if (pid == 0) {
+            execlp("gnuplot","gnuplot", "script.gnu",NULL);
+        } else {
+            wait(0);
+        }
+    }
+    GtkWidget* lab = gui_local_get_widget (gui_get_widget("boxVisu"),"imgPlot");
+    gtk_image_clear(GTK_IMAGE(lab));
+    gtk_image_set_from_file(GTK_IMAGE(lab),"temp.png");
+    return 1;
 }
 

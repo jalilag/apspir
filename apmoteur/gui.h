@@ -50,4 +50,5 @@ GtkDialog* gui_get_dialog(gchar* labid);
 GtkSwitch* gui_get_switch(gchar* labid);
 GtkGrid* gui_get_grid(gchar* labid);
 GtkSpinner* gui_get_spinner(gchar* labid);
+GtkAdjustment* gui_get_adjust(gchar* labid);
 #endif

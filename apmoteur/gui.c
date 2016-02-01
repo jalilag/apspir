@@ -54,6 +54,9 @@ GtkSpinner* gui_get_spinner(gchar* labid) {
 GtkBox* gui_get_box(gchar* labid) {
     return GTK_BOX(gui_get_object(labid));
 }
+GtkAdjustment* gui_get_adjust(gchar* labid) {
+    return GTK_ADJUSTMENT(gui_get_object(labid));
+}
 GtkWidget* gui_local_get_widget(GtkWidget* parent, const gchar* name) {
     if (g_ascii_strncasecmp(gtk_widget_get_name(parent),name,-1) == 0) {
         return parent;

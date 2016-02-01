@@ -96,7 +96,7 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {TORQUE_HMT_ACTIVATE,"TorqueHmtActive",0x2701,0x00,0x05,0,0x80,ERR_SET_HMT_ACTIVATE,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE},
     {TORQUE_HMT_CONTROL,"TorqueHmtControl",0x2702,0x00,0x05,0,0xFF,ERR_SET_HMT_CONTROL,ERR_READ_HMT_ACTIVATE,ERR_SAVE_HMT_ACTIVATE},
     {VELOCITY,"Velocity",0x60FF,0x00,0x04,0,1000000,ERR_SET_VELOCITY,ERR_READ_VELOCITY,ERR_SAVE_VELOCITY},
-    {TARGET_POSITION,"Position",0x607A,0x00,0x04,0,10000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
+    {TARGET_POSITION,"Position",0x607A,0x00,0x04,0,26000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
     {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL},
     {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,512000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX}
 };
@@ -162,7 +162,7 @@ int main(int argc,char **argv) {
 //        exit(-1);
 //    } else {
 //        if (pid == 0) {
-//            execlp("./test.sh","test.sh",NULL);
+//            execlp("./load_can.sh","load_can.sh",NULL);
 //            errgen_state = ERR_DRIVER_UP;
 //            g_idle_add(errgen_set_safe(NULL),NULL);
 //        } else {
