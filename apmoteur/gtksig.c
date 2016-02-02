@@ -27,6 +27,7 @@ extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
+extern int set_up;
 
 void gtksig_init () {
     // SIGNALS MAIN
@@ -37,6 +38,7 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "radBackward"), "toggled", G_CALLBACK (on_radBackward_toggled),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butVelUp"), "clicked", G_CALLBACK (on_butVelUp_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butVelDown"), "clicked", G_CALLBACK (on_butVelDown_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butStartSet"), "clicked", G_CALLBACK (on_butStartSet_clicked),NULL);
 
     g_signal_connect (gtk_builder_get_object (builder, "butVelStart"), "notify", G_CALLBACK (on_butVelStart_active_notify),NULL);
     // SIGNALS DIAL
@@ -690,5 +692,9 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
     }
     motor_running = 1;
 }
-
-
+void on_butStartSet_clicked (GtkWidget* but) {
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(but)))
+        set_up = 1;
+    else
+        set_up = 0;
+}

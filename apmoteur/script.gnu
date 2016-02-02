@@ -1,4 +1,4 @@
-set terminal pngcairo size 1110,100 enhanced font 'Verdana,10'
+set terminal pngcairo size 1110,100 enhanced font 'Verdana,10' background rgb 'black'
 set output 'temp.png'
 set key off
 set style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2
@@ -14,4 +14,4 @@ set rmargin 0
 g0(x)=((x>=0 && x<=1) ? 1 : 1/0)
 g1(x)=((x>=1 && x<=29) ? 1 : 1/0)
 g2(x)=((x>=29 && x<=30) ? 1 : 1/0)
- plot sin(0)*g0(x) with lines linestyle 1,sin(2*pi/9*x+0+(0-2*pi/9)*1)*g1(x) with lines linestyle 1,sin(2*pi/9*29+0+(0-2*pi/9)*1)*g2(x) with lines linestyle 1
+ plot sin(0)*g0(x) with lines linestyle 1,sin(2*pi/9*x+0-2*pi/9*1)*g1(x) with lines linestyle 1,sin(2*pi/9*29+0-2*pi/9*1)*g2(x) with lines linestyle 1

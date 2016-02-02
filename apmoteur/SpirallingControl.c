@@ -102,7 +102,8 @@ volatile PARAM pardata[PARAM_NUMBER] = {
 };
 // Menu courant
 int current_menu = 0;
-
+// Set up is running
+int set_up = 0;
 // A définir mettre a jour
 void catch_signal(int sig) {
     signal(SIGTERM, catch_signal);

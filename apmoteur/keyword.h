@@ -21,6 +21,7 @@ gboolean keyword_active_maj(gpointer data);
 #define COBID "COB ID"
 #define CONFIGURE "Configuration"
 #define CONTROL_WORD "Control word"
+#define CONFIG_NOT_SET "La configuration est pas définie ou mal définie, veuillez la mettre à jour (configuration->Helice et Géométrie)."
 #define COUPLE "Couple (%)"
 #define COUPLE_SLOPE "Pente de couple (pour mille/s)"
 #define CURRENT "Courant électrique"
