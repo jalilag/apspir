@@ -44,15 +44,16 @@ GMutex lock_gui_box;
 // Les paramètres
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 // Récupération des variables numériques à traiter
-void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4};
-void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4};
-void* temperature[SLAVE_NUMBER_LIMIT]= {&InternalTemp_1,&InternalTemp_2,&InternalTemp_3,&InternalTemp_4};
-void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4};
-void* velocity[SLAVE_NUMBER_LIMIT] = {&Velocity_1,&Velocity_2,&Velocity_3,&Velocity_4};
-void* vel2send[SLAVE_NUMBER_LIMIT] = {&Vel2Send_1,&Vel2Send_2,&Vel2Send_3,&Vel2Send_4};
+void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4,&StatusWord_5};
+void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4,&ErrorCode_5};
+void* temperature[SLAVE_NUMBER_LIMIT]= {&Temperature_1,&Temperature_2,&Temperature_3,&Temperature_4,&Temperature_5};
+void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4,&Voltage_5};
+void* velocity[SLAVE_NUMBER_LIMIT] = {&VelocityR_1,&VelocityR_2,&VelocityR_3,&VelocityR_4,&VelocityR_5};
+void* vel2send[SLAVE_NUMBER_LIMIT] = {&VelocityS_1,&VelocityS_2,&VelocityS_3,&VelocityS_4,&VelocityS_5};
+void* position[SLAVE_NUMBER_LIMIT] = {&PositionR_1,&PositionR_2,&PositionR_3,&PositionR_4,&PositionR_5};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
 
-// Structure d'acces aux variables defini dans le maitre
+// Acces a certaines variables moteur definies localement
 volatile PARVAR vardata[VAR_NUMBER] = {
     {"Active",0x00,NULL,ACTIVE},
     {"SlaveTitle",0x00,NULL,NODE},
@@ -75,7 +76,7 @@ volatile PARVAR vardata[VAR_NUMBER] = {
 // Boucle d'initialisation
 int run_init = 1;
 int run_gui_loop = 0;
-// Liste des paramètres CANOPEN modifiables
+// Liste des paramètres CANOPEN modifiables (acces par sdo)
 volatile PARAM pardata[PARAM_NUMBER] = {
     {PDOR1,"Pdor1",0x1600,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
     {PDOR2,"Pdor2",0x1601,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
@@ -100,6 +101,18 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL},
     {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,512000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX}
 };
+
+// Liste correspondance variables locales et distantes
+volatile LOCVAR local[LOCVAR_NUMBER] = {
+    {0x60410010,0x20000010}, //StatusWord
+    {0x603F0010,0x20050010}, //Error
+    {0x20150110,0x200A0010}, //Voltage
+    {0x20180108,0x200F0008}, //Temp
+    {0x606C0020,0x20140020}, //Vel R
+    {0x60FF0020,0x20190020}, //Vel S
+    {0x60640020,0x20190020} //Profile
+};
+
 // Menu courant
 int current_menu = 0;
 // Set up is running

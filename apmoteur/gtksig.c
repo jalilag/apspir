@@ -514,13 +514,15 @@ void on_lengthDef_changed (GtkWidget* pEntry) {
     }
     gtk_label_set_text(GTK_LABEL(lab),strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat,0x02),NULL));
     if (pipeLength < dat) {
-        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"greenColor"))
+        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"greenColor")) {
             gtk_style_context_remove_class(gtk_widget_get_style_context(lab),"greenColor");
-        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "redColor");
+            gtk_style_context_add_class (gtk_widget_get_style_context(lab), "redColor");
+        }
     } else {
-        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"redColor"))
+        if (gtk_style_context_has_class(gtk_widget_get_style_context(lab),"redColor")) {
             gtk_style_context_remove_class(gtk_widget_get_style_context(lab),"redColor");
-        gtk_style_context_add_class (gtk_widget_get_style_context(lab), "greenColor");
+            gtk_style_context_add_class (gtk_widget_get_style_context(lab), "greenColor");
+        }
     }
 }
 

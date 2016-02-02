@@ -55,7 +55,7 @@ static int slave_config_com(UNS8 nodeID) {
         return 0;
     }
     /** CONFIGURATION PDOT **/
-    // StatusWord, Error Code
+    // StatusWord, Error Code, Voltage, Temp
     if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0)) {
         errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
@@ -409,13 +409,13 @@ int slave_gui_param_gen(int ind) {
             int i=4,j;
             char chaine[1024] = "";
             while(fgets(chaine,1024,helix_fn) != NULL) {
-                printf("%s\n",chaine);
                 if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
                     gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
                 }
                 if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
                     gtk_entry_set_text(GTK_ENTRY(ent7), strtools_gnum2str(&datpipe,0x04));
                 }
+
                 if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
                     dat3+=dat2;
                     if (i == 4) {
@@ -423,10 +423,12 @@ int slave_gui_param_gen(int ind) {
 
                         GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
                         gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
+
                         gtk_widget_set_halign(lab4,GTK_ALIGN_START);
                         GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
                         gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
                         gtk_widget_set_halign(lab5,GTK_ALIGN_START);
+
                     }
                     j = i-3;
                     GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);

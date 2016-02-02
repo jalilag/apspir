@@ -35,6 +35,7 @@ struct CONFIG {
     int support_size;
 };
 
+
 UNS8 slave_get_node_with_index(int i);
 UNS8 slave_get_node_with_profile(int profInd);
 int slave_get_index_with_node(UNS8 nodeID);

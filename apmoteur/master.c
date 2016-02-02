@@ -37,6 +37,7 @@ extern s_BOARD MasterBoard;
 char* baud_rate="1M";
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern int SLAVE_NUMBER;
+extern LOCVAR local[LOCVAR_NUMBER];
 
 /*****************************************************************************/
 
@@ -198,4 +199,18 @@ void SpirallingMaster_post_SlaveBootup(CO_Data* d, UNS8 nodeid) {
 	printf("SpirallingMaster_post_SlaveBootup %x\n", nodeid);
     if (slave_get_param_in_num("Active",slave_get_index_with_node(nodeid)))
         slave_set_param("State",slave_get_index_with_node(nodeid),STATE_CONFIG);
+}
+
+UNS32 master_find_local_code_with_distant_code(UNS8 node,UNS32 code) {
+    int i,j;
+    j = (node -2) * 0x10000;
+    UNS32 res = 0xFFFFFFFF;
+    for (i=0;i<LOCVAR_NUMBER;i++) {
+        if (local[i].code_distant == code) res = local[i].code_local;
+    }
+    if (res == 0xFFFFFFFF) {
+        printf("Paramètre local inconnu : %x\n",code);
+        exit(EXIT_FAILURE);
+    }
+    return res+j;
 }

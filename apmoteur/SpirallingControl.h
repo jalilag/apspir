@@ -6,6 +6,7 @@
 #define PROFILE_NUMBER 5 // Nombre de profile
 #define PARAM_NUMBER 22 // Nombre max de profile
 #define VAR_NUMBER 18
+#define LOCVAR_NUMBER 7
 #define CYCLE_PERIOD 0x0007A120 // Sync tou les 50000us = 50ms
 #define HB_CONS_BASE 0x000003E8 // Verification du heartbeat tout les 1000ms
 #define HB_CONS_BASE_OFFSET 0x00000032 // Décalage de vérification 50ms

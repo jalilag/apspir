@@ -20,6 +20,7 @@
 static int SDO_step_error = 0;
 
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+extern LOCVAR local[LOCVAR_NUMBER];
 extern pthread_mutex_t lock_slave;
 extern int run_init, SLAVE_NUMBER;
 extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
@@ -243,6 +244,19 @@ int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...) {
         SDOR PDOMapAddress2 = {PDOMapIndex,i,0x07};
         if(!cantools_write_sdo(nodeID,PDOMapAddress2,&arg)) {
             printf("ERREUR ecriture index : %#.8x\n",arg);
+            return 0;
+        }
+        // Config Maitre
+        UNS32 PDOMapLocal;
+        if (PDOMapIndex >= 0x1A00) {
+            PDOMapLocal = PDOMapIndex - 0x0400 + 4*(nodeID-0x02);
+        } else {
+            PDOMapLocal = PDOMapIndex + 0x0400 + 4*(nodeID-0x02);
+        }
+        UNS32 dat = master_find_local_code_with_distant_code(nodeID,arg);
+        printf("Node %x PDOMapLocal %x dat %x\n",nodeID,PDOMapLocal,dat);
+        if(!cantools_write_local(PDOMapLocal,i,&dat,sizeof(UNS32))) {
+            printf("Erreur : PDOLocal\n");
             return 0;
         }
         arg = va_arg(ap,UNS32);

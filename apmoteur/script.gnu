@@ -1,4 +1,4 @@
-set terminal pngcairo size 1110,100 enhanced font 'Verdana,10' background rgb 'black'
+set terminal pngcairo size 1170,100 enhanced font 'Verdana,10' background rgb 'black'
 set output 'temp.png'
 set key off
 set style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2

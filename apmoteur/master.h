@@ -3,7 +3,13 @@
 #include "SpirallingMaster.h"
 
 
-// Parametres
+typedef struct LOCVAR LOCVAR;
+struct LOCVAR {
+    UNS32 code_distant;
+    UNS32 code_local;
+};
+
+
 
 void SpirallingMaster_heartbeatError(CO_Data* d, UNS8);
 
@@ -22,7 +28,7 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
 
 void master_init();
 static int master_start_sync(int start);
-
+UNS32 master_find_local_code_with_distant_code(UNS8 node,UNS32 code);
 
 
 #endif
