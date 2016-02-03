@@ -2,7 +2,6 @@
 #define _ERRGEN_H
 #include "data.h"
 #include <gtk/gtk.h>
-#include "errgen_laser.h"
 
 void errgen_set(UNS16 dat,char* op);
 GSourceFunc errgen_set_safe(gpointer data);

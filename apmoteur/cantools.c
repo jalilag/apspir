@@ -12,7 +12,6 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
-#include "serialtools.h"
 // CONSTANTS
 #define MAX_SDO_ERROR 2
 #define SDO_TIMEOUT 3
