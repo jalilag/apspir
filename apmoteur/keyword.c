@@ -159,8 +159,9 @@ gboolean keyword_maj(gpointer data) {
             clock_gettime(CLOCK_MONOTONIC, &tend);
             trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
             double vlaser = lrec/trec; //temps écoulé
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
             // Ajouter les vitesses moteurs
-            fputs(strtools_concat(strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
+            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
             fclose(vel_dat);
         }
     }

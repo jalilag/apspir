@@ -1283,6 +1283,10 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_grid_set_column_homogeneous(grid,TRUE);
         GtkWidget* labplot = gui_create_widget("img","imgPlot",NULL,NULL);
         gtk_grid_attach(GTK_GRID(grid),labplot,0,0,conf1.pipeLength,1);
+        if (set_up) {
+            GtkWidget* labplotvel = gui_create_widget("img","imgPlotVel",NULL,NULL);
+            gtk_grid_attach(GTK_GRID(grid),labplotvel,0,0,1,1);
+        }
         slave_gen_plot();
     } else {
         GtkWidget* labplot = gui_create_widget("lab","labConfigError",CONFIG_NOT_SET,"bold","cell2","red",NULL);
@@ -1297,9 +1301,8 @@ int slave_gen_plot() {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu");
     GtkWidget* gridVel = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel");
     INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
+    INTEGER32 wgridVel = gtk_widget_get_allocated_width(gridVel);
     char* str2build = "";
-    str2build = strtools_concat(str2build, "set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",NULL);
-    str2build = strtools_concat(str2build, "\nset output 'temp.png'",NULL);
     str2build = strtools_concat(str2build, "\nset key off",NULL);
     str2build = strtools_concat(str2build, "\nset style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 2 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2",NULL);
@@ -1309,6 +1312,10 @@ int slave_gen_plot() {
     str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
     str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
     char* str2build2 = str2build;
+    str2build = strtools_concat("\nset output 'temp.png'",str2build,NULL);
+    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",str2build,NULL);
+    str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
+    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",str2build2,NULL);
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
@@ -1364,19 +1371,37 @@ int slave_gen_plot() {
     if (set_up) {
         str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 with lines linestyle 2",NULL);
         double temps = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - (double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-        if (temps > 30)
+        if (temps < 30)
             str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
         else {
-            double deb = temps - (double)15;
+            double deb = temps - (double)30;
             str2build2 = strtools_concat(str2build2, "\nset xrange [",strtools_gnum2str(&deb,0x10),":",strtools_gnum2str(&temps,0x10),"]",NULL);
         }
         str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY,"\" using 1:2 with lines linestyle 1",NULL);
+        if(!strtools_build_file("script_vel.gnu",str2build2)) {
+            if (str2build2 != "") free(str2build2);
+            return 0;
+        }
+        pid_t pidVel = fork();
+        if (pidVel < 0) {
+            printf("A fork error has occurred.\n");
+            exit(-1);
+        } else {
+            if (pidVel == 0) {
+                execlp("gnuplot","gnuplot", "script_vel.gnu",NULL);
+            } else {
+                wait(0);
+            }
+        }
+        GtkWidget* lab2 = gui_local_get_widget (gui_get_widget("boxVisu"),"imgPlotVel");
+        // Verifier si une image existe
+//        gtk_image_clear(GTK_IMAGE(lab2));
+        gtk_image_set_from_file(GTK_IMAGE(lab2),"temp_vel.png");
     }
     if(!strtools_build_file("script.gnu",str2build)) {
         if (str2build != "") free(str2build);
         return 0;
     }
-
     pid_t pid = fork();
     if (pid < 0) {
         printf("A fork error has occurred.\n");
