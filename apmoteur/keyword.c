@@ -2,17 +2,22 @@
 #include <gtk/gtk.h>
 #include "gtksig.h"
 #include "gui.h"
+#include <math.h>
 #include "master.h"
 #include "strtools.h"
 #include "slave.h"
 #include "motor.h"
 #include "SpirallingControl.h"
 #include "profile.h"
+#include "serialtools.h"
 #include <time.h>
 
 extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
+extern int run_laser,set_up;
+extern INTEGER32 rot_pos;
+extern CONFIG conf1;
 
 void keyword_init () {
 
@@ -86,19 +91,23 @@ void keyword_init () {
     gui_label_set("labLaserDataG", DEFAULT);
     gui_label_set("labLaserDataD", DEFAULT);
     gui_label_set("labLaserDataV", DEFAULT);
+    gui_label_set("labLaserTitle", LASER);
     gui_label_set("labLaserTitleG", LASERG);
     gui_label_set("labLaserTitleD", LASERD);
     gui_label_set("labLaserState",STATE_LASER);
     gui_label_set("labLaserData", DISTANCE);
-
+    gui_button_set("butLaserLoad","","gtk-save");
+    gtk_button_set_image(gui_get_button("butLaserLoad"),GTK_WIDGET(gtk_image_new_from_icon_name("user-offline",GTK_ICON_SIZE_DND)));
 }
+
 extern int motor_running;
+
 gboolean keyword_maj(gpointer data) {
+    serialtools_plotLaserState();
     int i = 0,j=0,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
 
-    slave_gen_plot();
     int l = 0;
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
@@ -108,22 +117,33 @@ gboolean keyword_maj(gpointer data) {
                 j++;
         }
     }
-    if (l>0) {
+
+    if (l>0 || j>0 || (run_laser>0 && run_laser<3)) {
         gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
         gui_widget2show("chargement",NULL);
     } else {
-        if (j>0) {
-            gui_widget2show("chargement",NULL);
-            gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
-        } else {
-            gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
-            gui_widget2hide("chargement",NULL);
-            if (motor_running) {
-                Exit(0);
-                motor_running = 0;
-            }
+        gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
+        gui_widget2hide("chargement",NULL);
+        if (motor_running) {
+            Exit(0);
+            motor_running = 0;
         }
     }
+
+    if (set_up) {
+        FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"a");
+        if (helix_dat != NULL) {
+            INTEGER32 rpos;
+            if(motor_get_param(slave_get_node_with_profile(profile_get_index_with_id("RotVit")),"Profile",&rpos)) {
+                double rrpos = sin((double)(rot_pos - rpos)*2*M_PI/(51200*500));
+                double length = conf1.pipeLength +conf1.length2pipe - serialtools_get_laser_data_valid();
+                fputs(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n"),helix_dat);
+            }
+            fclose(helix_dat);
+        }
+    }
+    slave_gen_plot();
+
     for (i=0; i<SLAVE_NUMBER; i++) {
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
@@ -165,7 +185,6 @@ gboolean keyword_maj(gpointer data) {
             gui_local_label_set(strtools_concat("labM",key,"State",NULL),slave_get_param_in_char("State",i),"mainWindow");
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
-        printf("Vitesse %s %s\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_char("Velocity",i));
         // Ecriture des vitesses
         FILE* f = fopen(strtools_concat("dat/",slave_get_param_in_char("SlaveTitle",i),"_",profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)),".dat",NULL),"a");
         char temps[20];
@@ -179,30 +198,6 @@ gboolean keyword_maj(gpointer data) {
             fclose(f);
         }
     }
-    // Vérification du switch translation
-//    int switch_but = gui_switch_is_active("butVelStart");
-//    printf("%d\n",switch_but);
-//    if (switch_but == 1) {
-//        for (i=0; i<SLAVE_NUMBER; i++) {
-//            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
-//                if (slave_get_param_in_num("Active",i) == 1) {
-//                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == SON) {
-//                        motor_start(slave_get_node_with_index(i),1);
-//                    }
-//                }
-//            }
-//        }
-//    } else if (switch_but == 0) {
-//        for (i=0; i<SLAVE_NUMBER; i++) {
-//            if (slave_get_param_in_num("SlaveProfile",i) == 0) {
-//                if (slave_get_param_in_num("Active",i) == 1) {
-//                    if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == OENABLED) {
-//                        motor_start(slave_get_node_with_index(i),0);
-//                    }
-//                }
-//            }
-//        }
-//    }
     if(slave_get_node_with_profile(0) != 0x00) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(0))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(0))));
@@ -216,7 +211,6 @@ gboolean keyword_active_maj(gpointer data) {
     UNS8* res = data;
     int i = slave_get_index_with_node(*res);
     int var = slave_get_param_in_num("Active",i);
-    printf("%d %d %d\n",*res,i,var);
     int j = i+1;
     if(var == 0) {
         GtkWidget* but = gui_local_get_widget(gui_get_widget("gridState"),strtools_concat("butActive",strtools_gnum2str(&j,0x02),NULL));

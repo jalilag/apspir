@@ -50,4 +50,5 @@ void on_butTransStop_clicked(GtkWidget* pEntry);
 void on_butRotRight_clicked (GtkWidget* pEntry);
 void on_butRotLeft_clicked (GtkWidget* pEntry);
 void on_butStartSet_clicked (GtkWidget* but);
+void on_butLaserLoad_clicked (GtkWidget* but);
 #endif

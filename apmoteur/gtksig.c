@@ -19,6 +19,7 @@
 #include "errgen.h"
 #include "slave.h"
 #include "profile.h"
+#include "serialtools.h"
 
 GtkBuilder *builder;
 
@@ -28,6 +29,9 @@ extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
 extern int set_up;
+extern int run_laser;
+extern GThread* lthread;
+extern CONFIG conf1;
 
 void gtksig_init () {
     // SIGNALS MAIN
@@ -60,7 +64,10 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "butTransStop"), "clicked", G_CALLBACK (on_butTransStop_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butRotRight"), "clicked", G_CALLBACK (on_butRotRight_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butRotLeft"), "clicked", G_CALLBACK (on_butRotLeft_clicked),NULL);
-//    g_signal_connect (gtk_builder_get_object (builder, "butRotInit"), "clicked", G_CALLBACK (on_butRotInit_clicked),NULL);
+
+    // Laser
+    g_signal_connect (gtk_builder_get_object (builder, "butLaserLoad"), "clicked", G_CALLBACK (on_butLaserLoad_clicked),NULL);
+
 }
 
 // Bouton arret
@@ -694,9 +701,34 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
     }
     motor_running = 1;
 }
+INTEGER32 rot_pos;
 void on_butStartSet_clicked (GtkWidget* but) {
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(but)))
-        set_up = 1;
-    else
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(but))) {
+        INTEGER32 rpos;
+        if(motor_get_param(slave_get_node_with_profile(profile_get_index_with_id("RotVit")),"Profile",&rpos)) {
+            FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"w");
+            if (helix_dat != NULL) {
+                rot_pos = rpos;
+                double length = conf1.pipeLength +conf1.length2pipe - serialtools_get_laser_data_valid();
+                fputs("#    Distance    Position\n",helix_dat);
+                fputs(strtools_concat(strtools_gnum2str(&length,0x10)," 0\n",NULL),helix_dat);
+                fclose(helix_dat);
+                set_up = 1;
+            }
+        }
+    } else
         set_up = 0;
+}
+
+void on_butLaserLoad_clicked (GtkWidget* but) {
+    if (run_laser == 3) {
+        run_laser = 0;
+        serialtools_exit_laser();
+    } else if (run_laser == 0) {
+        lthread = g_thread_try_new (NULL, serialtools_init,NULL, NULL);
+        if (lthread == NULL) {
+            run_laser = 0;
+            errgen_set(ERR_LASER_LOOP_RUN,NULL);
+        }
+    }
 }

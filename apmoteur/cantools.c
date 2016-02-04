@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "od_callback.h"
 #include "errgen.h"
+#include "serialtools.h"
 // CONSTANTS
 #define MAX_SDO_ERROR 2
 #define SDO_TIMEOUT 3
@@ -26,6 +27,8 @@ extern INTEGER32 old_voltage[SLAVE_NUMBER_LIMIT];
 
 extern UNS16 errgen_state;
 extern char* errgen_aux;
+extern int run_laser;
+extern GThread* lthread;
 /**
 * Lecture d'une SDO
 **/
@@ -286,15 +289,17 @@ gpointer cantools_init_loop(gpointer data) {
     while (run_init == -1) sleep(1);
     master_init();
 
-// Chargement des lasers
-//    g_idle_add(serialtools_init_laser,NULL);
-
 // Chargement de l'interface
     g_idle_add(slave_gui_load_state,NULL);
     g_idle_add(slave_gui_load_visu,NULL);
     g_timeout_add(500,keyword_maj,NULL);
 
     while (run_init == 1) {
+        if (run_laser == 2) {
+            g_thread_join (lthread);
+            run_laser = 3;
+        }
+        if (run_laser == 3) serialtools_check_laser_500ms();
         j++;
         MasterState = 0;
         for (i=0; i<SLAVE_NUMBER;i++) {

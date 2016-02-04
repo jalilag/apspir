@@ -7,12 +7,13 @@
 #include "keyword.h"
 #include "strtools.h"
 #include "gtksig.h"
+#include "laser/errgen_laser.h"
 
 extern int current_menu, run_init;
 extern GMutex lock_gui_box;
 extern UNS16 errgen_state;
 extern char* errgen_aux;
-
+UNS8 errgen_laserState = MASTER_NOT_STARTED | SLAVE_NOT_STARTED;
 
 GSourceFunc errgen_set_safe(gpointer data) {
     errgen_set(errgen_state,errgen_aux);

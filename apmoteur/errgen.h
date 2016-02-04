@@ -9,11 +9,36 @@ GSourceFunc errgen_set_safe(gpointer data);
 static char* errgen_get_title(UNS16 dat);
 static char* errgen_get_content(UNS16 dat);
 
+#include "errgen_laser.h"
+#define LASER_ERROR(err)                    (0x80 | err)
+#define ERR_LASER_SERIAL_CONFIG              0x0501
+#define ERR_LASER_STARTCHECKTHREAD           0x0502
+
+#define ERR_SLAVE_CONFIG_ROT_REFPOS          0x0510
+#define ERR_MASTER_CONFIG_PDOT2              0x0511
+#define ERR_LASER_ASSERV_START               0x0512
+#define ERR_LASER_ASSERV_STOP                0x0513
+#define ERR_LASER_SIMU_START                 0x0514
+#define ERR_LASER_SIMU_STOP                  0x0515
+#define ERR_ROT_CALC_ACCEL                   0x0516
+#define ERR_ROT_WRITE_ACCEL                  0x0517
+#define ERR_ROT_GET_ACCEL                    0x0518
+#define ERR_ROT_GET_DECEL                    0x0519
+
+#define ERR_LASER_ASSERV_2_VELMOTROTDEFINED  0x0520
+#define ERR_LASER_ASSERV_READMOTROTDATA      0x0521
+#define ERR_LASER_ASSERV_GETINDEXROT         0x0522
+#define ERR_LASER_ASSERV_GETINDEXTRANS       0x0523
+#define ERR_LASER_ASSERV_MOTROT              0x0524
+#define ERR_LASER_ASSERV_SENS		         0x0525
+#define ERR_LASER_ASSERV_GETSTARTPOS	     0x0526
+
 #define ERR_DRIVER_UP                        0x0001
 #define ERR_DRIVER_LOAD                      0x0002
 #define ERR_DRIVER_OPEN                      0x0003
 #define ERR_INIT_LOOP_RUN                    0x0004
 #define ERR_GUI_LOOP_RUN                     0x0005
+#define ERR_LASER_LOOP_RUN                   0x0006
 
 #define ERR_FILE_OPEN                        0x0006
 #define ERR_FILE_EMPTY                       0x0007

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "gtksig.h"
 #include <gtk/gtk.h>
+#include <glib.h>
 #include "canfestival.h"
 
 char* strtools_concat(char* s1, char* s2, ...) {
@@ -158,8 +159,8 @@ void strtools_print_data(void* data,UNS8 type) {
 // param1 : pointeur vers variable
 // param2 : type
 gchar* strtools_gnum2str(void *data,UNS8 type) {
-    int* pdata = data;
     if (type == 0x01) {
+        int* pdata = data;
         if ((int)*pdata == 1) {
             return "True";
         } else if ((int)*pdata == 0) {
@@ -168,19 +169,29 @@ gchar* strtools_gnum2str(void *data,UNS8 type) {
             printf("num2str error: no boolean\n");exit(1);
         }
     } else if (type == 0x02) {
+        INTEGER8* pdata = data;
         return g_strdup_printf ("%d", (INTEGER8)*pdata);
     } else if (type == 0x03) {
+        INTEGER16* pdata = data;
         return g_strdup_printf ("%d", (INTEGER16)*pdata);
     } else if (type == 0x04) {
+        INTEGER32* pdata = data;
         return g_strdup_printf ("%d", (INTEGER32)*pdata);
     } else if (type == 0x05) {
+        UNS8* pdata = data;
         return g_strdup_printf ("%#.2X", (UNS8)*pdata);
     } else if (type == 0x06) {
+        UNS16* pdata = data;
         return g_strdup_printf ("%#.4X", (UNS16)*pdata);
     } else if (type == 0x07) {
+        UNS32* pdata = data;
         return g_strdup_printf ("%#.8X", (UNS32)*pdata);
     } else if (type == 0x0A) {
+        UNS32* pdata = data;
         return g_strdup_printf ("%x", (UNS32)*pdata);
+    } else if (type == 0x10) {
+        double* pdata = data;
+        return g_strdup_printf ("%.3f", (double)*pdata);
     } else {
         printf("num2str error : Type inconnu : %x \n",type); exit(1);
     }

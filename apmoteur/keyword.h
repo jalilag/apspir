@@ -88,6 +88,7 @@ gboolean keyword_active_maj(gpointer data);
 #define OFF "OFF"
 #define PIPE_LENGTH "Longueur du pipe"
 #define PIPE_LENGTH_ERROR "La longueur de pipe entrée est incorrecte"
+#define POSITION "Position"
 #define PDOR1 "PDOR 1"
 #define PDOR2 "PDOR 2"
 #define PDOR3 "PDOR 3"

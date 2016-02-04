@@ -1260,7 +1260,7 @@ gboolean slave_gui_load_visu(gpointer data) {
 }
 
 
-int slave_gen_plot(){
+int slave_gen_plot() {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu");
     INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
     char* str2build = "";
@@ -1299,34 +1299,37 @@ int slave_gen_plot(){
                 str2build = strtools_concat(str2build, "sin(0)*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             } else {
                 str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l],0x02),
-            "*x",")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+                "*x",")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             }
         } else {
             if (step[0][l] == 0) {
                 str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l-1],0x02),
-            "*",strtools_gnum2str(&y1,0x02),"+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+                "*",strtools_gnum2str(&y1,0x02),"+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             } else {
                 if (step[0][l-1] == 0) {
                     if (l==1)
                         k = strtools_concat(k,"-2*pi/",strtools_gnum2str(&step[0][l],0x02),
-                "*",strtools_gnum2str(&y1,0x02),NULL);
+                        "*",strtools_gnum2str(&y1,0x02),NULL);
                     else
                         k = strtools_concat(k,"+2*pi/",strtools_gnum2str(&step[0][l-2],0x02),
-                "*",strtools_gnum2str(&coord[l-2],0x02),"-2*pi/",strtools_gnum2str(&step[0][l],0x02),
-                "*",strtools_gnum2str(&y1,0x02),NULL);
+                        "*",strtools_gnum2str(&coord[l-2],0x02),"-2*pi/",strtools_gnum2str(&step[0][l],0x02),
+                        "*",strtools_gnum2str(&y1,0x02),NULL);
                 } else {
                     k = strtools_concat(k,"+2*pi/",strtools_gnum2str(&step[0][l-1],0x02),
-            "*",strtools_gnum2str(&y1,0x02),"-2*pi/",strtools_gnum2str(&step[0][l],0x02),
-            "*",strtools_gnum2str(&y1,0x02),NULL);
+                    "*",strtools_gnum2str(&y1,0x02),"-2*pi/",strtools_gnum2str(&step[0][l],0x02),
+                    "*",strtools_gnum2str(&y1,0x02),NULL);
                 }
                 str2build = strtools_concat(str2build, "sin(2*pi/",strtools_gnum2str(&step[0][l],0x02),
-            "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
+                "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             }
         }
         y1 += step[1][l];
         coord[l] = y1;
         if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);
     }
+    if (set_up)
+        str2build = strtools_concat(str2build, "\nplot ",FILE_HELIX_RECORDED," using 1:2 with lines linestyle 2",NULL);
+
     if(!strtools_build_file("script.gnu",str2build)) {
         if (str2build != "") free(str2build);
         return 0;
