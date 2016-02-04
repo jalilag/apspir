@@ -687,15 +687,17 @@ int slave_save_param (int index) {
 int slave_check_profile_file(int profId) {
     int i,j=0,res;
     FILE *f = fopen(profile_get_filename_with_index(profId),"r");
+    printf("File %s\n",profile_get_filename_with_index(profId));
     if (f != NULL) {
-        char title[20];
+        char title[20]="";
         int data;
         char chaine[1024]="";
         while(fgets(chaine,1024,f) != NULL) {
             if (sscanf(chaine,"%19s ; %d",title,&data) == 2) j++;
                 res = 0;
-                for (i=0; i<PARAM_NUMBER; i++)
+                for (i=0; i<PARAM_NUMBER; i++) {
                     if (strcmp(pardata[i].gui_code,title) == 0 ) res = 1;
+                }
                 if (res == 0) {
                     j = 0;
                     errgen_set(ERR_FILE_PROFILE_INVALID_PARAM,profile_get_filename_with_index(profId));

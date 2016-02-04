@@ -101,7 +101,7 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {TARGET_POSITION,"Position",0x607A,0x00,0x04,0,26000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
     {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL},
     {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,512000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX},
-    {POSITION,"Position",0x6064,0x00,0x04,0,999999999,NULL,ERR_READ_POSITION,NULL}
+    {POSITION,"Position",0x6064,0x00,0x04,0,999999999,0,ERR_READ_POSITION,0}
 };
 
 // Liste correspondance variables locales et distantes
@@ -172,20 +172,20 @@ int main(int argc,char **argv) {
     }
 
     // Configuration du socket
-    pid_t pid = fork();
-
-    if (pid < 0) {
-        printf("A fork error has occurred.\n");
-        exit(-1);
-    } else {
-        if (pid == 0) {
-            execlp("./load_can.sh","load_can.sh",NULL);
-            errgen_state = ERR_DRIVER_UP;
-            g_idle_add(errgen_set_safe(NULL),NULL);
-        } else {
-            wait(0);
-        }
-    }
+//    pid_t pid = fork();
+//
+//    if (pid < 0) {
+//        printf("A fork error has occurred.\n");
+//        exit(-1);
+//    } else {
+//        if (pid == 0) {
+//            execlp("./load_can.sh","load_can.sh",NULL);
+//            errgen_state = ERR_DRIVER_UP;
+//            g_idle_add(errgen_set_safe(NULL),NULL);
+//        } else {
+//            wait(0);
+//        }
+//    }
 
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
@@ -209,10 +209,10 @@ int main(int argc,char **argv) {
     }
 
 // Ouverture du port CAN
-    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
-        errgen_state = ERR_DRIVER_OPEN;
-        g_idle_add(errgen_set_safe(NULL),NULL);
-    }
+//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
+//        errgen_state = ERR_DRIVER_OPEN;
+//        g_idle_add(errgen_set_safe(NULL),NULL);
+//    }
 
 
 // Definition des esclaves

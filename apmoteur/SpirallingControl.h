@@ -4,7 +4,7 @@
 // DONNEE PROGRAMME
 #define SLAVE_NUMBER_LIMIT 10 // Nombre d'esclave
 #define PROFILE_NUMBER 5 // Nombre de profile
-#define PARAM_NUMBER 24 // Nombre max de profile
+#define PARAM_NUMBER 23 // Nombre max de profile
 #define VAR_NUMBER 18
 #define LOCVAR_NUMBER 7
 #define CYCLE_PERIOD 0x0007A120 // Sync tou les 50000us = 50ms
