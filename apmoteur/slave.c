@@ -13,6 +13,7 @@
 #include "master.h"
 #include "gtksig.h"
 #include "profile.h"
+#include <time.h>
 
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
@@ -25,10 +26,11 @@ extern PROF profiles[PROFILE_NUMBER];
 extern PARAM pardata[PARAM_NUMBER];
 extern PARVAR vardata[VAR_NUMBER];
 extern int set_up;
-
+extern struct timespec tstart, tend;
 CONFIG conf1;
-int step[2][20] = {{0}};
-int support[20]={0};
+
+static int step[2][20] = {{0}};
+static int support[20]={0};
 
 /**
 * Configuration des esclaves
@@ -174,7 +176,7 @@ gboolean slave_gui_load_state(gpointer data) {
     int i,j,k;
     char* key;
     GtkGrid* grid = gui_get_grid("gridState");
-    GtkWidget* lab = gui_create_widget("lab","labStateTitle",STATUT_TITLE,"h1","black",NULL);
+    GtkWidget* lab = gui_create_widget("lab","labStateTitle",MOTORS,"h1","black",NULL);
     gtk_widget_set_hexpand(lab,TRUE);
     gtk_grid_attach (grid, lab, 0, 0, SLAVE_NUMBER+1, 1);
     j=0;
@@ -747,6 +749,18 @@ UNS8 slave_get_node_with_profile(int profInd) {
     pthread_mutex_unlock (&lock_slave);
     return res;
 }
+UNS8 slave_get_node_with_profile_id(char* pid) {
+    int i, profInd = profile_get_index_with_id(pid);
+    UNS8 res = 0x00;
+    pthread_mutex_lock (&lock_slave);
+    for (i=0; i<SLAVE_NUMBER; i++) {
+        if (slaves[i].profile == profInd)
+            res=slaves[i].node;
+    }
+    pthread_mutex_unlock (&lock_slave);
+    return res;
+}
+
 /**
 * Retourne state en fonction index
 **/
@@ -839,7 +853,21 @@ int slave_get_index_with_node(UNS8 nodeID) {
         exit(EXIT_FAILURE);
     }
 }
-/**
+int slave_get_index_with_profile_id(char* pid) {
+    int i,res = -1;
+    int profind = profile_get_index_with_id(pid);
+    pthread_mutex_lock (&lock_slave);
+    for (i=0; i<SLAVE_NUMBER; i++) {
+        if (slaves[i].profile == profind) res=i;
+    }
+    pthread_mutex_unlock (&lock_slave);
+    if (res != -1)
+        return res;
+    else {
+        printf("Profile non trouvé %s",pid);
+        exit(EXIT_FAILURE);
+    }
+}/**
 * retourne profile en fonction de l'index
 **/
 int slave_get_profile_with_index(int i) {
@@ -1152,7 +1180,6 @@ char* slave_get_param_title (char* parid) {
 }
 
 gboolean slave_gui_load_visu(gpointer data) {
-
     int i,j,valid=0,i1=0,i2=0;
     for (i=0;i<20;i++) {
         for (j=0;j<2;j++){
@@ -1211,8 +1238,12 @@ gboolean slave_gui_load_visu(gpointer data) {
     // Grid
     if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu"));
+    if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel"));
     GtkGrid* grid = gui_local_grid_set("gridVisu",NULL,conf1.pipeLength,"");
     gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(grid),TRUE,TRUE,0);
+    GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,conf1.pipeLength,"");
+    gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(gridVel),TRUE,TRUE,0);
     if (valid == 3 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
@@ -1264,6 +1295,7 @@ gboolean slave_gui_load_visu(gpointer data) {
 
 int slave_gen_plot() {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu");
+    GtkWidget* gridVel = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel");
     INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
     char* str2build = "";
     str2build = strtools_concat(str2build, "set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",NULL);
@@ -1274,12 +1306,12 @@ int slave_gen_plot() {
     str2build = strtools_concat(str2build, "\nset style line 11 lc rgb '#808080' lt 1",NULL);
     str2build = strtools_concat(str2build, "\nset style line 12 lc rgb '#808080' lt 0 lw 1",NULL);
     str2build = strtools_concat(str2build, "\nset border 3 back ls 11",NULL);
+    str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
+    str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
+    char* str2build2 = str2build;
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
-    str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
-    str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
-
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
         if (l == 0) {
@@ -1295,7 +1327,7 @@ int slave_gen_plot() {
     char* k;
     for (l=0; l<conf1.step_size;l++) {
         if (l == 0) {
-            str2build = strtools_concat(str2build,"\n plot ",NULL);
+            str2build = strtools_concat(str2build,"\nplot ",NULL);
             k = "0";
             if (step[0][l] == 0) {
                 str2build = strtools_concat(str2build, "sin(0)*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
@@ -1329,9 +1361,17 @@ int slave_gen_plot() {
         coord[l] = y1;
         if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);
     }
-    if (set_up)
-        str2build = strtools_concat(str2build, "\nplot ",FILE_HELIX_RECORDED," using 1:2 with lines linestyle 2",NULL);
-
+    if (set_up) {
+        str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 with lines linestyle 2",NULL);
+        double temps = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - (double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
+        if (temps > 30)
+            str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
+        else {
+            double deb = temps - (double)15;
+            str2build2 = strtools_concat(str2build2, "\nset xrange [",strtools_gnum2str(&deb,0x10),":",strtools_gnum2str(&temps,0x10),"]",NULL);
+        }
+        str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY,"\" using 1:2 with lines linestyle 1",NULL);
+    }
     if(!strtools_build_file("script.gnu",str2build)) {
         if (str2build != "") free(str2build);
         return 0;

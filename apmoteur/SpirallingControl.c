@@ -22,27 +22,10 @@
 #include "profile.h"
 #include <time.h>
 
-
-
-// Plateforme MASTER
 s_BOARD MasterBoard = {"0","1M"};
 
-// Définition des esclaves
-volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
-
-volatile PROF profiles[PROFILE_NUMBER] = {
-    {0,"TransVit","Translation (vitesse)"},
-    {1,"TransCouple","Translation (couple)"},
-    {2,"RotVit","Rotation (vitesse)"},
-    {3,"RotCouple","Rotation (couple)"},
-    {4,"Libre","Libre"}
-};
-int SLAVE_NUMBER;
-pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
-GMutex lock_gui_box;
-// Les paramètres
-INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
-// Récupération des variables numériques à traiter
+/** RECUPERATION DES VARIABLES GLOBALES **/
+    // Récupération des variables numériques à traiter
 void* power[SLAVE_NUMBER_LIMIT]= {&StatusWord_1,&StatusWord_2,&StatusWord_3,&StatusWord_4,&StatusWord_5};
 void* power_error[SLAVE_NUMBER_LIMIT]= {&ErrorCode_1,&ErrorCode_2,&ErrorCode_3,&ErrorCode_4,&ErrorCode_5};
 void* temperature[SLAVE_NUMBER_LIMIT]= {&Temperature_1,&Temperature_2,&Temperature_3,&Temperature_4,&Temperature_5};
@@ -51,8 +34,21 @@ void* velocity[SLAVE_NUMBER_LIMIT] = {&VelocityR_1,&VelocityR_2,&VelocityR_3,&Ve
 void* vel2send[SLAVE_NUMBER_LIMIT] = {&VelocityS_1,&VelocityS_2,&VelocityS_3,&VelocityS_4,&VelocityS_5};
 void* position[SLAVE_NUMBER_LIMIT] = {&PositionR_1,&PositionR_2,&PositionR_3,&PositionR_4,&PositionR_5};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
-
-// Acces a certaines variables moteur definies localement
+INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
+/** STRUCTURE **/
+    // Moteurs
+volatile SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
+int SLAVE_NUMBER;
+pthread_mutex_t lock_slave = PTHREAD_MUTEX_INITIALIZER; // Mutex de slaves
+    // Profiles
+volatile PROF profiles[PROFILE_NUMBER] = {
+    {0,"TransVit","Translation (vitesse)"},
+    {1,"TransCouple","Translation (couple)"},
+    {2,"RotVit","Rotation (vitesse)"},
+    {3,"RotCouple","Rotation (couple)"},
+    {4,"Libre","Libre"}
+};
+    // Acces rapide aux variables locales
 volatile PARVAR vardata[VAR_NUMBER] = {
     {"Active",0x00,NULL,ACTIVE},
     {"SlaveTitle",0x00,NULL,NODE},
@@ -65,6 +61,7 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"State",0x02,NULL,STATUT_TITLE},
     {"StateError",0x02,NULL,STATE_ERROR},
     {"Power",0x06,power,POWER_STATE},
+    {"Position",0x04,position,POSITION},
     {"PowerError",0x06,power_error,POWER_STATE_ERROR},
     {"Temp",0x02,temperature,TEMPERATURE},
     {"Volt",0x04,voltage,VOLTAGE},
@@ -72,12 +69,7 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"Velocity",0x04,velocity,DEFAULT},
     {"Vel2send",0x04,vel2send,DEFAULT}
 };
-// Boucle d'initialisation
-int run_init = 1;
-int run_gui_loop = 0;
-int run_laser = 0;
-GThread * lthread;
-// Liste des paramètres CANOPEN modifiables (acces par sdo)
+    // Acces variables distantes
 volatile PARAM pardata[PARAM_NUMBER] = {
     {PDOR1,"Pdor1",0x1600,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
     {PDOR2,"Pdor2",0x1601,0x00,0x07,0,0x70000000,ERR_SET_PDO,0,0},
@@ -104,7 +96,7 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {POSITION,"Position",0x6064,0x00,0x04,0,999999999,0,ERR_READ_POSITION,0}
 };
 
-// Liste correspondance variables locales et distantes
+    // Liste correspondance variables locales et distantes
 volatile LOCVAR local[LOCVAR_NUMBER] = {
     {0x60410010,0x20000010}, //StatusWord
     {0x603F0010,0x20050010}, //Error
@@ -115,19 +107,34 @@ volatile LOCVAR local[LOCVAR_NUMBER] = {
     {0x60640020,0x20190020} //Profile
 };
 
-// Menu courant
+/** PARAMETRES GENERAUX **/
+int run_init = 1;
+int run_gui_loop = 0;
+int run_laser = 0;
+GThread * lthread;
+GMutex lock_gui_box;
+UNS16 errgen_state = 0x0000;
+char* errgen_aux = NULL;
+    // Menu courant
 int current_menu = 0;
-// Set up is running
+    // Pose is running
 int set_up = 0;
-// A définir mettre a jour
+    // Variable de temps
+volatile struct timespec tstart={0,0}, tend={0,0};
+    // Incrémentation du moteur rotvit
+INTEGER32 rot_pos;
+    // Mesure laser
+double length_start,actual_length;
+
+
+/** FONCTIONS **/
+    // A définir mettre a jour
 void catch_signal(int sig) {
     signal(SIGTERM, catch_signal);
     signal(SIGINT, catch_signal);
     printf("Got Signal %d\n",sig);
 }
 
-UNS16 errgen_state = 0x0000;
-char* errgen_aux = NULL;
 
 /**
 * Fermeture de l'application
@@ -161,6 +168,15 @@ void Exit(int type) {
 }
 
 int main(int argc,char **argv) {
+
+    struct timespec tstart={0,0}, tend={0,0};
+    clock_gettime(CLOCK_MONOTONIC, &tstart);
+    clock_gettime(CLOCK_MONOTONIC, &tend);
+    printf("some_long_computation took about %.5f seconds\n",
+           ((double)tend.tv_sec + 1.0e-9*tend.tv_nsec) -
+           ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec));
+ exit(1);
+
 // Initialisation de l'interface graphique
     gui_init();
     gchar* thgui = "gui";

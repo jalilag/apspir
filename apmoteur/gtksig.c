@@ -8,7 +8,7 @@
 #include <glib.h>
 
 #include "canfestival.h"
-
+#include <time.h>
 #include "keyword.h"
 #include "master.h"
 #include "gui.h"
@@ -32,6 +32,10 @@ extern int set_up;
 extern int run_laser;
 extern GThread* lthread;
 extern CONFIG conf1;
+extern struct timespec tstart, tend;
+extern INTEGER32 rot_pos;
+extern double length_start,actual_length;
+
 
 void gtksig_init () {
     // SIGNALS MAIN
@@ -67,6 +71,11 @@ void gtksig_init () {
 
     // Laser
     g_signal_connect (gtk_builder_get_object (builder, "butLaserLoad"), "clicked", G_CALLBACK (on_butLaserLoad_clicked),NULL);
+
+    // Pose
+    g_signal_connect (gtk_builder_get_object (builder, "butStartSet"), "clicked", G_CALLBACK (on_butStartSet_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butContinueSet"), "clicked", G_CALLBACK (on_butContinueSet_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butStopSet"), "clicked", G_CALLBACK (on_butStopSet_clicked),NULL);
 
 }
 
@@ -643,7 +652,7 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_forward(slave_get_node_with_index(i),0)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-                INTEGER32 val = 71111*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep"));
+                INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
                 if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
@@ -678,7 +687,7 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_forward(slave_get_node_with_index(i),1)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-                INTEGER32 val = 71111*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep"));
+                INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
                 if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
@@ -701,24 +710,6 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
     }
     motor_running = 1;
 }
-INTEGER32 rot_pos;
-void on_butStartSet_clicked (GtkWidget* but) {
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(but))) {
-        INTEGER32 rpos;
-        if(motor_get_param(slave_get_node_with_profile(profile_get_index_with_id("RotVit")),"Profile",&rpos)) {
-            FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"w");
-            if (helix_dat != NULL) {
-                rot_pos = rpos;
-                double length = conf1.pipeLength +conf1.length2pipe - serialtools_get_laser_data_valid();
-                fputs("#    Distance    Position\n",helix_dat);
-                fputs(strtools_concat(strtools_gnum2str(&length,0x10)," 0\n",NULL),helix_dat);
-                fclose(helix_dat);
-                set_up = 1;
-            }
-        }
-    } else
-        set_up = 0;
-}
 
 void on_butLaserLoad_clicked (GtkWidget* but) {
     if (run_laser == 3) {
@@ -730,5 +721,46 @@ void on_butLaserLoad_clicked (GtkWidget* but) {
             run_laser = 0;
             errgen_set(ERR_LASER_LOOP_RUN,NULL);
         }
+    }
+}
+
+
+void on_butStartSet_clicked (GtkWidget* but) {
+    if (set_up == 0) {
+        INTEGER32 rpos = slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit"));
+        FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"w");
+        if (helix_dat != NULL) {
+            rot_pos = rpos;
+            length_start = serialtools_get_laser_data_valid();
+            actual_length = length_start;
+            double length = 0;
+            fputs("#    Distance    Position\n",helix_dat);
+            fputs("0 0\n",helix_dat);
+            fclose(helix_dat);
+            slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),100000);
+            clock_gettime(CLOCK_MONOTONIC, &tstart);
+            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
+            if (vel_dat != NULL) {
+                length_start = serialtools_get_laser_data_valid();
+                double length = 0;
+                fputs("#    Vlaser    Vrot\n",vel_dat);
+                fputs("0 0\n",vel_dat);
+                fclose(vel_dat);
+                set_up = 1;
+            }
+        }
+    }
+}
+
+void on_butContinueSet_clicked (GtkWidget* but) {
+    if (set_up == 0) {
+        set_up = 1;
+    }
+}
+
+void on_butStopSet_clicked (GtkWidget* but) {
+    if (set_up == 1) {
+        slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),0);
+        set_up = 0;
     }
 }

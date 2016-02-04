@@ -16,8 +16,10 @@ extern int SLAVE_NUMBER;
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 extern int run_laser,set_up;
-extern INTEGER32 rot_pos;
+extern INTEGER32 rot_pos; // Position de démarrage moteur
+extern double length_start,actual_length; // Longueur de début
 extern CONFIG conf1;
+extern struct timespec tstart, tend;
 
 void keyword_init () {
 
@@ -98,10 +100,19 @@ void keyword_init () {
     gui_label_set("labLaserData", DISTANCE);
     gui_button_set("butLaserLoad","","gtk-save");
     gtk_button_set_image(gui_get_button("butLaserLoad"),GTK_WIDGET(gtk_image_new_from_icon_name("user-offline",GTK_ICON_SIZE_DND)));
+
+/** BOX SET **/
+    gui_label_set("labTitleSetUp",SET_UP_TITLE);
+    gui_button_set("butStartSet",START,"media-playback-start");
+    gui_button_set("butContinueSet",CONTINUE,"view-refresh");
+    gui_button_set("butStopSet",STOP,"process-stop");
+
+
 }
+double length_old = 0;
 
 extern int motor_running;
-
+int iii = 0;
 gboolean keyword_maj(gpointer data) {
     serialtools_plotLaserState();
     int i = 0,j=0,k;
@@ -129,17 +140,28 @@ gboolean keyword_maj(gpointer data) {
             motor_running = 0;
         }
     }
-
+    // Ecriture du fichier hélice
     if (set_up) {
         FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"a");
         if (helix_dat != NULL) {
-            INTEGER32 rpos;
-            if(motor_get_param(slave_get_node_with_profile(profile_get_index_with_id("RotVit")),"Profile",&rpos)) {
-                double rrpos = sin((double)(rot_pos - rpos)*2*M_PI/(51200*500));
-                double length = conf1.pipeLength +conf1.length2pipe - serialtools_get_laser_data_valid();
-                fputs(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n"),helix_dat);
-            }
+            INTEGER32 rpos = slave_get_param_in_num("Position",slave_get_index_with_node(slave_get_node_with_profile(profile_get_index_with_id("RotVit"))));
+            double rrpos = sin((double)(rot_pos - rpos)*2*M_PI/(51200*500));
+            double length = length_start - serialtools_get_laser_data_valid();
+            fputs(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n",NULL),helix_dat);
             fclose(helix_dat);
+        }
+        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
+        if (vel_dat != NULL) {
+            double lrec = actual_length;
+            actual_length = serialtools_get_laser_data_valid();
+            lrec = actual_length-lrec; // Distance parcourue
+            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
+            clock_gettime(CLOCK_MONOTONIC, &tend);
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
+            double vlaser = lrec/trec; //temps écoulé
+            // Ajouter les vitesses moteurs
+            fputs(strtools_concat(strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
+            fclose(vel_dat);
         }
     }
     slave_gen_plot();

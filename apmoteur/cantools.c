@@ -35,7 +35,6 @@ extern GThread* lthread;
 int cantools_read_sdo(UNS8 nodeid,SDOR sdo, void* data) {
 	UNS32 abortCode;
     UNS32 size;
-
 	UNS8 res;
     UNS8 datatype = 0;
     if (sdo.type == 0x01) {

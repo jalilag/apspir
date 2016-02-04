@@ -55,7 +55,8 @@ static void slave_set_active_with_index(int i, int var);
 
 int slave_get_profile_with_index(int i);
 int slave_get_profile_with_node(UNS8 node);
-
+int slave_get_index_with_profile_id(char* pid);
+UNS8 slave_get_node_with_profile_id(char* pid);
 
 char* slave_get_title_with_index(int i);
 char* slave_get_title_with_node(UNS8 node);

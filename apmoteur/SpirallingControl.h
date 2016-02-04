@@ -5,7 +5,7 @@
 #define SLAVE_NUMBER_LIMIT 10 // Nombre d'esclave
 #define PROFILE_NUMBER 5 // Nombre de profile
 #define PARAM_NUMBER 23 // Nombre max de profile
-#define VAR_NUMBER 18
+#define VAR_NUMBER 19
 #define LOCVAR_NUMBER 7
 #define CYCLE_PERIOD 0x0007A120 // Sync tou les 50000us = 50ms
 #define HB_CONS_BASE 0x000003E8 // Verification du heartbeat tout les 1000ms
@@ -15,6 +15,8 @@
 #define FILE_HELIX_CONFIG "config/helix_config.txt"
 #define FILE_GEOM_CONFIG "config/geom_config.txt"
 #define FILE_HELIX_RECORDED "config/helix_record.txt"
+#define FILE_VELOCITY "config/velocity.txt"
+
 #define TIME_SET_LIMIT 300
 #define STEP_LIMIT 6
 // PROFILE
