@@ -6,7 +6,6 @@
 #include <signal.h>
 #include <gtk/gtk.h>
 #include <glib.h>
-
 #include "canfestival.h"
 #include <time.h>
 #include "keyword.h"
@@ -737,19 +736,20 @@ void on_butStartSet_clicked (GtkWidget* but) {
             fputs("#    Distance    Position\n",helix_dat);
             fputs("0 0\n",helix_dat);
             fclose(helix_dat);
-            slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),100000);
+            motor_forward(slave_get_node_with_profile_id("RotVit"),0);
+            motor_start(slave_get_node_with_profile_id("RotVit"),1);
+            slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),200000);
             clock_gettime(CLOCK_MONOTONIC, &tstart);
             clock_gettime(CLOCK_MONOTONIC, &tend);
-            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
-            if (vel_dat != NULL) {
-                length_start = serialtools_get_laser_data_valid();
-                double length = 0;
-                fputs("# time    Vlaser    Vrot\n",vel_dat);
-                fputs("0 0 0\n",vel_dat);
-                fclose(vel_dat);
+//            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
+//            if (vel_dat != NULL) {
+//                length_start = serialtools_get_laser_data_valid();
+//                double length = 0;
+//                fputs("# time    Vlaser    Vrot\n",vel_dat);
+//                fputs("0 0 0\n",vel_dat);
+//                fclose(vel_dat);
                 set_up = 1;
-            }
-        }
+         }
     }
 }
 
@@ -763,5 +763,6 @@ void on_butStopSet_clicked (GtkWidget* but) {
     if (set_up == 1) {
         slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),0);
         set_up = 0;
+        motor_start(slave_get_node_with_profile_id("RotVit"),0);
     }
 }

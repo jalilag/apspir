@@ -61,7 +61,7 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"State",0x02,NULL,STATUT_TITLE},
     {"StateError",0x02,NULL,STATE_ERROR},
     {"Power",0x06,power,POWER_STATE},
-    {"Position",0x04,position,POSITION},
+    {"Position",0x04,position,DEFAULT},
     {"PowerError",0x06,power_error,POWER_STATE_ERROR},
     {"Temp",0x02,temperature,TEMPERATURE},
     {"Volt",0x04,voltage,VOLTAGE},
@@ -104,7 +104,7 @@ volatile LOCVAR local[LOCVAR_NUMBER] = {
     {0x20180108,0x200F0008}, //Temp
     {0x606C0020,0x20140020}, //Vel R
     {0x60FF0020,0x20190020}, //Vel S
-    {0x60640020,0x20190020} //Profile
+    {0x60640020,0x201E0020} //Profile
 };
 
 /** PARAMETRES GENERAUX **/
@@ -168,6 +168,9 @@ void Exit(int type) {
 }
 
 int main(int argc,char **argv) {
+    printf("Vel2send4 %d\n",VelocityS_4);
+    VelocityS_4 = 0;
+    printf("Vel2send4 %d\n",VelocityS_4);
 
 // Initialisation de l'interface graphique
     gui_init();
@@ -180,20 +183,20 @@ int main(int argc,char **argv) {
     }
 
     // Configuration du socket
-//    pid_t pid = fork();
-//
-//    if (pid < 0) {
-//        printf("A fork error has occurred.\n");
-//        exit(-1);
-//    } else {
-//        if (pid == 0) {
-//            execlp("./load_can.sh","load_can.sh",NULL);
-//            errgen_state = ERR_DRIVER_UP;
-//            g_idle_add(errgen_set_safe(NULL),NULL);
-//        } else {
-//            wait(0);
-//        }
-//    }
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        printf("A fork error has occurred.\n");
+        exit(-1);
+    } else {
+        if (pid == 0) {
+            execlp("./load_can.sh","load_can.sh",NULL);
+            errgen_state = ERR_DRIVER_UP;
+            g_idle_add(errgen_set_safe(NULL),NULL);
+        } else {
+            wait(0);
+        }
+    }
 
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
@@ -217,10 +220,10 @@ int main(int argc,char **argv) {
     }
 
 // Ouverture du port CAN
-//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
-//        errgen_state = ERR_DRIVER_OPEN;
-//        g_idle_add(errgen_set_safe(NULL),NULL);
-//    }
+    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
+        errgen_state = ERR_DRIVER_OPEN;
+        g_idle_add(errgen_set_safe(NULL),NULL);
+    }
 
 
 // Definition des esclaves

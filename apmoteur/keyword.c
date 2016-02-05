@@ -140,6 +140,8 @@ gboolean keyword_maj(gpointer data) {
             motor_running = 0;
         }
     }
+    printf("VelS %d\n",slave_get_param_in_num("Vel2send",slave_get_index_with_profile_id("RotVit")));
+
     // Ecriture du fichier hélice
     if (set_up) {
         FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"a");
@@ -149,21 +151,23 @@ gboolean keyword_maj(gpointer data) {
             double length = length_start - serialtools_get_laser_data_valid();
             fputs(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n",NULL),helix_dat);
             fclose(helix_dat);
+            printf("vel : %d\n",VelocityS_4);
+            printf("slave pos %s\n",slave_get_param_in_char("Position",slave_get_index_with_profile_id("RotVit")));
         }
-        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
-        if (vel_dat != NULL) {
-            double lrec = actual_length;
-            actual_length = serialtools_get_laser_data_valid();
-            lrec = actual_length-lrec; // Distance parcourue
-            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
-            clock_gettime(CLOCK_MONOTONIC, &tend);
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
-            double vlaser = lrec/trec; //temps écoulé
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
-            // Ajouter les vitesses moteurs
-            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
-            fclose(vel_dat);
-        }
+//        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
+//        if (vel_dat != NULL) {
+//            double lrec = actual_length;
+//            actual_length = serialtools_get_laser_data_valid();
+//            lrec = actual_length-lrec; // Distance parcourue
+//            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
+//            clock_gettime(CLOCK_MONOTONIC, &tend);
+//            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
+//            double vlaser = lrec/trec; //temps écoulé
+//            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
+//            // Ajouter les vitesses moteurs
+//            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
+//            fclose(vel_dat);
+//        }
     }
     slave_gen_plot();
 

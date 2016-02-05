@@ -150,6 +150,7 @@ void SpirallingMaster_stopped(CO_Data* d) {
 }
 
 void SpirallingMaster_post_sync(CO_Data* d) {
+    printf("POST SYNC Vel1 %d", slave_get_param_in_num("Vel2send",slave_get_index_with_profile_id("RotVit")));
      sendPDOevent(d);
 }
 
@@ -193,6 +194,7 @@ void SpirallingMaster_post_SlaveStateChange(CO_Data* d, UNS8 nodeId, e_nodeState
 }
 
 void SpirallingMaster_post_TPDO(CO_Data* d) {
+    printf("POST TPDO Vel1 %d", slave_get_param_in_num("Vel2send",slave_get_index_with_profile_id("RotVit")));
 }
 
 void SpirallingMaster_post_SlaveBootup(CO_Data* d, UNS8 nodeid) {
