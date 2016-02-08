@@ -422,7 +422,6 @@ int slave_gui_param_gen(int ind) {
                     dat3+=dat2;
                     if (i == 4) {
                         // Lab title
-
                         GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
                         gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
 
@@ -1239,14 +1238,15 @@ gboolean slave_gui_load_visu(gpointer data) {
         fclose(geom_fn);
     }
     // Grid
-    if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu") != NULL)
-        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu"));
-    if (gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel") != NULL)
-        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel"));
-    GtkGrid* grid = gui_local_grid_set("gridVisu",NULL,conf1.pipeLength,"");
-    gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(grid),TRUE,TRUE,0);
-//    GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,conf1.pipeLength,"");
-//    gtk_box_pack_start (gui_get_box("boxVisu"),GTK_WIDGET(gridVel),TRUE,TRUE,0);
+    GtkWidget* gridPar = gui_get_widget("gridVisu");
+    if (gui_local_get_widget(gridPar,"gridHelix") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gridPar,"gridHelix"));
+    if (gui_local_get_widget(gridPar,"gridVel") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gridPar,"gridVel"));
+    GtkGrid* grid = gui_local_grid_set("gridHelix",NULL,conf1.pipeLength,"");
+    GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,conf1.pipeLength,"");
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(grid),0,1,1,1);
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridVel),1,1,1,1);
     if (valid == 3 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
@@ -1286,10 +1286,8 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_grid_set_column_homogeneous(grid,TRUE);
         GtkWidget* labplot = gui_create_widget("img","imgPlot",NULL,NULL);
         gtk_grid_attach(GTK_GRID(grid),labplot,0,0,conf1.pipeLength,1);
-//        if (set_up) {
-//            GtkWidget* labplotvel = gui_create_widget("img","imgPlotVel",NULL,NULL);
-//            gtk_grid_attach(GTK_GRID(grid),labplotvel,0,0,1,1);
-//        }
+        GtkWidget* labplotvel = gui_create_widget("img","imgPlotVel",NULL,NULL);
+        gtk_grid_attach(GTK_GRID(gridVel),labplotvel,0,0,1,1);
         slave_gen_plot();
     } else {
         GtkWidget* labplot = gui_create_widget("lab","labConfigError",CONFIG_NOT_SET,"bold","cell2","red",NULL);
@@ -1301,12 +1299,17 @@ gboolean slave_gui_load_visu(gpointer data) {
 
 
 int slave_gen_plot() {
-    GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVisu");
-//    GtkWidget* gridVel = gui_local_get_widget(gui_get_widget("boxVisu"),"gridVel");
+    GtkWidget* gridPar = gui_get_widget("gridVisu");
+    GtkWidget* grid = gui_local_get_widget(gridPar,"gridHelix");
+    gtk_widget_set_halign(grid,GTK_ALIGN_FILL);
+    gtk_widget_set_hexpand(grid,FALSE);
+    GtkWidget* gridVel = gui_local_get_widget(gridPar,"gridVel");
+    gtk_widget_set_halign(gridVel,GTK_ALIGN_FILL);
+    gtk_widget_set_hexpand(gridVel,TRUE);
     INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
-//    INTEGER32 wgridVel = gtk_widget_get_allocated_width(gridVel);
+    INTEGER32 wgridVel = gtk_widget_get_allocated_width(gridVel);
     char* str2build = "";
-    str2build = strtools_concat(str2build, "\nset key off",NULL);
+    str2build = strtools_concat(str2build, "\nset key outside left horizontal top textcolor rgb \"white\"",NULL);
     str2build = strtools_concat(str2build, "\nset style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 2 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 11 lc rgb '#808080' lt 1",NULL);
@@ -1316,9 +1319,9 @@ int slave_gen_plot() {
     str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
     char* str2build2 = str2build;
     str2build = strtools_concat("\nset output 'temp.png'",str2build,NULL);
-    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",str2build,NULL);
-//    str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
-//    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,10' background rgb 'black'",str2build2,NULL);
+    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
+    str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
+    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
@@ -1367,39 +1370,44 @@ int slave_gen_plot() {
                 "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             }
         }
+        str2build = strtools_concat(str2build, "title \"Courbe théorique\"",NULL);
+
         y1 += step[1][l];
         coord[l] = y1;
         if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);
     }
     if (set_up) {
-        str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 with lines linestyle 2",NULL);
-//        double temps = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - (double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-//        if (temps < 30)
-//            str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
-//        else {
-//            double deb = temps - (double)30;
-//            str2build2 = strtools_concat(str2build2, "\nset xrange [",strtools_gnum2str(&deb,0x10),":",strtools_gnum2str(&temps,0x10),"]",NULL);
-//        }
-//        str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY,"\" using 1:2 with lines linestyle 1",NULL);
-//        if(!strtools_build_file("script_vel.gnu",str2build2)) {
-//            if (str2build2 != "") free(str2build2);
-//            return 0;
-//        }
-//        pid_t pidVel = fork();
-//        if (pidVel < 0) {
-//            printf("A fork error has occurred.\n");
-//            exit(-1);
-//        } else {
-//            if (pidVel == 0) {
-//                execlp("gnuplot","gnuplot", "script_vel.gnu",NULL);
-//            } else {
-//                wait(0);
-//            }
-//        }
-//        GtkWidget* lab2 = gui_local_get_widget (gui_get_widget("boxVisu"),"imgPlotVel");
-//        // Verifier si une image existe
-////        gtk_image_clear(GTK_IMAGE(lab2));
-//        gtk_image_set_from_file(GTK_IMAGE(lab2),"temp_vel.png");
+        str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 title \"Courbe réelle\" with lines linestyle 2",NULL);
+        double temps = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - (double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec+15;
+        if (temps < 30)
+            str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
+        else {
+            INTEGER32 deb = (int)temps - (int)30;
+            INTEGER32 fin = (int)(temps);
+            str2build2 = strtools_concat(str2build2, "\nset xrange [",strtools_gnum2str(&deb,0x04),":",strtools_gnum2str(&fin,0x04),"]",NULL);
+        }
+        str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY,"\" using 1:2 title \"Vit. Laser\" with lines linestyle 1",NULL);
+        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY,"\" using 1:3 title \"Vit. Translation\" with lines linestyle 2",NULL);
+        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY,"\" using 1:4 title \"Vit. Rotation\" with lines linestyle 3",NULL);
+        if(!strtools_build_file("script_vel.gnu",str2build2)) {
+            if (str2build2 != "") free(str2build2);
+            return 0;
+        }
+        pid_t pidVel = fork();
+        if (pidVel < 0) {
+            printf("A fork error has occurred.\n");
+            exit(-1);
+        } else {
+            if (pidVel == 0) {
+                execlp("gnuplot","gnuplot", "script_vel.gnu",NULL);
+            } else {
+                wait(0);
+            }
+        }
+        GtkWidget* lab2 = gui_local_get_widget (gridPar,"imgPlotVel");
+        // Verifier si une image existe
+        gtk_image_clear(GTK_IMAGE(lab2));
+        gtk_image_set_from_file(GTK_IMAGE(lab2),"temp_vel.png");
     }
     if(!strtools_build_file("script.gnu",str2build)) {
         if (str2build != "") free(str2build);
@@ -1416,7 +1424,7 @@ int slave_gen_plot() {
             wait(0);
         }
     }
-    GtkWidget* lab = gui_local_get_widget (gui_get_widget("boxVisu"),"imgPlot");
+    GtkWidget* lab = gui_local_get_widget (gridPar,"imgPlot");
     gtk_image_clear(GTK_IMAGE(lab));
     gtk_image_set_from_file(GTK_IMAGE(lab),"temp.png");
     return 1;

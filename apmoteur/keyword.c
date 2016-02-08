@@ -3,6 +3,7 @@
 #include "gtksig.h"
 #include "gui.h"
 #include <math.h>
+#include <stdio.h>
 #include "master.h"
 #include "strtools.h"
 #include "slave.h"
@@ -137,6 +138,7 @@ gboolean keyword_maj(gpointer data) {
         gui_widget2hide("chargement",NULL);
         if (motor_running) {
             Exit(0);
+            slave_set_param("State",slave_get_index_with_profile_id("RotVit"),STATE_CONFIG);
             motor_running = 0;
         }
     }
@@ -154,20 +156,23 @@ gboolean keyword_maj(gpointer data) {
             printf("vel : %d\n",VelocityS_4);
             printf("slave pos %s\n",slave_get_param_in_char("Position",slave_get_index_with_profile_id("RotVit")));
         }
-//        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
-//        if (vel_dat != NULL) {
-//            double lrec = actual_length;
-//            actual_length = serialtools_get_laser_data_valid();
-//            lrec = actual_length-lrec; // Distance parcourue
-//            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
-//            clock_gettime(CLOCK_MONOTONIC, &tend);
-//            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
-//            double vlaser = lrec/trec; //temps écoulé
-//            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
-//            // Ajouter les vitesses moteurs
-//            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," 0\n",NULL),vel_dat);
-//            fclose(vel_dat);
-//        }
+        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
+        if (vel_dat != NULL) {
+            double lrec = actual_length;
+            actual_length = serialtools_get_laser_data_valid();
+            lrec = actual_length-lrec; // Distance parcourue
+            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
+            clock_gettime(CLOCK_MONOTONIC, &tend);
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
+            double vlaser = fabs(lrec)/trec; //temps écoulé
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
+            // Ajouter les vitesses moteurs
+            printf("%d %d",slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit")),slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")));
+            double vtrans = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit"))*0.817/(51200*125);
+            double vrot = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"))*7/(51200*500);
+            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," ",strtools_gnum2str(&vtrans,0x10)," ",strtools_gnum2str(&vrot,0x10),"\n",NULL),vel_dat);
+            fclose(vel_dat);
+        }
     }
     slave_gen_plot();
 

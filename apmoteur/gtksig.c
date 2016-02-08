@@ -741,15 +741,16 @@ void on_butStartSet_clicked (GtkWidget* but) {
             slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),200000);
             clock_gettime(CLOCK_MONOTONIC, &tstart);
             clock_gettime(CLOCK_MONOTONIC, &tend);
-//            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
-//            if (vel_dat != NULL) {
-//                length_start = serialtools_get_laser_data_valid();
-//                double length = 0;
-//                fputs("# time    Vlaser    Vrot\n",vel_dat);
-//                fputs("0 0 0\n",vel_dat);
-//                fclose(vel_dat);
+            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
+            if (vel_dat != NULL) {
+                length_start = serialtools_get_laser_data_valid();
+                double length = 0;
+                fputs("# time    Vlaser    Vrot\n",vel_dat);
+                fputs("0 0 0\n",vel_dat);
+                fclose(vel_dat);
                 set_up = 1;
-         }
+            }
+        }
     }
 }
 
