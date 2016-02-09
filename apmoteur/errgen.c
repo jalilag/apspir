@@ -197,7 +197,10 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_LASER_ASSERV_MOTROT) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_ASSERV_SENS) return ERR_LASER_ASSERV_TITLE;
     else if (dat == ERR_LASER_SIMU_START) return ERR_LASER_SIMU_TITLE;
-    else if (dat == ERR_LASER_SIMU_STOP) return ERR_LASER_SIMU_TITLE;    
+    else if (dat == ERR_LASER_SIMU_STOP) return ERR_LASER_SIMU_TITLE;
+    else if (dat == ERR_LASER_ASSERV_PARAM) return ERR_LASER_ASSERV_TITLE;
+    else if (dat == ERR_LASER_ASSERV_PARAM_SAVE) return ERR_LASER_ASSERV_TITLE;
+    else if (dat == ERR_LASER_ASSERV_PRECORR) return ERR_LASER_ASSERV_TITLE;
 
     else if (dat == ERR_HELIX_PROFILE) return ERR_HELIX_PROFILE_TITLE;
     //fin ajout 220116
@@ -329,6 +332,9 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_LASER_ASSERV_GETINDEXTRANS) return ERR_LASER_ASSERV_GETINDEXTRANS_CONTENT;
     else if (dat == ERR_LASER_ASSERV_MOTROT) return ERR_LASER_ASSERV_MOTROT_CONTENT;
     else if (dat == ERR_LASER_ASSERV_GETSTARTPOS) return ERR_LASER_ASSERV_GETSTARTPOS_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_PARAM) return ERR_LASER_ASSERV_PARAM_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_PARAM_SAVE) return ERR_LASER_ASSERV_PARAM_SAVE_CONTENT;
+    else if (dat == ERR_LASER_ASSERV_PRECORR) return ERR_LASER_ASSERV_PRECORR_CONTENT;
 
     else if (dat == ERR_HELIX_PROFILE) return ERR_HELIX_PROFILE_CONTENT;
 

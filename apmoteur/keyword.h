@@ -531,8 +531,15 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_LASER_ASSERV_MOTROT_CONTENT "Impossible de lancer la rotation. Une erreur dans la config du moteur rotation subsiste"
 #define ERR_LASER_ASSERV_SENS_CONTENT "Impossible de partir dans ce sens"
 #define ERR_LASER_ASSERV_GETSTARTPOS_CONTENT "Les laser ne sont pas démarré. Impossible de démarrer la pose"
-
+#define ERR_LASER_ASSERV_PARAM_CONTENT "Les parametres entres ne sont pas valide. Ils seront remplace par les parametres par default"
+#define ERR_LASER_ASSERV_PARAM_SAVE_CONTENT "Probleme lors de l'enregistrement des parametres. Ils ne seront actif que jusqu'a fermeture de l'application"
 #define ERR_HELIX_PROFILE_CONTENT "Erreur lecture consigne hélice"
+#define ERR_LASER_ASSERV_PRECORR_CONTENT "La précorrection de positionnement rotation a échouée"
+
+#define LASER_ASSERV_TRSL_ACTIF_LABEL "translation active"
+#define LASER_ASSERV_TRSL_INACTIF_LABEL "translation inactive"
+#define LASER_ASSERV_ROT_ACTIF_LABEL "rotation active"
+#define LASER_ASSERV_ROT_INACTIF_LABEL "rotation inactive"
 //fin ajout 220116
 
 #endif // _SIGNAUX_H

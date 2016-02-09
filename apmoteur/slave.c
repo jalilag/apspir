@@ -41,7 +41,7 @@ int slave_config(UNS8 nodeID) {
 * Configuration des paramètres de com
 * 0: Echec; 1 Reussite
 **/
-static int slave_config_com(UNS8 nodeID) {
+int slave_config_com(UNS8 nodeID) {
     /** ACTIVATION HEARTBEAT PRODUCER **/
 
     UNS16 heartbeat_prod = HB_PROD;
@@ -126,20 +126,11 @@ static int slave_config_com(UNS8 nodeID) {
      } else if (l == PROF_COUPLROT || l == PROF_COUPLTRANS){
         //couple à transmettre
         //mapping PDOT:
-        if(l == PROF_COUPLTRANS){
-            if( !cantools_PDO_map_config(nodeID,0x1A01,0x606C0020,0x60770010,0)){
-                errgen_state = ERR_SLAVE_CONFIG_PDOT;
-                errgen_aux = slave_get_title_with_node(nodeID);
-                g_idle_add(errgen_set_safe(NULL), NULL);
-                //return 0;
-            }
-        } else {
-            if( !cantools_PDO_map_config(nodeID,0x1A01,0x60770010,0)){
-                errgen_state = ERR_SLAVE_CONFIG_PDOT;
-                errgen_aux = slave_get_title_with_node(nodeID);
-                g_idle_add(errgen_set_safe(NULL), NULL);
-                //return 0;
-            }
+        if( !cantools_PDO_map_config(nodeID,0x1A01,0x606C0020,0)){
+            errgen_state = ERR_SLAVE_CONFIG_PDOT;
+            errgen_aux = slave_get_title_with_node(nodeID);
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            //return 0;
         }
         if (!cantools_PDO_trans(nodeID,0x1801,0xFF,1000,0)) {
             errgen_state = ERR_SLAVE_CONFIG_ACTIVE_PDO;
@@ -769,7 +760,7 @@ UNS8 slave_get_node_with_profile(int profInd) {
 /**
 * Retourne state en fonction index
 **/
-static int slave_get_state_with_index(int i) {
+int slave_get_state_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state;
@@ -783,7 +774,7 @@ static int slave_get_state_with_index(int i) {
 /**
 * Affectation du state en fonction index
 **/
-static void slave_set_state_with_index(int i, int dat) {
+void slave_set_state_with_index(int i, int dat) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         slaves[i].state = dat;
@@ -795,7 +786,7 @@ static void slave_set_state_with_index(int i, int dat) {
 /**
 * Retourne stateerror en fonction index
 **/
-static int slave_get_state_error_with_index(int i) {
+int slave_get_state_error_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int dat = slaves[i].state_error;
@@ -809,7 +800,7 @@ static int slave_get_state_error_with_index(int i) {
 /**
 * Affectation du state_error en fonction de l'index
 **/
-static void slave_set_state_error_with_index (int i, int dat) {
+void slave_set_state_error_with_index (int i, int dat) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         slaves[i].state_error = dat;
@@ -821,7 +812,7 @@ static void slave_set_state_error_with_index (int i, int dat) {
 }
 
 
-static void slave_set_active_with_index(int i, int var) {
+void slave_set_active_with_index(int i, int var) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         slaves[i].active = var;
@@ -830,7 +821,7 @@ static void slave_set_active_with_index(int i, int var) {
         printf("6Index trop grand : %d \n",i); exit(EXIT_FAILURE);
     }
 }
-static int slave_get_active_with_index(int i) {
+int slave_get_active_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
         int var = slaves[i].active;
@@ -883,7 +874,7 @@ void slave_set_profile_with_index(int i, int dat) {
         exit(EXIT_FAILURE);
     }
 }
-static UNS32 slave_get_vendor_with_index(int i) {
+UNS32 slave_get_vendor_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         UNS32 dat;
         pthread_mutex_lock (&lock_slave);
@@ -895,7 +886,7 @@ static UNS32 slave_get_vendor_with_index(int i) {
         exit(EXIT_FAILURE);
     }
 }
-static UNS32 slave_get_product_with_index(int i) {
+UNS32 slave_get_product_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         UNS32 dat;
         pthread_mutex_lock (&lock_slave);
@@ -907,7 +898,7 @@ static UNS32 slave_get_product_with_index(int i) {
         exit(EXIT_FAILURE);
     }
 }
-static UNS32 slave_get_revision_with_index(int i) {
+UNS32 slave_get_revision_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         UNS32 dat;
         pthread_mutex_lock (&lock_slave);
@@ -919,7 +910,7 @@ static UNS32 slave_get_revision_with_index(int i) {
         exit(EXIT_FAILURE);
     }
 }
-static UNS32 slave_get_serial_with_index(int i) {
+UNS32 slave_get_serial_with_index(int i) {
     if (i<SLAVE_NUMBER) {
         UNS32 dat;
         pthread_mutex_lock (&lock_slave);
@@ -966,7 +957,7 @@ char* slave_get_title_with_node(UNS8 node) {
 /**
 * Retourne la correspondance en texte de l'état
 **/
-static char* slave_get_state_title(int state) {
+char* slave_get_state_title(int state) {
     if(state == STATE_LSS_CONFIG) return STATE_LSS_CONFIG_TXT;
     else if(state == STATE_PREOP) return STATE_PREOP_TXT;
     else if(state == STATE_CONFIG) return STATE_CONFIG_TXT;
@@ -992,7 +983,7 @@ char* slave_get_state_img (int state) {
 /**
 * Retourne la correspondance en texte de l'état erreur
 **/
-static char* slave_get_state_error_title(int state) {
+char* slave_get_state_error_title(int state) {
     if(state == ERROR_STATE_NULL) return ERROR_STATE_NULL_TXT;
     else if(state == ERROR_STATE_LSS) return ERROR_STATE_LSS_TXT;
     else if(state == ERROR_STATE_CONFIG) return ERROR_STATE_CONFIG_TXT;

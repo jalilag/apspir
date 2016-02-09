@@ -1,3 +1,5 @@
 Current ; 100
-Velinc ; 15000
+Velinc ; 50000
 Profile ; 3
+Acc ; 500000
+Dcc ; 500000

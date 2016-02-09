@@ -87,6 +87,9 @@ void init_laser_data(laser * l)
     {
       l->laser_dat[i].t = 0;
       l->laser_dat[i].mes = 0;
+      l->laser_dat[i].vitesse = 0;
+      l->laser_dat[i].vitesse_1s = 0;
+      l->laser_dat[i].a_1s = 0;
     }
   pthread_mutex_unlock(&(l->mutex));
   LastLaserData.t = 0;
@@ -278,6 +281,7 @@ void Save_Data_Laser(laser * l, unsigned long mes, unsigned long t)
       l->laser_dat[i].t = l->laser_dat[i-1].t;
       l->laser_dat[i].vitesse = l->laser_dat[i-1].vitesse;
       l->laser_dat[i].vitesse_1s = l->laser_dat[i-1].vitesse_1s;
+      l->laser_dat[i].a_1s = l->laser_dat[i-1].a_1s;
     }
 
   l->laser_dat[0].mes = mes;
@@ -286,13 +290,16 @@ void Save_Data_Laser(laser * l, unsigned long mes, unsigned long t)
   dx = mes-(l->laser_dat[ORDRE_APPROX-1].mes);
   dt = CONVERT_MUS_S(t-(l->laser_dat[ORDRE_APPROX-1].t));
   l->laser_dat[0].vitesse_1s = (long int)(dx/dt);
+
+  //acceleration
+  l->laser_dat[0].a_1s = (long int)((l->laser_dat[0].vitesse_1s - l->laser_dat[ORDRE_APPROX-1].vitesse_1s) / dt);
+
   //vitesse instantannée err 30dmm/s
   dx = mes-(l->laser_dat[1].mes);
   dt = CONVERT_MUS_S(t-(l->laser_dat[1].t));
   l->laser_dat[0].vitesse = (long int)(dx/dt);
 
   pthread_mutex_unlock(&(l->mutex));
-  //printf("laser %d, mes = %lu, t = %lu, v = %ld, v1s = %ld\n", l->fd, mes, t, l->laser_dat[0].vitesse, l->laser_dat[0].vitesse_1s);
   return;
 }
 
@@ -376,6 +383,7 @@ int read_port(laser * l, int recvBytes, char * buf)
             buf[res] = 0;
             printf("Erreur laser %d: Synchro perdue\n", l->fd);
             printf("Mesure: buf = %s, res = %d", buf, res);
+            usleep(100000);
             tcflush(l->fd, TCIOFLUSH);
             return -1;
       }
@@ -477,7 +485,7 @@ void laser_genCfile_Close(int portNumber)
 
 int Laser_Recv_Stop(laser * l)
 {
-  char * data = "s0c\n";
+  //char * data = "s0c\n";
   int res;
   //printf("Laser_Recv_Stop laser %d=>", l->fd);
 
@@ -647,7 +655,7 @@ unsigned int VerifyMeasureConsistency(struct laser_data * MasterData,
   //printf("\nConsistency val: LastPos = %lu, LastT = %lu, v = %ld dt2 = %lu dt3 = %lu diff1 = %lu diff2 = %lu diff3 = %lu tac2 = %lu tac3 = %lu\n",
   //	 LastLaserData.mes, LastLaserData.t, v, dt2, dt3, diff1, diff2, diff3, tac2, tac3);
   //printf("Mesconsistency_val = %ld, MasterDat.mes = %lu, SLaveDat.mes = %lu, PositionOffset %ld\n\n", MESCONSISTENCY_VAL(v), (*MasterData).mes, (*SlaveData).mes, PositionOffset);
-  if(diff1 < POSITIONCONSISTENCY_VAL)
+  if(diff1 <= POSITIONCONSISTENCY_VAL)
     {
       //printf("Case diff1< machin\n");
       return LASER_STATUS_OK;
@@ -655,7 +663,7 @@ unsigned int VerifyMeasureConsistency(struct laser_data * MasterData,
   else if(diff1 > POSITIONCONSISTENCY_VAL)
     {
       //printf("Case diff1> machin\n");
-      if((diff2 < MESCONSISTENCY_VAL(v)+tac2) && (diff3 < MESCONSISTENCY_VAL(v)+tac3))
+      if((diff2 <= MESCONSISTENCY_VAL(v)+tac2) && (diff3 <= MESCONSISTENCY_VAL(v)+tac3))
 	{
 	  //printf("Case diff2< && diff3< machin\n");
 	  return LASER_STATUS_OK;
@@ -665,12 +673,12 @@ unsigned int VerifyMeasureConsistency(struct laser_data * MasterData,
 	  //printf("Case diff2> && diff3>\n");
 	  return ERR_LASER_FATAL;
 	}
-      else if((diff2 > MESCONSISTENCY_VAL(v)+tac2) && (diff3 < MESCONSISTENCY_VAL(v)+tac3))
+      else if((diff2 > MESCONSISTENCY_VAL(v)+tac2) && (diff3 <= MESCONSISTENCY_VAL(v)+tac3))
 	{
 	  //printf("Case diff2> && diff3< machin\n");
 	  laser_status |= MASTER_FAILED_DATCONSISTENCY;
 	}
-      else if((diff2 < MESCONSISTENCY_VAL(v)+tac2) && (diff3 > MESCONSISTENCY_VAL(v)+tac3))
+      else if((diff2 <= MESCONSISTENCY_VAL(v)+tac2) && (diff3 > MESCONSISTENCY_VAL(v)+tac3))
 	{
 	  //printf("Case diff2< && diff3> machin\n");
 	  laser_status |= SLAVE_FAILED_DATCONSISTENCY;
@@ -690,7 +698,7 @@ unsigned int VerifyMeasureConsistency(struct laser_data * MasterData,
 unsigned int VerifyTimeConsistency_OneLaser(unsigned long LaserTime, unsigned long reftime)
 {
   //printf("LaserTime-reftime = %lu, TIMECONSISTENCY_VAL = %u\n", labs(LaserTime-reftime), TIMECONSISTENCY_VAL);
-  if(labs(LaserTime-reftime)<TIMECONSISTENCY_VAL){
+  if(labs(LaserTime-reftime)<=TIMECONSISTENCY_VAL){
     return LASER_STATUS_OK;
     }
   else{
@@ -700,17 +708,17 @@ unsigned int VerifyTimeConsistency_OneLaser(unsigned long LaserTime, unsigned lo
 unsigned int VerifyTimeConsistency(unsigned long MasterTime, unsigned long SlaveTime, unsigned long time)
 {
     //printf("mastertime-slavetime = %lu, mastertime-time = %lu, slavetime-time = %lu", labs(MasterTime-SlaveTime), labs(MasterTime-time), labs(SlaveTime-time));
-  if(!(labs(MasterTime-time)<TIMECONSISTENCY_VAL || labs(SlaveTime-time)<TIMECONSISTENCY_VAL))
+  if(!(labs(MasterTime-time)<=TIMECONSISTENCY_VAL || labs(SlaveTime-time)<=TIMECONSISTENCY_VAL))
     {
       //printf("case t1> t2>\n");
       return ERR_LASER_FATAL;
     }
-  else if(labs(MasterTime-time)>TIMECONSISTENCY_VAL && labs(SlaveTime-time)<TIMECONSISTENCY_VAL)
+  else if(labs(MasterTime-time)>TIMECONSISTENCY_VAL && labs(SlaveTime-time)<=TIMECONSISTENCY_VAL)
     {
       //printf("case t1> t2<\n");
       return MASTER_FAILED_TIMEOUT;//Master Failed
     }
-  else if(labs(MasterTime-time)<TIMECONSISTENCY_VAL && labs(SlaveTime-time)>TIMECONSISTENCY_VAL)
+  else if(labs(MasterTime-time)<=TIMECONSISTENCY_VAL && labs(SlaveTime-time)>TIMECONSISTENCY_VAL)
     {
       //printf("case t1> t2<\n");
       return SLAVE_FAILED_TIMEOUT;//Slave Failed
@@ -729,7 +737,6 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
 
   if(master->ready_for_analyse && slave->ready_for_analyse)
     {
-      printf("cas 1\n");
       pthread_mutex_lock(&(master->mutex));
       mdat = master->laser_dat[0];
       pthread_mutex_unlock(&(master->mutex));
@@ -740,19 +747,17 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
       pthread_mutex_unlock(&(slave->mutex));
 
 
-      if(labs(mdat.t-sdat.t)<TIMECONSISTENCY_VAL)
+      if(labs(mdat.t-sdat.t)<=TIMECONSISTENCY_VAL)
 	{
 	  PositionOffset = mdat.mes - sdat.mes;
 	  LastLaserData = mdat;
-	  printf("PositionOffset = %ld\n", PositionOffset);
 	  return 0;
 	}
-
+    printf("LASER_ERROR PositionOffset\n");
       return -1;
     }
   else if(master->ready_for_analyse && !slave->ready_for_analyse)
     {
-      printf("cas2\n");
       pthread_mutex_lock(&(master->mutex));
       mdat = master->laser_dat[0];
       pthread_mutex_unlock(&(master->mutex));
@@ -761,7 +766,6 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
     }
   else if(!master->ready_for_analyse && slave->ready_for_analyse)
     {
-      printf("cas3\n");
       pthread_mutex_lock(&(slave->mutex));
       sdat = slave->laser_dat[0];
       pthread_mutex_unlock(&(slave->mutex));
@@ -770,7 +774,7 @@ int Laser_GetPositionOffset(laser * master, laser * slave)
     }
   else
     {
-      printf("cas 4\n");
+      printf("LASER_ERROR PositionOffset\n");
       return -1;// laser not ready
     }
 
@@ -852,7 +856,6 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
   unsigned long time;
   unsigned int laser_status = LASER_STATUS_OK;
 
-  unsigned long t0, t2;
   int r1, r2;
 
   if(master->isSimu){
@@ -999,8 +1002,8 @@ unsigned int Laser_GetData(laser * master, laser * slave, struct laser_data * d)
 unsigned int Laser_Init2Laser(laser * ml, laser * sl)
 {
     unsigned int returnval = 0;
-    int i;
-/*
+/*    int i;
+
     printf("date = %lu\n", GetDate_us());
     for (i=0;i<10;i++)
         printf("isopen[%d] = %d", i, isopen[i]);
@@ -1043,8 +1046,6 @@ unsigned int Laser_Init2Laser(laser * ml, laser * sl)
 //attention. Fixe l'offset de pos à 0. Ne pas utiliser pour lancer 2 laser.
 unsigned int Laser_Start1Laser(laser * l)
 {
-    int returnval = 0;
-
     if(Laser_Recv_Start(l)<0)
     {
       printf("Laser %d failed to start\n", l->fd);

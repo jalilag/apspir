@@ -134,6 +134,7 @@ char* errgen_aux = NULL;
 void Exit(int type) {
     int i = 0;
     gtk_switch_set_active(gui_get_switch("butVelStart"),0);
+    gtk_switch_set_active(gui_get_switch("but_Start_R"),0);
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("Active",i)) {
             motor_start(slave_get_node_with_index(i),0);
@@ -141,15 +142,21 @@ void Exit(int type) {
                 motor_switch_off(slave_get_node_with_index(i));
         }
     }
-    if (type > 1) {
+    if (type >= 1) {
         run_init = 0;
         //ajout 220116
         free(HelixUserData.d);
         free(HelixUserData.p);
         //exit asserv
-		if(run_asserv){
-		    printf("EXIT ASSERV\n");
-		    if(laser_asserv_stop()){
+		if(run_asserv && !run_trsl){
+		    printf("EXIT ASSERV ROT\n");
+		    if(laser_asserv_rotation_stop()){
+		        errgen_set(ERR_LASER_ASSERV_STOP, NULL);
+		    }
+		}
+		if(run_trsl){
+            printf("EXIT ASSERV TRSL\n");
+            if(laser_asserv_translation_stop()){
 		        errgen_set(ERR_LASER_ASSERV_STOP, NULL);
 		    }
 		}
@@ -157,6 +164,8 @@ void Exit(int type) {
 		//fermeture laser
 		serialtools_exit_laser();
 		//ajout 220116
+    }
+    if (type > 1){
         masterSendNMTstateChange (&SpirallingMaster_Data, 0, NMT_Stop_Node);
         if (getState(&SpirallingMaster_Data) != Unknown_state &&
         getState(&SpirallingMaster_Data) != Stopped)

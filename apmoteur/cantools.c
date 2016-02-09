@@ -22,6 +22,10 @@
 #define MAX_SDO_ERROR 2
 #define SDO_TIMEOUT 3
 
+//parametre pour application du couple (voir cantools.c cantools_ApplyVitRot, cantools_ApplyVitTrans)
+#define MOTOR_ROT_MAX_VEL 300000
+#define MOTOR_ROT_COUPL_DEFAULT 0
+
 static int SDO_step_error = 0;
 
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
@@ -364,27 +368,44 @@ gpointer cantools_waitStopTrans_Thread (gpointer arg)
     g_thread_exit(NULL);
 }
 
-//title = "Rotation" ou "Translation"
+
 void cantools_ApplyVelRot(INTEGER32 vit)
 {
     int i;
     UNS32 pdonum;
     INTEGER32 vtm, vtc;
     INTEGER32 data;
-    //printf("7\n");
+    EnterMutex();
+    vtm = CaptVit_R;
+    vtc = ConsVit_R;
+    if(vtc!=vit){
+        vtc = vit;
+        ConsVit_R = vit;
+    }
+    LeaveMutex();
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if((slave_get_profile_with_index(i) == PROF_VITTRANS) || slave_get_profile_with_index(i) == PROF_COUPLTRANS)
+            slave_set_param("Vel2send", i, ConsVit_T);
+    }
     for (i=0;i<SLAVE_NUMBER; i++){
+        if(slave_get_profile_with_index(i) == PROF_COUPLROT){
+        /**VIA PDO**/
+            EnterMutex();
+            if(vit != ConsVit_R) ConsVit_R = vit;
+            if (ConsVit_R >= 0){
+                if (ConsVit_R <= MOTOR_ROT_MAX_VEL) ConsCoupl_R = (INTEGER16)(MOTOR_ROT_COUPL_DEFAULT + (850-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R)/MOTOR_ROT_MAX_VEL);
+                else ConsCoupl_R = 850;
+            } else if (ConsVit_R < 0) {
+                if (ConsVit_R >= -MOTOR_ROT_MAX_VEL) ConsCoupl_R = (INTEGER16)(-MOTOR_ROT_COUPL_DEFAULT + (850-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R)/MOTOR_ROT_MAX_VEL);
+                else ConsCoupl_R = -850;
+            }
+            PDOEventTimerAlarm(&SpirallingMaster_Data, (UNS32)slave_get_param_in_num("GetPDOT0Num", i));
+            LeaveMutex();
+        }
+    }
+    for (i=0;i<SLAVE_NUMBER;i++){
         if(slave_get_profile_with_index(i) == PROF_VITROT){
             //printf("8\n");
-
-            EnterMutex();
-            vtm = CaptVit_R;
-            vtc = ConsVit_R;
-            if(vtc!=vit){
-                vtc = vit;
-                ConsVit_R = vit;
-            }
-            LeaveMutex();
-
             pdonum = slave_get_param_in_num("GetPDOT0Num",i);
             //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
             if(vtm == 0 || vtc == 0){
@@ -422,32 +443,6 @@ void cantools_ApplyVelRot(INTEGER32 vit)
             PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
             LeaveMutex();
         }
-        else if(slave_get_profile_with_index(i) == PROF_COUPLROT){
-        /**VIA PDO**/
-            EnterMutex();
-            if(vit != ConsVit_R) ConsVit_R = vit;
-            if (ConsVit_R >= 0){
-                if (ConsVit_R <= MOTOR_ROT_MAX_VEL) ConsCoupl_R = (INTEGER16)(MOTOR_ROT_COUPL_DEFAULT + (850-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R)/MOTOR_ROT_MAX_VEL);
-                else ConsCoupl_R = 850;
-            } else if (ConsVit_R < 0) {
-                if (ConsVit_R >= -MOTOR_ROT_MAX_VEL) ConsCoupl_R = (INTEGER16)(-MOTOR_ROT_COUPL_DEFAULT + (850-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R)/MOTOR_ROT_MAX_VEL);
-                else ConsCoupl_R = -850;
-            }
-            PDOEventTimerAlarm(&SpirallingMaster_Data, (UNS32)slave_get_param_in_num("GetPDOT0Num", i));
-            LeaveMutex();
-        /**VIA SDO**/
-        /*
-            SDOR sdoTargetCoupl = {0x6071,0,int16};
-            INTEGER16 data;
-            EnterMutex();
-            if (ConsVit_R <= MOTOR_ROT_MAX_VEL) data = (INTEGER16)(MOTOR_ROT_COUPL_DEFAULT + (1000-MOTOR_ROT_COUPL_DEFAULT)*(double)(ConsVit_R/MOTOR_ROT_MAX_VEL));
-            else data = 1000;
-            LeaveMutex();
-            if(!cantools_write_sdo(slave_get_node_with_index(i), sdoTargetCoupl, &data)){
-                errgen_set(ERR_SAVE_TORQUE, slave_get_title_with_index(i));
-            }
-            */
-        }
     }
 }
 
@@ -457,21 +452,31 @@ void cantools_ApplyVelTrans(INTEGER32 vit)
     UNS32 pdonum;
     INTEGER32 vtm, vtc;
     INTEGER32 data;
-    printf("7\n");
-    for (i=0;i<SLAVE_NUMBER; i++){
-        if(slave_get_profile_with_index(i) == PROF_VITTRANS || slave_get_profile_with_index(i) == PROF_COUPLTRANS){
-            slave_set_param("Vel2send", i, vit);
-        }
-        if(slave_get_profile_with_index(i) == PROF_VITTRANS){
-            EnterMutex();
-            vtm = CaptVit_T;
-            vtc = ConsVit_T;
-            if(vtc!=vit){
-                vtc = vit;
-                ConsVit_T = vit;
-            }
-            LeaveMutex();
+    EnterMutex();
+    vtm = CaptVit_T;
+    vtc = ConsVit_T;
+    if(vtc!=vit){
+        vtc = vit;
+        ConsVit_T = vit;
+    }
+    LeaveMutex();
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if((slave_get_profile_with_index(i) == PROF_VITTRANS) || slave_get_profile_with_index(i) == PROF_COUPLTRANS)
+            slave_set_param("Vel2send", i, ConsVit_T);
+    }
 
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if(slave_get_profile_with_index(i) == PROF_COUPLTRANS){
+            /**VIA PDO**/
+            INTEGER16 couple = motor_get_couple(vit);
+            EnterMutex();
+            ConsCoupl_T = couple;
+            PDOEventTimerAlarm(&SpirallingMaster_Data, (UNS32)slave_get_param_in_num("GetPDOT0Num", i));
+            LeaveMutex();
+        }
+    }
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if(slave_get_profile_with_index(i) == PROF_VITTRANS){
             pdonum = slave_get_param_in_num("GetPDOT0Num",i);
             //printf("pdonum = %d", slave_get_param_in_num("Vel2sendTransPDONum",i));
             //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
@@ -511,43 +516,82 @@ void cantools_ApplyVelTrans(INTEGER32 vit)
             PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
             LeaveMutex();
         }
-        else if(slave_get_profile_with_index(i) == PROF_COUPLTRANS){
-            printf("9\n");
-            /**VIA PDO**/
+    }
+}
+
+void cantools_ApplyCouplTrans(INTEGER16 coupl){
+    int i;
+    for(i=0;i<SLAVE_NUMBER;i++){
+        if(slave_get_profile_with_index(i) == PROF_COUPLTRANS){
             EnterMutex();
-            if(ConsVit_T != vit) ConsVit_T = vit;
-            ConsCoupl_T = motor_get_couple(vit);
-            /*
-            if(ConsVit_T >= 0) {
-                if (ConsVit_T <= MOTOR_TRANS_MAX_VEL) ConsCoupl_T = (INTEGER16)(MOTOR_TRANS_COUPL_DEFAULT + (850-MOTOR_TRANS_COUPL_DEFAULT)*(double)(ConsVit_T)/MOTOR_TRANS_MAX_VEL);
-                else ConsCoupl_T = 850;
-            } else if (ConsVit_T < 0) {
-                if (ConsVit_T >= -MOTOR_TRANS_MAX_VEL) ConsCoupl_T = (INTEGER16)(-MOTOR_TRANS_COUPL_DEFAULT + (850-MOTOR_TRANS_COUPL_DEFAULT)*(double)(ConsVit_T)/MOTOR_TRANS_MAX_VEL);
-                else ConsCoupl_T = -850;
-            }*/
-            printf("ConsCoupl_T =%d\n", ConsCoupl_T);
+            ConsCoupl_T = coupl;
             PDOEventTimerAlarm(&SpirallingMaster_Data, (UNS32)slave_get_param_in_num("GetPDOT0Num", i));
             LeaveMutex();
-
-            /**VIA SDO**/
-            /*
-            SDOR sdoTargetCoupl = {0x6071,0,int16};
-            INTEGER16 data;
-            EnterMutex();
-            if(ConsVit_T != vit) ConsVit_T = vit;
-            if (ConsVit_T <= MOTOR_TRANS_MAX_VEL) data = (INTEGER16)(MOTOR_TRANS_COUPL_DEFAULT + (1000-MOTOR_TRANS_COUPL_DEFAULT)*(double)(ConsVit_T/MOTOR_TRANS_MAX_VEL));
-            else data = 1000;
-            LeaveMutex();
-            printf("data = %d", data);
-            if(!cantools_write_sdo(slave_get_node_with_index(i), sdoTargetCoupl, &data)){
-                errgen_set(ERR_SAVE_TORQUE, slave_get_title_with_index(i));
-            }
-            */
         }
     }
 }
 
+void cantools_ApplyUniqVelTrans(INTEGER32 vit){
+    int i;
+    UNS32 pdonum;
+    INTEGER32 vtm, vtc;
+    INTEGER32 data;
+    EnterMutex();
+    vtm = CaptVit_T;
+    vtc = ConsVit_T;
+    if(vtc!=vit){
+        vtc = vit;
+        ConsVit_T = vit;
+    }
+    LeaveMutex();
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if((slave_get_profile_with_index(i) == PROF_VITTRANS))
+            slave_set_param("Vel2send", i, ConsVit_T);
+    }
 
+    for (i=0;i<SLAVE_NUMBER;i++){
+        if(slave_get_profile_with_index(i) == PROF_VITTRANS){
+            pdonum = slave_get_param_in_num("GetPDOT0Num",i);
+            //printf("pdonum = %d", slave_get_param_in_num("Vel2sendTransPDONum",i));
+            //gerer les problèmes de non-application de l'acceleration au demarrage et a l'arrêt
+
+            if(vtm == 0 || vtc == 0){
+                if((vtm == 0) && (vtc != 0)){
+                    data = vtc/abs(vtc);
+
+                    EnterMutex();
+                    ConsVit_T = data;
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    ConsVit_T = vtc;
+                    LeaveMutex();
+
+                    usleep(1000);
+                } else if ((vtc == 0) && (vtm != 0)) {
+                    data = vtm/abs(vtm);
+
+                    EnterMutex();
+                    ConsVit_T = data;
+                    PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                    LeaveMutex();
+                    trans_motor_index = i;
+                    if(g_thread_try_new(NULL, cantools_waitStopTrans_Thread, &trans_motor_index, NULL) == NULL){
+                        //bloquer le moteur direct
+                        EnterMutex();
+                        ConsVit_T = vtc;
+                        PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+                        LeaveMutex();
+                    }
+
+                    return;
+                } else return;//la vitesse de 0 est déjà appliquée.
+
+            }
+            EnterMutex();
+            PDOEventTimerAlarm(&SpirallingMaster_Data, pdonum);
+            LeaveMutex();
+        }
+    }
+}
 //fin ajout 220116
 /**
 * INITIALISATION LOOP

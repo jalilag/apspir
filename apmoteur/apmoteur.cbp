@@ -100,12 +100,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="laser/laser_asserv.h" />
-		<Unit filename="laser/laser_asserv_cst.h" />
-		<Unit filename="laser/laser_simulation.c">
+		<Unit filename="laser/laser_asserv_cst.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="laser/laser_simulation.h" />
+		<Unit filename="laser/laser_asserv_cst.h" />
 		<Unit filename="laser/struct_laser.h" />
+		<Unit filename="laser_asserv_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="laser_asserv_utils.h" />
 		<Unit filename="lsstools.c">
 			<Option compilerVar="CC" />
 		</Unit>

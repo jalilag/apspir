@@ -1,0 +1,29 @@
+LASER ASSERVISSEMENT TRANSLATION STARTED WITH VEL 99956
+laser: dist = 123111, time = 14873082, vel = 1, acc = 0
+Moteurs trsl: Consigne VT = 0, Capture VT = 0, Vitesse L lent= 0,  Accel L = 0, Couple = 0
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist = 123097, time = 15358652, vel = -14, acc = -17
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 6580,  Accel L = 17, Couple = 150
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist = 123065, time = 15949750, vel = -50, acc = -57
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 23500,  Accel L = 57, Couple = 150
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist = 122959, time = 16441370, vel = -138, acc = -121
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 64861,  Accel L = 121, Couple = 150
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist = 122850, time = 16929335, vel = -229, acc = -191
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 107632,  Accel L = 191, Couple = 150
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist = 122747, time = 17404919, vel = -227, acc = -85
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 106692,  Accel L = 85, Couple = 150
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist = 122652, time = 17885446, vel = -217, acc = 0
+Moteurs trsl: Consigne VT = 99956, Capture VT = 99956, Vitesse L lent= 101992,  Accel L = 0, Couple = 150
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok

@@ -48,21 +48,22 @@ void on_butRotLeft_clicked (GtkWidget* pEntry);
 void on_butRotInit_clicked (GtkWidget* pEntry);
 
 //ajout220116
-void on_but_StartRot_notify(GtkWidget* pEntry);
 void on_but_Start_Laser_clicked(GtkWidget* pEntry);
 void on_butReinitLaser_clicked(GtkWidget* pEntry);
 
-void on_LaserSimuOpt_clicked(GtkWidget* pEntry);
-void on_LaserSimuClose_clicked(GtkWidget* pEntry);
-
-
-void on_LASERSTARTSIMU_clicked(GtkWidget* pEntry);
-void on_LASERSTOPSIMU_clicked(GtkWidget* pEntry);
-
-void on_setVelincSimuTrans_clicked(GtkWidget* pEntry);
-void on_sim_inc_pos_clicked(GtkWidget* pEntry);
-void on_sim_dec_pos_clicked(GtkWidget* pEntry);
-void on_sim_inc_vel_clicked(GtkWidget* pEntry);
-void on_sim_dec_vel_clicked(GtkWidget* pEntry);
 //fin ajout 220116
+//AJOUT 270116
+void on_but_StartPose_clicked(GtkWidget* pEntry);
+void on_but_ContinuePose_clicked(GtkWidget* pEntry);
+void on_but_StopPose_clicked(GtkWidget* pEntry);
+void on_but_StartPoseTreuil_clicked(GtkWidget* pEntry);
+void on_but_ContinuePoseTreuil_clicked(GtkWidget* pEntry);
+void on_but_StopPoseTreuil_clicked(GtkWidget* pEntry);
+
+void on_but_paramPose_clicked(GtkWidget* pEntry);
+void on_but_saveParamAsserv_clicked(GtkWidget* pEntry);
+void on_but_returnParamAsserv_clicked(GtkWidget* pEntry);
+void on_but_paramDefault_clicked(GtkWidget* pEntry);
+
+//FIN AJOUT 270116
 #endif

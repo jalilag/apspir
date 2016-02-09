@@ -18,6 +18,7 @@ extern UNS8 errgen_laserState;
 #define ERR_LASER_SERIAL_CONFIG              0x0501
 #define ERR_LASER_STARTCHECKTHREAD           0x0502
 
+//laser asserv rot
 #define ERR_SLAVE_CONFIG_ROT_REFPOS          0x0510
 #define ERR_MASTER_CONFIG_PDOT2              0x0511
 #define ERR_LASER_ASSERV_START               0x0512
@@ -34,8 +35,11 @@ extern UNS8 errgen_laserState;
 #define ERR_LASER_ASSERV_GETINDEXROT         0x0522
 #define ERR_LASER_ASSERV_GETINDEXTRANS       0x0523
 #define ERR_LASER_ASSERV_MOTROT              0x0524
-#define ERR_LASER_ASSERV_SENS		     0x0525
+#define ERR_LASER_ASSERV_SENS		         0x0525
 #define ERR_LASER_ASSERV_GETSTARTPOS	     0x0526
+#define ERR_LASER_ASSERV_PARAM               0x0527
+#define ERR_LASER_ASSERV_PARAM_SAVE          0x0528
+#define ERR_LASER_ASSERV_PRECORR             0x0529
 
 #define ERR_HELIX_PROFILE                    0x0540
 

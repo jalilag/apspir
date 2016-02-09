@@ -2287,162 +2287,270 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x2001 :   Mapped variable StatusWord_2 */
+                    ODCallback_t StatusWord_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2001[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&StatusWord_2 }
                      };
 
 /* index 0x2002 :   Mapped variable StatusWord_3 */
+                    ODCallback_t StatusWord_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2002[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&StatusWord_3 }
                      };
 
 /* index 0x2003 :   Mapped variable StatusWord_4 */
+                    ODCallback_t StatusWord_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2003[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&StatusWord_4 }
                      };
 
 /* index 0x2004 :   Mapped variable StatusWord_5 */
+                    ODCallback_t StatusWord_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2004[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&StatusWord_5 }
                      };
 
 /* index 0x2005 :   Mapped variable ControlWord_1 */
+                    ODCallback_t ControlWord_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2005[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ControlWord_1 }
                      };
 
 /* index 0x2006 :   Mapped variable ControlWord_2 */
+                    ODCallback_t ControlWord_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2006[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ControlWord_2 }
                      };
 
 /* index 0x2007 :   Mapped variable ControlWord_3 */
+                    ODCallback_t ControlWord_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2007[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ControlWord_3 }
                      };
 
 /* index 0x2008 :   Mapped variable ControlWord_4 */
+                    ODCallback_t ControlWord_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2008[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ControlWord_4 }
                      };
 
 /* index 0x2009 :   Mapped variable ControlWord_5 */
+                    ODCallback_t ControlWord_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2009[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ControlWord_5 }
                      };
 
 /* index 0x200A :   Mapped variable Voltage_1 */
+                    ODCallback_t Voltage_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200A[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&Voltage_1 }
                      };
 
 /* index 0x200B :   Mapped variable Voltage_2 */
+                    ODCallback_t Voltage_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200B[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&Voltage_2 }
                      };
 
 /* index 0x200C :   Mapped variable Voltage_3 */
+                    ODCallback_t Voltage_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200C[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&Voltage_3 }
                      };
 
 /* index 0x200D :   Mapped variable Voltage_4 */
+                    ODCallback_t Voltage_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200D[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&Voltage_4 }
                      };
 
 /* index 0x200E :   Mapped variable Voltage_5 */
+                    ODCallback_t Voltage_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200E[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&Voltage_5 }
                      };
 
 /* index 0x200F :   Mapped variable ErrCode_1 */
+                    ODCallback_t ErrCode_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index200F[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ErrCode_1 }
                      };
 
 /* index 0x2010 :   Mapped variable ErrCode_2 */
+                    ODCallback_t ErrCode_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2010[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ErrCode_2 }
                      };
 
 /* index 0x2011 :   Mapped variable ErrCode_3 */
+                    ODCallback_t ErrCode_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2011[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ErrCode_3 }
                      };
 
 /* index 0x2012 :   Mapped variable ErrCode_4 */
+                    ODCallback_t ErrCode_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2012[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ErrCode_4 }
                      };
 
 /* index 0x2013 :   Mapped variable ErrCode_5 */
+                    ODCallback_t ErrCode_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2013[] =
                      {
                        { RW, uint16, sizeof (UNS16), (void*)&ErrCode_5 }
                      };
 
 /* index 0x2014 :   Mapped variable InternalTemp_1 */
+                    ODCallback_t InternalTemp_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2014[] =
                      {
                        { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_1 }
                      };
 
 /* index 0x2015 :   Mapped variable InternalTemp_2 */
+                    ODCallback_t InternalTemp_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2015[] =
                      {
                        { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_2 }
                      };
 
 /* index 0x2016 :   Mapped variable InternalTemp_3 */
+                    ODCallback_t InternalTemp_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2016[] =
                      {
                        { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_3 }
                      };
 
 /* index 0x2017 :   Mapped variable InternalTemp_4 */
+                    ODCallback_t InternalTemp_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2017[] =
                      {
                        { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_4 }
                      };
 
 /* index 0x2018 :   Mapped variable InternalTemp_5 */
+                    ODCallback_t InternalTemp_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2018[] =
                      {
                        { RW, int8, sizeof (INTEGER8), (void*)&InternalTemp_5 }
                      };
 
 /* index 0x2019 :   Mapped variable ConsVit_T */
+                    ODCallback_t ConsVit_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2019[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&ConsVit_T }
                      };
 
 /* index 0x201A :   Mapped variable ConsVit_R */
+                    ODCallback_t ConsVit_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index201A[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&ConsVit_R }
                      };
 
 /* index 0x201B :   Mapped variable CaptVit_T */
+                    ODCallback_t CaptVit_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index201B[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&CaptVit_T }
@@ -2469,132 +2577,220 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x201E :   Mapped variable ConsAccel_T */
+                    ODCallback_t ConsAccel_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index201E[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&ConsAccel_T }
                      };
 
 /* index 0x201F :   Mapped variable ConsAccel_R */
+                    ODCallback_t ConsAccel_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index201F[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&ConsAccel_R }
                      };
 
 /* index 0x2020 :   Mapped variable CaptAccel_T */
+                    ODCallback_t CaptAccel_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2020[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&CaptAccel_T }
                      };
 
 /* index 0x2021 :   Mapped variable CaptAccel_R */
+                    ODCallback_t CaptAccel_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2021[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&CaptAccel_R }
                      };
 
 /* index 0x2022 :   Mapped variable ConsDecel_T */
+                    ODCallback_t ConsDecel_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2022[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&ConsDecel_T }
                      };
 
 /* index 0x2023 :   Mapped variable ConsDecel_R */
+                    ODCallback_t ConsDecel_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2023[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&ConsDecel_R }
                      };
 
 /* index 0x2024 :   Mapped variable CaptDecel_T */
+                    ODCallback_t CaptDecel_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2024[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&CaptDecel_T }
                      };
 
 /* index 0x2025 :   Mapped variable CaptDecel_R */
+                    ODCallback_t CaptDecel_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2025[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&CaptDecel_R }
                      };
 
 /* index 0x2026 :   Mapped variable Velocity_1 */
+                    ODCallback_t Velocity_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2026[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Velocity_1 }
                      };
 
 /* index 0x2027 :   Mapped variable Velocity_2 */
+                    ODCallback_t Velocity_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2027[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Velocity_2 }
                      };
 
 /* index 0x2028 :   Mapped variable Velocity_3 */
+                    ODCallback_t Velocity_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2028[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Velocity_3 }
                      };
 
 /* index 0x2029 :   Mapped variable Velocity_4 */
+                    ODCallback_t Velocity_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2029[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Velocity_4 }
                      };
 
 /* index 0x202A :   Mapped variable Velocity_5 */
+                    ODCallback_t Velocity_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202A[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Velocity_5 }
                      };
 
 /* index 0x202B :   Mapped variable Vel2Send_1 */
+                    ODCallback_t Vel2Send_1_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202B[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_1 }
                      };
 
 /* index 0x202C :   Mapped variable Vel2Send_2 */
+                    ODCallback_t Vel2Send_2_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202C[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_2 }
                      };
 
 /* index 0x202D :   Mapped variable Vel2Send_3 */
+                    ODCallback_t Vel2Send_3_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202D[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_3 }
                      };
 
 /* index 0x202E :   Mapped variable Vel2Send_4 */
+                    ODCallback_t Vel2Send_4_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202E[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_4 }
                      };
 
 /* index 0x202F :   Mapped variable Vel2Send_5 */
+                    ODCallback_t Vel2Send_5_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index202F[] =
                      {
                        { RW, int32, sizeof (INTEGER32), (void*)&Vel2Send_5 }
                      };
 
 /* index 0x2030 :   Mapped variable ConsCoupl_R */
+                    ODCallback_t ConsCoupl_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2030[] =
                      {
                        { RW, int16, sizeof (INTEGER16), (void*)&ConsCoupl_R }
                      };
 
 /* index 0x2031 :   Mapped variable ConsCoupl_T */
+                    ODCallback_t ConsCoupl_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2031[] =
                      {
                        { RW, int16, sizeof (INTEGER16), (void*)&ConsCoupl_T }
                      };
 
 /* index 0x2032 :   Mapped variable CaptCoupl_R */
+                    ODCallback_t CaptCoupl_R_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2032[] =
                      {
                        { RW, int16, sizeof (INTEGER16), (void*)&CaptCoupl_R }
                      };
 
 /* index 0x2033 :   Mapped variable CaptCoupl_T */
+                    ODCallback_t CaptCoupl_T_callbacks[] =
+                     {
+                       NULL,
+                     };
                     subindex SpirallingMaster_Index2033[] =
                      {
                        { RW, int16, sizeof (INTEGER16), (void*)&CaptCoupl_T }
@@ -2852,57 +3048,57 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 		case 0x1A13: i = 91;break;
 		case 0x1F22: i = 92;break;
 		case 0x2000: i = 93;*callbacks = StatusWord_1_callbacks; break;
-		case 0x2001: i = 94;break;
-		case 0x2002: i = 95;break;
-		case 0x2003: i = 96;break;
-		case 0x2004: i = 97;break;
-		case 0x2005: i = 98;break;
-		case 0x2006: i = 99;break;
-		case 0x2007: i = 100;break;
-		case 0x2008: i = 101;break;
-		case 0x2009: i = 102;break;
-		case 0x200A: i = 103;break;
-		case 0x200B: i = 104;break;
-		case 0x200C: i = 105;break;
-		case 0x200D: i = 106;break;
-		case 0x200E: i = 107;break;
-		case 0x200F: i = 108;break;
-		case 0x2010: i = 109;break;
-		case 0x2011: i = 110;break;
-		case 0x2012: i = 111;break;
-		case 0x2013: i = 112;break;
-		case 0x2014: i = 113;break;
-		case 0x2015: i = 114;break;
-		case 0x2016: i = 115;break;
-		case 0x2017: i = 116;break;
-		case 0x2018: i = 117;break;
-		case 0x2019: i = 118;break;
-		case 0x201A: i = 119;break;
-		case 0x201B: i = 120;break;
+		case 0x2001: i = 94;*callbacks = StatusWord_2_callbacks; break;
+		case 0x2002: i = 95;*callbacks = StatusWord_3_callbacks; break;
+		case 0x2003: i = 96;*callbacks = StatusWord_4_callbacks; break;
+		case 0x2004: i = 97;*callbacks = StatusWord_5_callbacks; break;
+		case 0x2005: i = 98;*callbacks = ControlWord_1_callbacks; break;
+		case 0x2006: i = 99;*callbacks = ControlWord_2_callbacks; break;
+		case 0x2007: i = 100;*callbacks = ControlWord_3_callbacks; break;
+		case 0x2008: i = 101;*callbacks = ControlWord_4_callbacks; break;
+		case 0x2009: i = 102;*callbacks = ControlWord_5_callbacks; break;
+		case 0x200A: i = 103;*callbacks = Voltage_1_callbacks; break;
+		case 0x200B: i = 104;*callbacks = Voltage_2_callbacks; break;
+		case 0x200C: i = 105;*callbacks = Voltage_3_callbacks; break;
+		case 0x200D: i = 106;*callbacks = Voltage_4_callbacks; break;
+		case 0x200E: i = 107;*callbacks = Voltage_5_callbacks; break;
+		case 0x200F: i = 108;*callbacks = ErrCode_1_callbacks; break;
+		case 0x2010: i = 109;*callbacks = ErrCode_2_callbacks; break;
+		case 0x2011: i = 110;*callbacks = ErrCode_3_callbacks; break;
+		case 0x2012: i = 111;*callbacks = ErrCode_4_callbacks; break;
+		case 0x2013: i = 112;*callbacks = ErrCode_5_callbacks; break;
+		case 0x2014: i = 113;*callbacks = InternalTemp_1_callbacks; break;
+		case 0x2015: i = 114;*callbacks = InternalTemp_2_callbacks; break;
+		case 0x2016: i = 115;*callbacks = InternalTemp_3_callbacks; break;
+		case 0x2017: i = 116;*callbacks = InternalTemp_4_callbacks; break;
+		case 0x2018: i = 117;*callbacks = InternalTemp_5_callbacks; break;
+		case 0x2019: i = 118;*callbacks = ConsVit_T_callbacks; break;
+		case 0x201A: i = 119;*callbacks = ConsVit_R_callbacks; break;
+		case 0x201B: i = 120;*callbacks = CaptVit_T_callbacks; break;
 		case 0x201C: i = 121;*callbacks = CaptVit_R_callbacks; break;
 		case 0x201D: i = 122;*callbacks = CaptPos_R_callbacks; break;
-		case 0x201E: i = 123;break;
-		case 0x201F: i = 124;break;
-		case 0x2020: i = 125;break;
-		case 0x2021: i = 126;break;
-		case 0x2022: i = 127;break;
-		case 0x2023: i = 128;break;
-		case 0x2024: i = 129;break;
-		case 0x2025: i = 130;break;
-		case 0x2026: i = 131;break;
-		case 0x2027: i = 132;break;
-		case 0x2028: i = 133;break;
-		case 0x2029: i = 134;break;
-		case 0x202A: i = 135;break;
-		case 0x202B: i = 136;break;
-		case 0x202C: i = 137;break;
-		case 0x202D: i = 138;break;
-		case 0x202E: i = 139;break;
-		case 0x202F: i = 140;break;
-		case 0x2030: i = 141;break;
-		case 0x2031: i = 142;break;
-		case 0x2032: i = 143;break;
-		case 0x2033: i = 144;break;
+		case 0x201E: i = 123;*callbacks = ConsAccel_T_callbacks; break;
+		case 0x201F: i = 124;*callbacks = ConsAccel_R_callbacks; break;
+		case 0x2020: i = 125;*callbacks = CaptAccel_T_callbacks; break;
+		case 0x2021: i = 126;*callbacks = CaptAccel_R_callbacks; break;
+		case 0x2022: i = 127;*callbacks = ConsDecel_T_callbacks; break;
+		case 0x2023: i = 128;*callbacks = ConsDecel_R_callbacks; break;
+		case 0x2024: i = 129;*callbacks = CaptDecel_T_callbacks; break;
+		case 0x2025: i = 130;*callbacks = CaptDecel_R_callbacks; break;
+		case 0x2026: i = 131;*callbacks = Velocity_1_callbacks; break;
+		case 0x2027: i = 132;*callbacks = Velocity_2_callbacks; break;
+		case 0x2028: i = 133;*callbacks = Velocity_3_callbacks; break;
+		case 0x2029: i = 134;*callbacks = Velocity_4_callbacks; break;
+		case 0x202A: i = 135;*callbacks = Velocity_5_callbacks; break;
+		case 0x202B: i = 136;*callbacks = Vel2Send_1_callbacks; break;
+		case 0x202C: i = 137;*callbacks = Vel2Send_2_callbacks; break;
+		case 0x202D: i = 138;*callbacks = Vel2Send_3_callbacks; break;
+		case 0x202E: i = 139;*callbacks = Vel2Send_4_callbacks; break;
+		case 0x202F: i = 140;*callbacks = Vel2Send_5_callbacks; break;
+		case 0x2030: i = 141;*callbacks = ConsCoupl_R_callbacks; break;
+		case 0x2031: i = 142;*callbacks = ConsCoupl_T_callbacks; break;
+		case 0x2032: i = 143;*callbacks = CaptCoupl_R_callbacks; break;
+		case 0x2033: i = 144;*callbacks = CaptCoupl_T_callbacks; break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

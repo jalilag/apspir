@@ -30,31 +30,31 @@ void serialtools_plotLaserState(void)
     }
 
     if((err & 0x15) == MASTER_FAILED_TIMEOUT) {
-	gui_label_set("labLaser1StatInfo", MASTER_FAILED_TIMEOUT_LABEL);
-	gui_image_set("imgLaserGStatInfo", "gtk-no", 2);
+        gui_label_set("labLaser1StatInfo", MASTER_FAILED_TIMEOUT_LABEL);
+        gui_image_set("imgLaserGStatInfo", "gtk-no", 2);
     } else if ((err & 0x15) == MASTER_FAILED_DATCONSISTENCY) {
       	gui_label_set("labLaser1StatInfo", MASTER_FAILED_DATCONSISTENCY_LABEL);
-	gui_image_set("imgLaserGStatInfo", "gtk-no", 2);
+        gui_image_set("imgLaserGStatInfo", "gtk-no", 2);
     } else if ((err & 0x15) == MASTER_NOT_STARTED) {
         gui_label_set("labLaser1StatInfo", MASTER_NOT_STARTED_LABEL);
         gui_image_set("imgLaserGStatInfo", "gtk-no", 2);
     } else {
         gui_label_set("labLaser1StatInfo", LASER_STATUS_OK_LABEL);
-	gui_image_set("imgLaserGStatInfo", "gtk-yes", 2);
+        gui_image_set("imgLaserGStatInfo", "gtk-yes", 2);
     }
 
     if((err & 0x2A) == SLAVE_FAILED_TIMEOUT) {
-	gui_label_set("labLaser2StatInfo", MASTER_FAILED_TIMEOUT_LABEL);
-	gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
+        gui_label_set("labLaser2StatInfo", SLAVE_FAILED_TIMEOUT_LABEL);
+        gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
     } else if ((err & 0x2A) == SLAVE_FAILED_DATCONSISTENCY) {
-	gui_label_set("labLaser2StatInfo", SLAVE_FAILED_DATCONSISTENCY_LABEL);
-	gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
+        gui_label_set("labLaser2StatInfo", SLAVE_FAILED_DATCONSISTENCY_LABEL);
+        gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
     } else if ((err & 0x2A) == SLAVE_NOT_STARTED) {
         gui_label_set("labLaser2StatInfo", SLAVE_NOT_STARTED_LABEL);
-	gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
+        gui_image_set("imgLaserDStatInfo", "gtk-no", 2);
     } else {
         gui_label_set("labLaser2StatInfo", LASER_STATUS_OK_LABEL);
-	gui_image_set("imgLaserDStatInfo", "gtk-yes", 2);
+        gui_image_set("imgLaserDStatInfo", "gtk-yes", 2);
     }
 
     //affichage mesures non vérifiées

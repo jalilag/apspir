@@ -1,0 +1,2314 @@
+LASER ASSERVISSEMENT TRANSLATION STARTED WITH VEL 300000
+laser: dist, time, vel, acc = 179521 42045028 -1 -1
+got Consigne VT = 0, Capture VT = 0, Vitesse L lent= 470,  Accel L = 1
+asserv trsl cas 1
+Vitesse Trans Appliquée:50000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 179523 42354387 6 8
+got Consigne VT = 50000, Capture VT = 14905, Vitesse L lent= 0,  Accel L = -8
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 179514 42670859 -7 -8
+got Consigne VT = 50000, Capture VT = 29895, Vitesse L lent= 3290,  Accel L = 8
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 179476 42928463 -46 -45
+got Consigne VT = 50000, Capture VT = 44885, Vitesse L lent= 21620,  Accel L = 45
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179442 43292593 -72 -68
+got Consigne VT = 50000, Capture VT = 50000, Vitesse L lent= 33840,  Accel L = 68
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179417 43533114 -96 -89
+got Consigne VT = 50000, Capture VT = 50000, Vitesse L lent= 45121,  Accel L = 89
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179384 43850647 -109 -83
+got Consigne VT = 50000, Capture VT = 50000, Vitesse L lent= 51231,  Accel L = 83
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179355 44155371 -94 -23
+got Consigne VT = 50000, Capture VT = 50000, Vitesse L lent= 44181,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179316 44482931 -106 -10
+got Consigne VT = 50000, Capture VT = 50000, Vitesse L lent= 49821,  Accel L = 10
+asserv trsl cas 1
+Vitesse Trans Appliquée:100000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 179298 44783612 -92 18
+got Consigne VT = 100000, Capture VT = 59959, Vitesse L lent= 43241,  Accel L = -18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 179292 45099367 -66 29
+got Consigne VT = 100000, Capture VT = 79945, Vitesse L lent= 31020,  Accel L = -29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179281 45334387 -53 51
+got Consigne VT = 100000, Capture VT = 94934, Vitesse L lent= 24910,  Accel L = -51
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179227 45679089 -71 26
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 33370,  Accel L = -26
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179139 46001494 -155 -80
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 72851,  Accel L = 80
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179085 46237042 -204 -153
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 95882,  Accel L = 153
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 179001 46551664 -258 -206
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 121263,  Accel L = 206
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178924 46905733 -238 -104
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 111862,  Accel L = 104
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178926 47121231 -185 -8
+got Consigne VT = 100000, Capture VT = 100000, Vitesse L lent= 86952,  Accel L = 8
+asserv trsl cas 1
+Vitesse Trans Appliquée:150000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 178873 47452411 -158 82
+got Consigne VT = 150000, Capture VT = 109955, Vitesse L lent= 74261,  Accel L = -82
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 178755 47812140 -184 64
+got Consigne VT = 150000, Capture VT = 129938, Vitesse L lent= 86482,  Accel L = -64
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178705 48008835 -221 -10
+got Consigne VT = 150000, Capture VT = 144929, Vitesse L lent= 103872,  Accel L = 10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 178593 48357613 -308 -157
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 144763,  Accel L = 157
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178425 48712357 -356 -176
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 167324,  Accel L = 176
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178308 48936978 -412 -215
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 193645,  Accel L = 215
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178234 49276212 -400 -124
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 188004,  Accel L = 124
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178225 49526933 -301 21
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 141473,  Accel L = -21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178155 49835108 -206 177
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 96822,  Accel L = -177
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 178034 50127818 -227 187
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 106692,  Accel L = -187
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177946 50442576 -304 -3
+got Consigne VT = 150000, Capture VT = 150000, Vitesse L lent= 142883,  Accel L = 3
+asserv trsl cas 1
+Vitesse Trans Appliquée:200000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 177839 50755534 -343 -148
+got Consigne VT = 200000, Capture VT = 159978, Vitesse L lent= 161214,  Accel L = 148
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 177730 51071715 -322 -100
+got Consigne VT = 200000, Capture VT = 179966, Vitesse L lent= 151343,  Accel L = 100
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177596 51399715 -365 -63
+got Consigne VT = 200000, Capture VT = 194954, Vitesse L lent= 171554,  Accel L = 63
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177477 51708392 -379 -37
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 178134,  Accel L = 37
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177327 52018674 -425 -108
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 199755,  Accel L = 108
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177235 52238955 -428 -88
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 201165,  Accel L = 88
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 177109 52558291 -428 -46
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 201165,  Accel L = 46
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 176969 52871565 -434 -34
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 203985,  Accel L = 34
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 176837 53189250 -418 10
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 196465,  Accel L = -10
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 176696 53492016 -442 -14
+got Consigne VT = 250000, Capture VT = 209987, Vitesse L lent= 207745,  Accel L = 14
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 176480 53799001 -527 -100
+got Consigne VT = 250000, Capture VT = 224977, Vitesse L lent= 247696,  Accel L = 100
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 176307 54099395 -582 -180
+got Consigne VT = 250000, Capture VT = 239966, Vitesse L lent= 273547,  Accel L = 180
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 176136 54412763 -608 -180
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 285767,  Accel L = 180
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 175973 54722095 -549 -23
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 258036,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 175867 54939972 -521 50
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 244876,  Accel L = -50
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 175696 55245427 -534 71
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -71
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 175538 55549596 -525 47
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 246756,  Accel L = -47
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 175372 55868812 -532 -11
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250046,  Accel L = 11
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 175213 56160327 -527 7
+got Consigne VT = 300000, Capture VT = 259952, Vitesse L lent= 247696,  Accel L = -7
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 175047 56465510 -536 -12
+got Consigne VT = 300000, Capture VT = 279936, Vitesse L lent= 251926,  Accel L = 12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 174860 56791501 -554 -23
+got Consigne VT = 300000, Capture VT = 294926, Vitesse L lent= 260386,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 174656 57118794 -581 -56
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 273077,  Accel L = 56
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 174531 57333345 -591 -64
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 277777,  Accel L = 64
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 174346 57635975 -597 -46
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 280597,  Accel L = 46
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 174167 57937432 -601 -36
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282477,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 173939 58321594 -596 1
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 280127,  Accel L = -1
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 173755 58618550 -607 -5
+got Consigne VT = 250000, Capture VT = 285052, Vitesse L lent= 285297,  Accel L = 5
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 173580 58916292 -599 -2
+got Consigne VT = 250000, Capture VT = 270066, Vitesse L lent= 281537,  Accel L = 2
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 173392 59221476 -607 -12
+got Consigne VT = 250000, Capture VT = 255077, Vitesse L lent= 285297,  Accel L = 12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 173209 59526299 -601 6
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282477,  Accel L = -6
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 173052 59817160 -586 14
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275427,  Accel L = -14
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 172892 60109423 -563 49
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 264616,  Accel L = -49
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 172741 60401747 -534 76
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -76
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 172582 60696792 -534 59
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -59
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 172423 61000817 -526 41
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -41
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 172253 61306899 -539 -5
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 253336,  Accel L = 5
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 172102 61602046 -530 4
+got Consigne VT = 300000, Capture VT = 259958, Vitesse L lent= 249106,  Accel L = -4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 171932 61894126 -549 -25
+got Consigne VT = 300000, Capture VT = 279942, Vitesse L lent= 258036,  Accel L = 25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 171768 62183727 -553 -15
+got Consigne VT = 300000, Capture VT = 294931, Vitesse L lent= 259916,  Accel L = 15
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 171587 62476464 -588 -66
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 276367,  Accel L = 66
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 171407 62777005 -594 -50
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 279187,  Accel L = 50
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 171231 63074546 -602 -55
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282947,  Accel L = 55
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 171052 63375982 -594 -6
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 279187,  Accel L = 6
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 170876 63677192 -589 5
+got Consigne VT = 250000, Capture VT = 290042, Vitesse L lent= 276837,  Accel L = -5
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 170700 63981453 -585 18
+got Consigne VT = 250000, Capture VT = 270056, Vitesse L lent= 274957,  Accel L = -18
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 170504 64284399 -603 -9
+got Consigne VT = 250000, Capture VT = 255070, Vitesse L lent= 283417,  Accel L = 9
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 170331 64576676 -605 -17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 284357,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 170174 64876596 -587 -2
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275897,  Accel L = 2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 170010 65171044 -557 51
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 261796,  Accel L = -51
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 169848 65474878 -537 75
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 252396,  Accel L = -75
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 169662 65796062 -556 33
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 261326,  Accel L = -33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 169442 66086903 -620 -68
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 291407,  Accel L = 68
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 169285 66375461 -625 -97
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 293757,  Accel L = 97
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 169106 66678967 -629 -82
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 295637,  Accel L = 82
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 168954 66968361 -553 76
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 259916,  Accel L = -76
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 168797 67268456 -546 88
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 256626,  Accel L = -88
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 168626 67577867 -533 106
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250516,  Accel L = -106
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 168463 67886732 -534 20
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -20
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 168304 68185476 -537 9
+got Consigne VT = 300000, Capture VT = 264948, Vitesse L lent= 252396,  Accel L = -9
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 168147 68474332 -534 -1
+got Consigne VT = 300000, Capture VT = 279935, Vitesse L lent= 250986,  Accel L = 1
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 167981 68768308 -546 -13
+got Consigne VT = 300000, Capture VT = 294926, Vitesse L lent= 256626,  Accel L = 13
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 167807 69063388 -566 -33
+got Consigne VT = 250000, Capture VT = 280054, Vitesse L lent= 266026,  Accel L = 33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 167640 69357957 -573 -44
+got Consigne VT = 250000, Capture VT = 265067, Vitesse L lent= 269317,  Accel L = 44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 167470 69651304 -578 -36
+got Consigne VT = 250000, Capture VT = 250074, Vitesse L lent= 271667,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 167307 69952503 -562 4
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 264146,  Accel L = -4
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 167092 70350734 -542 42
+got Consigne VT = 300000, Capture VT = 259962, Vitesse L lent= 254746,  Accel L = -42
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 166941 70640957 -531 39
+got Consigne VT = 300000, Capture VT = 279947, Vitesse L lent= 249576,  Accel L = -39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 166763 70946606 -549 7
+got Consigne VT = 300000, Capture VT = 294938, Vitesse L lent= 258036,  Accel L = -7
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 166587 71248192 -562 -22
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 264146,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 166424 71542558 -573 -46
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 269317,  Accel L = 46
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 166259 71837156 -565 -17
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265556,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 166100 72132162 -550 13
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 258506,  Accel L = -13
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 165945 72422028 -544 32
+got Consigne VT = 250000, Capture VT = 290015, Vitesse L lent= 255686,  Accel L = -32
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 165791 72707886 -537 32
+got Consigne VT = 250000, Capture VT = 275029, Vitesse L lent= 252396,  Accel L = -32
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 165633 72995010 -541 10
+got Consigne VT = 250000, Capture VT = 260039, Vitesse L lent= 254276,  Accel L = -10
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 165472 73286838 -546 -2
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 256626,  Accel L = 2
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 165320 73580803 -539 -2
+got Consigne VT = 300000, Capture VT = 259956, Vitesse L lent= 253336,  Accel L = 2
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 165163 73870054 -537 4
+got Consigne VT = 300000, Capture VT = 279942, Vitesse L lent= 252396,  Accel L = -4
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 164993 74179852 -536 11
+got Consigne VT = 300000, Capture VT = 294932, Vitesse L lent= 251926,  Accel L = -11
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 164836 74464097 -547 -9
+got Consigne VT = 250000, Capture VT = 280057, Vitesse L lent= 257096,  Accel L = 9
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 164631 74845251 -542 0
+got Consigne VT = 200000, Capture VT = 265067, Vitesse L lent= 254746,  Accel L = 0
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 164477 75130176 -540 3
+got Consigne VT = 200000, Capture VT = 250077, Vitesse L lent= 253806,  Accel L = -3
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 164313 75416367 -547 4
+got Consigne VT = 200000, Capture VT = 235088, Vitesse L lent= 257096,  Accel L = -4
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 164164 75708772 -540 2
+got Consigne VT = 200000, Capture VT = 220100, Vitesse L lent= 253806,  Accel L = -2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 164063 76002752 -474 75
+got Consigne VT = 200000, Capture VT = 205111, Vitesse L lent= 222785,  Accel L = -75
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163985 76292985 -374 197
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 175784,  Accel L = -197
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163861 76579423 -348 220
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 163564,  Accel L = -220
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163758 76868073 -352 140
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 165444,  Accel L = -140
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163621 77250790 -370 3
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 173904,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 163528 77527144 -350 -15
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 164504,  Accel L = 15
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 163388 77804918 -398 -32
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 187064,  Accel L = 32
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163222 78084331 -478 -129
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 224665,  Accel L = 129
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 163041 78413984 -549 -224
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 258036,  Accel L = 224
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162967 78681570 -480 -93
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 225605,  Accel L = 93
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162908 79043386 -286 272
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 134423,  Accel L = -272
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162811 79314509 -245 356
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 115152,  Accel L = -356
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162692 79584822 -316 146
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 148523,  Accel L = -146
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162594 79942999 -355 -128
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 166854,  Accel L = 128
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162581 80213468 -231 47
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 108572,  Accel L = -47
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162581 80482445 -97 304
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 45591,  Accel L = -304
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162578 80844174 -7 394
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 3290,  Accel L = -394
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162575 81113847 -4 220
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 1880,  Accel L = -220
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162575 81472392 -2 44
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 940,  Accel L = -44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162580 81743421 4 9
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 0,  Accel L = -9
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 162573 82013150 -6 -2
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 2820,  Accel L = 2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 162528 82377131 -58 -66
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 27260,  Accel L = 66
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162411 82647606 -204 -251
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 95882,  Accel L = 251
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162250 82916710 -394 -474
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 185184,  Accel L = 474
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 162030 83279743 -577 -594
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 271197,  Accel L = 594
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161876 83550114 -600 -419
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 282007,  Accel L = 419
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161801 83819835 -478 -20
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 224665,  Accel L = 20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 161744 84179449 -282 395
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 132543,  Accel L = -395
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161642 84450547 -253 382
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 118913,  Accel L = -382
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161531 84718879 -319 129
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 149933,  Accel L = -129
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161379 85081310 -417 -206
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 195995,  Accel L = 206
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161266 85355855 -414 -180
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 194585,  Accel L = 180
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161150 85627718 -431 -124
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 202575,  Accel L = 124
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 161016 85904588 -440 -27
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 206805,  Accel L = 27
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160874 86266234 -433 -23
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 203515,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160766 86538025 -417 23
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 195995,  Accel L = -23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160640 86807065 -411 44
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 193175,  Accel L = -44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160498 87168338 -423 7
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 198815,  Accel L = -7
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 160367 87440601 -440 -39
+got Consigne VT = 250000, Capture VT = 209978, Vitesse L lent= 206805,  Accel L = 39
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 160202 87713724 -487 -87
+got Consigne VT = 250000, Capture VT = 224968, Vitesse L lent= 228895,  Accel L = 87
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160163 88073506 -362 73
+got Consigne VT = 250000, Capture VT = 239955, Vitesse L lent= 170144,  Accel L = -73
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160124 88343076 -223 295
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 104812,  Accel L = -295
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 160023 88628078 -192 337
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 90242,  Accel L = -337
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 159890 88906126 -327 42
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 153694,  Accel L = -42
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 159675 89276195 -512 -404
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 240646,  Accel L = 404
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 159502 89576788 -561 -379
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 263676,  Accel L = 379
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 159331 89848613 -596 -258
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 280127,  Accel L = 258
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 159178 90121843 -587 -88
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275897,  Accel L = 88
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 158952 90484791 -593 -17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 278717,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 158789 90757505 -598 -8
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 281067,  Accel L = 8
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 158612 91029331 -625 -33
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 293757,  Accel L = 33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 158386 91393160 -627 -41
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 294697,  Accel L = 41
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 158228 91664277 -612 6
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 287647,  Accel L = -6
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 158084 91938201 -575 54
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 270257,  Accel L = -54
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 157928 92211380 -559 83
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 262736,  Accel L = -83
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 157737 92576374 -540 69
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 253806,  Accel L = -69
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 157593 92849864 -537 40
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 252396,  Accel L = -40
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 157442 93122367 -536 17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -17
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 157243 93502305 -534 10
+got Consigne VT = 300000, Capture VT = 259989, Vitesse L lent= 250986,  Accel L = -10
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 157084 93792994 -542 -22
+got Consigne VT = 300000, Capture VT = 279975, Vitesse L lent= 254746,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 156908 94078527 -566 -35
+got Consigne VT = 300000, Capture VT = 294963, Vitesse L lent= 266026,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 156737 94368990 -583 -56
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 274017,  Accel L = 56
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 156564 94657302 -601 -68
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282477,  Accel L = 68
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 156389 94948259 -596 -34
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 280127,  Accel L = 34
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 156221 95231087 -598 -17
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 281067,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 156050 95523826 -593 9
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 278717,  Accel L = -9
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 155874 95818571 -591 5
+got Consigne VT = 250000, Capture VT = 290028, Vitesse L lent= 277777,  Accel L = -5
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 155696 96114401 -594 4
+got Consigne VT = 250000, Capture VT = 275036, Vitesse L lent= 279187,  Accel L = -4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 155510 96407646 -610 -19
+got Consigne VT = 250000, Capture VT = 260048, Vitesse L lent= 286707,  Accel L = 19
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 155267 96794859 -625 -44
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 293757,  Accel L = 44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 155097 97084038 -621 -29
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 291877,  Accel L = 29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 154921 97376611 -608 0
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 285767,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 154764 97666766 -576 56
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 270727,  Accel L = -56
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 154608 97966838 -553 77
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 259916,  Accel L = -77
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 154452 98264742 -528 90
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -90
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 154289 98567783 -527 54
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247696,  Accel L = -54
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 154132 98851760 -537 18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 252396,  Accel L = -18
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 153977 99137362 -544 -18
+got Consigne VT = 300000, Capture VT = 259994, Vitesse L lent= 255686,  Accel L = 18
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 153766 99515082 -549 -11
+got Consigne VT = 300000, Capture VT = 274984, Vitesse L lent= 258036,  Accel L = 11
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 153600 99807196 -563 -36
+got Consigne VT = 300000, Capture VT = 294968, Vitesse L lent= 264616,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 153422 100101191 -582 -43
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 273547,  Accel L = 43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 153244 100397664 -591 -47
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 277777,  Accel L = 47
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 153075 100684750 -598 -39
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 281067,  Accel L = 39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 152914 100976356 -580 2
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 272607,  Accel L = -2
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 152750 101258309 -573 20
+got Consigne VT = 250000, Capture VT = 290015, Vitesse L lent= 269317,  Accel L = -20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 152578 101551917 -573 28
+got Consigne VT = 250000, Capture VT = 275026, Vitesse L lent= 269317,  Accel L = -28
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 152399 101850215 -589 -10
+got Consigne VT = 250000, Capture VT = 260037, Vitesse L lent= 276837,  Accel L = 10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 152227 102145359 -589 -18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 276837,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 152060 102434074 -587 -15
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275897,  Accel L = 15
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 151832 102821210 -581 12
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 273077,  Accel L = -12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 151662 103109204 -588 -2
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 276367,  Accel L = 2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 151502 103394246 -578 3
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 271667,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 151347 103687594 -559 25
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 262736,  Accel L = -25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 151197 103985331 -530 66
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249106,  Accel L = -66
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 151064 104276720 -496 92
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 233126,  Accel L = -92
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150901 104582019 -498 68
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 234066,  Accel L = -68
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150753 104867048 -503 30
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 236416,  Accel L = -30
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150594 105155480 -534 -43
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = 43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150441 105441333 -535 -43
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251456,  Accel L = 43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150286 105740586 -534 -35
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 150122 106049865 -527 7
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247696,  Accel L = -7
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 149950 106356662 -536 -1
+got Consigne VT = 300000, Capture VT = 259968, Vitesse L lent= 251926,  Accel L = 1
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 149791 106649618 -544 -11
+got Consigne VT = 300000, Capture VT = 274958, Vitesse L lent= 255686,  Accel L = 11
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 149621 106965757 -547 -21
+got Consigne VT = 300000, Capture VT = 289947, Vitesse L lent= 257096,  Accel L = 21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 149491 107266411 -504 35
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 236886,  Accel L = -35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 149399 107556659 -432 123
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 203045,  Accel L = -123
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 149281 107847473 -385 183
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 180954,  Accel L = -183
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 149163 108149420 -371 150
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 174374,  Accel L = -150
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 149055 108460272 -380 57
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 178604,  Accel L = -57
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 148934 108761630 -379 6
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 178134,  Accel L = -6
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 148818 109061363 -378 -7
+got Consigne VT = 250000, Capture VT = 290032, Vitesse L lent= 177664,  Accel L = 7
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 148675 109380385 -412 -34
+got Consigne VT = 200000, Capture VT = 275044, Vitesse L lent= 193645,  Accel L = 34
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 148569 109615727 -426 -47
+got Consigne VT = 200000, Capture VT = 255058, Vitesse L lent= 200225,  Accel L = 47
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 148406 109954442 -455 -77
+got Consigne VT = 200000, Capture VT = 240070, Vitesse L lent= 213855,  Accel L = 77
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 148268 110248077 -464 -64
+got Consigne VT = 200000, Capture VT = 225081, Vitesse L lent= 218085,  Accel L = 64
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 148121 110546409 -481 -59
+got Consigne VT = 200000, Capture VT = 210090, Vitesse L lent= 226075,  Accel L = 59
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 147962 110872494 -483 -30
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 227015,  Accel L = 30
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 147849 111172537 -453 11
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 212915,  Accel L = -11
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 147790 111471742 -357 134
+got Consigne VT = 250000, Capture VT = 209991, Vitesse L lent= 167794,  Accel L = -134
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 147637 111775994 -359 137
+got Consigne VT = 250000, Capture VT = 224984, Vitesse L lent= 168734,  Accel L = -137
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 147433 112072471 -462 -10
+got Consigne VT = 250000, Capture VT = 239970, Vitesse L lent= 217145,  Accel L = 10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 147297 112376036 -545 -207
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 256156,  Accel L = 207
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 147177 112676001 -511 -168
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 240176,  Accel L = 168
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 147000 112982051 -476 -15
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 223725,  Accel L = 15
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 146807 113289765 -536 9
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -9
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 146606 113595848 -620 -118
+got Consigne VT = 300000, Capture VT = 259989, Vitesse L lent= 291407,  Accel L = 118
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 146403 113896276 -653 -193
+got Consigne VT = 300000, Capture VT = 274978, Vitesse L lent= 306917,  Accel L = 193
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 146237 114185505 -636 -111
+got Consigne VT = 300000, Capture VT = 289969, Vitesse L lent= 298927,  Accel L = 111
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 146052 114480550 -626 -6
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 294227,  Accel L = 6
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 145874 114773336 -603 57
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 283417,  Accel L = -57
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 145695 115071946 -611 28
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 287177,  Accel L = -28
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 145510 115371088 -608 20
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 285767,  Accel L = -20
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 145332 115667651 -606 -3
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 284827,  Accel L = 3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 145157 115959187 -606 5
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 284827,  Accel L = -5
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 144976 116250093 -607 1
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 285297,  Accel L = -1
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 144733 116640784 -617 -12
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 289997,  Accel L = 12
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 144558 116928893 -616 -11
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 289527,  Accel L = 11
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 144380 117228846 -610 -7
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 286707,  Accel L = 7
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 144192 117526303 -610 7
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 286707,  Accel L = -7
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 143994 117828052 -627 -12
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 294697,  Accel L = 12
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 143813 118124188 -633 -25
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 297517,  Accel L = 25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 143631 118417285 -629 -21
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 295637,  Accel L = 21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 143457 118706083 -611 18
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 287177,  Accel L = -18
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 143283 118999730 -605 31
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 284357,  Accel L = -31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 143103 119290421 -604 28
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 283887,  Accel L = -28
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 142925 119584557 -605 6
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 284357,  Accel L = -6
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 142750 119876575 -607 -2
+got Consigne VT = 250000, Capture VT = 285047, Vitesse L lent= 285297,  Accel L = 2
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 142579 120168103 -597 7
+got Consigne VT = 250000, Capture VT = 270056, Vitesse L lent= 280597,  Accel L = -7
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 142352 120554405 -589 24
+got Consigne VT = 250000, Capture VT = 255069, Vitesse L lent= 276837,  Accel L = -24
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 142174 120847176 -596 2
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 280127,  Accel L = -2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 142004 121142643 -591 0
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 277777,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 141844 121439934 -573 18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 269317,  Accel L = -18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 141684 121742837 -547 54
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 257096,  Accel L = -54
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 141529 122036019 -531 67
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249576,  Accel L = -67
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 141370 122329160 -533 44
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250516,  Accel L = -44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 141221 122622944 -526 23
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 141066 122911598 -528 3
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -3
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 140911 123203184 -525 9
+got Consigne VT = 300000, Capture VT = 259956, Vitesse L lent= 246756,  Accel L = -9
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 140750 123492045 -541 -17
+got Consigne VT = 300000, Capture VT = 279942, Vitesse L lent= 254276,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 140580 123790846 -552 -27
+got Consigne VT = 300000, Capture VT = 294933, Vitesse L lent= 259446,  Accel L = 27
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 140414 124091960 -559 -38
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 262736,  Accel L = 38
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 140254 124380909 -558 -19
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 262266,  Accel L = 19
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 140096 124673013 -548 4
+got Consigne VT = 250000, Capture VT = 285054, Vitesse L lent= 257566,  Accel L = -4
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 139871 125056304 -561 -4
+got Consigne VT = 200000, Capture VT = 270065, Vitesse L lent= 263676,  Accel L = 4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 139706 125347136 -571 -17
+got Consigne VT = 200000, Capture VT = 255075, Vitesse L lent= 268376,  Accel L = 17
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 139530 125632753 -591 -37
+got Consigne VT = 200000, Capture VT = 240087, Vitesse L lent= 277777,  Accel L = 37
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 139353 125925378 -596 -40
+got Consigne VT = 200000, Capture VT = 225097, Vitesse L lent= 280127,  Accel L = 40
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 139237 126217540 -538 37
+got Consigne VT = 200000, Capture VT = 210109, Vitesse L lent= 252866,  Accel L = -37
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 139184 126511512 -393 225
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 184714,  Accel L = -225
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 139100 126807225 -286 351
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 134423,  Accel L = -351
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 138941 127095186 -337 229
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 158394,  Accel L = -229
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 138827 127391196 -405 -13
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 190354,  Accel L = 13
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 138700 127685651 -455 -192
+got Consigne VT = 250000, Capture VT = 209981, Vitesse L lent= 213855,  Accel L = 192
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 138461 128066946 -507 -181
+got Consigne VT = 250000, Capture VT = 224971, Vitesse L lent= 238296,  Accel L = 181
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 138285 128358549 -575 -158
+got Consigne VT = 250000, Capture VT = 244956, Vitesse L lent= 270257,  Accel L = 158
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 138126 128648631 -600 -167
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282007,  Accel L = 167
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 137968 128945902 -560 -60
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 263206,  Accel L = 60
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 137818 129229486 -536 44
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 137672 129514665 -524 87
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 246286,  Accel L = -87
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 137525 129806065 -515 52
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 242056,  Accel L = -52
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 137370 130092752 -518 20
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 243466,  Accel L = -20
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 137213 130392487 -522 2
+got Consigne VT = 300000, Capture VT = 259963, Vitesse L lent= 245346,  Accel L = -2
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 137053 130688605 -534 -21
+got Consigne VT = 300000, Capture VT = 279947, Vitesse L lent= 250986,  Accel L = 21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 136885 130992635 -538 -22
+got Consigne VT = 300000, Capture VT = 294937, Vitesse L lent= 252866,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 136716 131287335 -555 -36
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 260856,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 136496 131674569 -571 -52
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 268376,  Accel L = 52
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 136340 131959449 -561 -18
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 263676,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 136188 132246221 -546 12
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 256626,  Accel L = -12
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 136019 132538646 -552 21
+got Consigne VT = 250000, Capture VT = 290012, Vitesse L lent= 259446,  Accel L = -21
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 135835 132837478 -575 -15
+got Consigne VT = 250000, Capture VT = 275024, Vitesse L lent= 270257,  Accel L = 15
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 135660 133132717 -595 -55
+got Consigne VT = 250000, Capture VT = 260035, Vitesse L lent= 279657,  Accel L = 55
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 135479 133424018 -609 -64
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 286237,  Accel L = 64
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 135304 133701845 -614 -45
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 288587,  Accel L = 45
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 135136 133991941 -609 -16
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 286237,  Accel L = 16
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 134916 134371051 -594 8
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 279187,  Accel L = -8
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 134759 134661392 -567 50
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 266496,  Accel L = -50
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 134602 134956113 -549 65
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 258036,  Accel L = -65
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 134449 135247558 -532 70
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250046,  Accel L = -70
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 134290 135536805 -535 36
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251456,  Accel L = -36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 134149 135826594 -520 33
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 244406,  Accel L = -33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 133991 136116540 -527 5
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247696,  Accel L = -5
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 133842 136399366 -519 18
+got Consigne VT = 300000, Capture VT = 264944, Vitesse L lent= 243936,  Accel L = -18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 133631 136781372 -540 -18
+got Consigne VT = 300000, Capture VT = 279936, Vitesse L lent= 253806,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 133465 137077579 -549 -21
+got Consigne VT = 300000, Capture VT = 294925, Vitesse L lent= 258036,  Accel L = 21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 133298 137369586 -561 -34
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 263676,  Accel L = 34
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 133133 137650099 -573 -37
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 269317,  Accel L = 37
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 132974 137936185 -571 -25
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 268376,  Accel L = 25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 132813 138222382 -568 -8
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 266966,  Accel L = 8
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 132640 138509121 -573 0
+got Consigne VT = 250000, Capture VT = 290031, Vitesse L lent= 269317,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 132462 138800497 -592 -24
+got Consigne VT = 250000, Capture VT = 275042, Vitesse L lent= 278247,  Accel L = 24
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 132291 139091297 -600 -36
+got Consigne VT = 250000, Capture VT = 260053, Vitesse L lent= 282007,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 132058 139482281 -599 -29
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 281537,  Accel L = 29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 131891 139766443 -591 5
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 277777,  Accel L = -5
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 131733 140038775 -586 12
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275427,  Accel L = -12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 131561 140323888 -590 10
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 277307,  Accel L = -10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 131404 140605248 -580 13
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 272607,  Accel L = -13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 131247 140899905 -564 25
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 265086,  Accel L = -25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 131042 141291803 -531 61
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249576,  Accel L = -61
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 130892 141577924 -523 55
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 245816,  Accel L = -55
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 130741 141863041 -532 16
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250046,  Accel L = -16
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 130582 142150953 -535 -4
+got Consigne VT = 300000, Capture VT = 259958, Vitesse L lent= 251456,  Accel L = 4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 130425 142437729 -543 -23
+got Consigne VT = 300000, Capture VT = 279943, Vitesse L lent= 255216,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 130258 142724661 -560 -32
+got Consigne VT = 300000, Capture VT = 294932, Vitesse L lent= 263206,  Accel L = 32
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 130089 143014953 -570 -40
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 267906,  Accel L = 40
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 129917 143308923 -583 -45
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 274017,  Accel L = 45
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 129698 143692313 -585 -35
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 274957,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 129530 143974780 -579 -1
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 272137,  Accel L = 1
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 129362 144255702 -591 -12
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 277777,  Accel L = 12
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 129187 144541567 -601 -18
+got Consigne VT = 250000, Capture VT = 290012, Vitesse L lent= 282477,  Accel L = 18
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 129010 144826966 -610 -36
+got Consigne VT = 250000, Capture VT = 275022, Vitesse L lent= 286707,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 128838 145115773 -609 -20
+got Consigne VT = 250000, Capture VT = 255037, Vitesse L lent= 286237,  Accel L = 20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 128612 145492517 -601 6
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282477,  Accel L = -6
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 128430 145777539 -614 -8
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 288587,  Accel L = 8
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 128253 146064298 -621 -22
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 291877,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 128086 146353848 -610 -10
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 286707,  Accel L = 10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 127935 146636964 -575 45
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 270257,  Accel L = -45
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 127778 146924787 -552 80
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 259446,  Accel L = -80
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 127625 147212473 -536 86
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -86
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 127410 147603534 -540 35
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 253806,  Accel L = -35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 127256 147896527 -534 14
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -14
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 127106 148179246 -537 -5
+got Consigne VT = 300000, Capture VT = 259965, Vitesse L lent= 252396,  Accel L = 5
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 126948 148463358 -537 3
+got Consigne VT = 300000, Capture VT = 274952, Vitesse L lent= 252396,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 126784 148749993 -553 -22
+got Consigne VT = 300000, Capture VT = 289943, Vitesse L lent= 259916,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 126619 149041326 -564 -31
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265086,  Accel L = 31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 126455 149326128 -571 -39
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 268376,  Accel L = 39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 126287 149618420 -572 -21
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 268847,  Accel L = 21
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 126066 150003762 -575 -9
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 270257,  Accel L = 9
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 125894 150295485 -583 -20
+got Consigne VT = 250000, Capture VT = 290017, Vitesse L lent= 274017,  Accel L = 20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 125723 150575250 -592 -18
+got Consigne VT = 250000, Capture VT = 275027, Vitesse L lent= 278247,  Accel L = 18
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 125546 150872392 -598 -26
+got Consigne VT = 250000, Capture VT = 260038, Vitesse L lent= 281067,  Accel L = 26
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 125364 151163683 -610 -31
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 286707,  Accel L = 31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 125190 151452192 -607 -17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 285297,  Accel L = 17
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 125020 151746485 -601 -3
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282477,  Accel L = 3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 124865 152032711 -574 41
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 269787,  Accel L = -41
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 124662 152407904 -543 87
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 255216,  Accel L = -87
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 124511 152694625 -530 78
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249106,  Accel L = -78
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 124359 152981592 -526 53
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -53
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 124205 153271196 -529 16
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248636,  Accel L = -16
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 124056 153561242 -525 5
+got Consigne VT = 300000, Capture VT = 259985, Vitesse L lent= 246756,  Accel L = -5
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 123900 153858547 -523 3
+got Consigne VT = 300000, Capture VT = 274971, Vitesse L lent= 245816,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 123734 154139084 -542 -14
+got Consigne VT = 300000, Capture VT = 289963, Vitesse L lent= 254746,  Accel L = 14
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 123567 154429786 -563 -43
+got Consigne VT = 250000, Capture VT = 285040, Vitesse L lent= 264616,  Accel L = 43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 123350 154818502 -567 -39
+got Consigne VT = 250000, Capture VT = 270051, Vitesse L lent= 266496,  Accel L = 39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 123175 155114052 -574 -33
+got Consigne VT = 250000, Capture VT = 250064, Vitesse L lent= 269787,  Accel L = 33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 123009 155408634 -572 -7
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 268847,  Accel L = 7
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 122844 155704610 -571 -4
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 268376,  Accel L = 4
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 122681 155997639 -559 16
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 262736,  Accel L = -16
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 122529 156280821 -550 25
+got Consigne VT = 300000, Capture VT = 259986, Vitesse L lent= 258506,  Accel L = -25
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 122373 156564461 -547 27
+got Consigne VT = 300000, Capture VT = 274975, Vitesse L lent= 257096,  Accel L = -27
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 122205 156852538 -556 3
+got Consigne VT = 300000, Capture VT = 289963, Vitesse L lent= 261326,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 122043 157141113 -564 -16
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265086,  Accel L = 16
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 121883 157432371 -564 -19
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265086,  Accel L = 19
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 121665 157821495 -553 11
+got Consigne VT = 250000, Capture VT = 285054, Vitesse L lent= 259916,  Accel L = -11
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 121503 158117836 -552 11
+got Consigne VT = 200000, Capture VT = 270064, Vitesse L lent= 259446,  Accel L = -11
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 121336 158404961 -569 -17
+got Consigne VT = 200000, Capture VT = 255077, Vitesse L lent= 267436,  Accel L = 17
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 121165 158696985 -571 -20
+got Consigne VT = 200000, Capture VT = 240087, Vitesse L lent= 268376,  Accel L = 20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 120994 158986390 -586 -39
+got Consigne VT = 200000, Capture VT = 225096, Vitesse L lent= 275427,  Accel L = 39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120877 159278123 -525 50
+got Consigne VT = 200000, Capture VT = 210106, Vitesse L lent= 246756,  Accel L = -50
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120836 159569294 -377 222
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 177194,  Accel L = -222
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120692 159858879 -346 275
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 162624,  Accel L = -275
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120568 160151416 -353 196
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 165914,  Accel L = -196
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120447 160447542 -442 -74
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 207745,  Accel L = 74
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120283 160832622 -414 -85
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 194585,  Accel L = 85
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120162 161125807 -423 -58
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 198815,  Accel L = 58
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 120038 161407054 -425 25
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 199755,  Accel L = -25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 119928 161689333 -414 0
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 194585,  Accel L = 0
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 119787 161984446 -436 -15
+got Consigne VT = 250000, Capture VT = 209994, Vitesse L lent= 204925,  Accel L = 15
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 119616 162272985 -487 -71
+got Consigne VT = 250000, Capture VT = 224983, Vitesse L lent= 228895,  Accel L = 71
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 119445 162556514 -556 -163
+got Consigne VT = 250000, Capture VT = 239972, Vitesse L lent= 261326,  Accel L = 163
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 119226 162938907 -591 -165
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 277777,  Accel L = 165
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 119074 163224089 -562 -59
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 264146,  Accel L = 59
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 118915 163508852 -555 18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 260856,  Accel L = -18
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 118761 163795105 -543 56
+got Consigne VT = 300000, Capture VT = 259966, Vitesse L lent= 255216,  Accel L = -56
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 118605 164082937 -546 18
+got Consigne VT = 300000, Capture VT = 274956, Vitesse L lent= 256626,  Accel L = -18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 118435 164374551 -554 1
+got Consigne VT = 300000, Capture VT = 289945, Vitesse L lent= 260386,  Accel L = -1
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 118263 164676194 -565 -24
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265556,  Accel L = 24
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 118102 164969353 -567 -23
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 266496,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 117938 165260098 -561 -7
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 263676,  Accel L = 7
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 117723 165635573 -563 5
+got Consigne VT = 250000, Capture VT = 290024, Vitesse L lent= 264616,  Accel L = -5
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 117559 165915528 -576 -18
+got Consigne VT = 200000, Capture VT = 270035, Vitesse L lent= 270727,  Accel L = 18
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 117396 166205087 -573 -17
+got Consigne VT = 200000, Capture VT = 255050, Vitesse L lent= 269317,  Accel L = 17
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 117228 166492426 -577 -16
+got Consigne VT = 200000, Capture VT = 240061, Vitesse L lent= 271197,  Accel L = 16
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 117050 166783443 -586 -11
+got Consigne VT = 200000, Capture VT = 225068, Vitesse L lent= 275427,  Accel L = 11
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 116904 167079594 -562 12
+got Consigne VT = 200000, Capture VT = 210079, Vitesse L lent= 264146,  Accel L = -12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 116825 167367030 -460 133
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 216205,  Accel L = -133
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 116725 167744440 -310 321
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 145703,  Accel L = -321
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 116576 168031167 -342 235
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 160744,  Accel L = -235
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 116458 168313520 -412 -2
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 193645,  Accel L = 2
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 116322 168605380 -468 -183
+got Consigne VT = 250000, Capture VT = 209954, Vitesse L lent= 219965,  Accel L = 183
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 116137 168903337 -503 -184
+got Consigne VT = 250000, Capture VT = 224940, Vitesse L lent= 236416,  Accel L = 184
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115948 169204765 -572 -179
+got Consigne VT = 250000, Capture VT = 244928, Vitesse L lent= 268847,  Accel L = 179
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115767 169497549 -622 -172
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 292347,  Accel L = 172
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115618 169778479 -593 -102
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 278717,  Accel L = 102
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115410 170149669 -565 34
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 265556,  Accel L = -34
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115253 170445885 -541 87
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 254276,  Accel L = -87
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 115099 170737067 -535 57
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251456,  Accel L = -57
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 114946 171022701 -531 38
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249576,  Accel L = -38
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 114799 171307863 -526 17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -17
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 114645 171594595 -529 6
+got Consigne VT = 300000, Capture VT = 259987, Vitesse L lent= 248636,  Accel L = -6
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 114492 171872429 -534 -3
+got Consigne VT = 300000, Capture VT = 274977, Vitesse L lent= 250986,  Accel L = 3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 114269 172256066 -562 -38
+got Consigne VT = 300000, Capture VT = 289964, Vitesse L lent= 264146,  Accel L = 38
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 114097 172539605 -585 -59
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 274957,  Accel L = 59
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 113922 172825234 -601 -72
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282477,  Accel L = 72
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 113737 173129582 -609 -53
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 286237,  Accel L = 53
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 113559 173411601 -616 -35
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 289527,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 113381 173702239 -616 -17
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 289527,  Accel L = 17
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 113213 173977693 -617 -9
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 289997,  Accel L = 9
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 112981 174357826 -614 -7
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 288587,  Accel L = 7
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 112807 174639780 -608 10
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 285767,  Accel L = -10
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 112634 174925888 -611 -1
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 287177,  Accel L = 1
+asserv trsl cas 1
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 112458 175225305 -602 13
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282947,  Accel L = -13
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 112282 175519283 -596 13
+got Consigne VT = 250000, Capture VT = 290042, Vitesse L lent= 280127,  Accel L = -13
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 112114 175801632 -593 20
+got Consigne VT = 250000, Capture VT = 270056, Vitesse L lent= 278717,  Accel L = -20
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 111938 176087836 -602 0
+got Consigne VT = 250000, Capture VT = 255069, Vitesse L lent= 282947,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 111702 176463831 -618 -27
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 290467,  Accel L = 27
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 111535 176747824 -615 -30
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 289057,  Accel L = 30
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 111373 177035901 -594 12
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 279187,  Accel L = -12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 111221 177326871 -557 70
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 261796,  Accel L = -70
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 111063 177616139 -543 82
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 255216,  Accel L = -82
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 110910 177902380 -534 69
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -69
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 110760 178186408 -536 24
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -24
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 110557 178566853 -533 3
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250516,  Accel L = -3
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 110406 178851482 -530 4
+got Consigne VT = 300000, Capture VT = 259960, Vitesse L lent= 249106,  Accel L = -4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 110245 179136738 -543 -13
+got Consigne VT = 300000, Capture VT = 274949, Vitesse L lent= 255216,  Accel L = 13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 110083 179425977 -551 -20
+got Consigne VT = 300000, Capture VT = 289937, Vitesse L lent= 258976,  Accel L = 20
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 109918 179718365 -562 -36
+got Consigne VT = 250000, Capture VT = 280040, Vitesse L lent= 264146,  Accel L = 36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 109749 180006771 -570 -31
+got Consigne VT = 250000, Capture VT = 265048, Vitesse L lent= 267906,  Accel L = 31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 109594 180287090 -567 -18
+got Consigne VT = 250000, Capture VT = 250060, Vitesse L lent= 266496,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 109366 180668383 -581 -19
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 273077,  Accel L = 19
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 109200 180963594 -579 -15
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 272137,  Accel L = 15
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 109039 181256888 -573 -5
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 269317,  Accel L = 5
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 108886 181547293 -546 39
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 256626,  Accel L = -39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 108732 181835813 -536 49
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251926,  Accel L = -49
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 108576 182121443 -535 43
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251456,  Accel L = -43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 108435 182403384 -526 23
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 108235 182773952 -530 5
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249106,  Accel L = -5
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 108076 183061862 -532 0
+got Consigne VT = 300000, Capture VT = 264948, Vitesse L lent= 250046,  Accel L = 0
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 107921 183345553 -541 -10
+got Consigne VT = 300000, Capture VT = 279937, Vitesse L lent= 254276,  Accel L = 10
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 107752 183637897 -559 -33
+got Consigne VT = 300000, Capture VT = 294924, Vitesse L lent= 262736,  Accel L = 33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 107591 183936522 -554 -25
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 260386,  Accel L = 25
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 107421 184226988 -567 -29
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 266496,  Accel L = 29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 107257 184514806 -564 -5
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265086,  Accel L = 5
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 107093 184797175 -578 -27
+got Consigne VT = 250000, Capture VT = 290021, Vitesse L lent= 271667,  Accel L = 27
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 106864 185182053 -590 -32
+got Consigne VT = 250000, Capture VT = 275033, Vitesse L lent= 277307,  Accel L = 32
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 106685 185472829 -599 -31
+got Consigne VT = 250000, Capture VT = 255048, Vitesse L lent= 281537,  Accel L = 31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 106502 185766950 -611 -35
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 287177,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 106313 186075402 -616 -29
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 289527,  Accel L = 29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 106138 186360984 -615 -18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 289057,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 105976 186653784 -593 20
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 278717,  Accel L = -20
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 105826 186940427 -562 62
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 264146,  Accel L = -62
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 105674 187226802 -535 92
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 251456,  Accel L = -92
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 105520 187516516 -528 75
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -75
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 105369 187808968 -526 41
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -41
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 105170 188183859 -525 12
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 246756,  Accel L = -12
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 105024 188463122 -521 14
+got Consigne VT = 300000, Capture VT = 259994, Vitesse L lent= 244876,  Accel L = -14
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 104867 188744117 -536 -13
+got Consigne VT = 300000, Capture VT = 274984, Vitesse L lent= 251926,  Accel L = 13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 104705 189026714 -551 -30
+got Consigne VT = 300000, Capture VT = 289973, Vitesse L lent= 258976,  Accel L = 30
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 104542 189311531 -568 -55
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 266966,  Accel L = 55
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 104375 189600601 -574 -44
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 269787,  Accel L = 44
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 104161 189987789 -569 -18
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 267436,  Accel L = 18
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 103989 190273824 -576 -10
+got Consigne VT = 250000, Capture VT = 285054, Vitesse L lent= 270727,  Accel L = 10
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 103824 190558526 -569 8
+got Consigne VT = 250000, Capture VT = 270061, Vitesse L lent= 267436,  Accel L = -8
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 103655 190834781 -597 -33
+got Consigne VT = 250000, Capture VT = 255076, Vitesse L lent= 280597,  Accel L = 33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 103488 191111367 -598 -26
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 281067,  Accel L = 26
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 103258 191489978 -602 -23
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282947,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 103091 191787586 -586 13
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 275427,  Accel L = -13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 102939 192075965 -566 29
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 266026,  Accel L = -29
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 102782 192365917 -543 67
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 255216,  Accel L = -67
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 102631 192657255 -528 66
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -66
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 102476 192941877 -534 36
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -36
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 102331 193219311 -528 17
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -17
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 102178 193507909 -532 -4
+got Consigne VT = 300000, Capture VT = 264948, Vitesse L lent= 250046,  Accel L = 4
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 101962 193897157 -537 -1
+got Consigne VT = 300000, Capture VT = 279936, Vitesse L lent= 252396,  Accel L = 1
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 101803 194187842 -544 -14
+got Consigne VT = 300000, Capture VT = 294924, Vitesse L lent= 255686,  Accel L = 14
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 101636 194480325 -554 -17
+got Consigne VT = 250000, Capture VT = 281262, Vitesse L lent= 260386,  Accel L = 17
+asserv trsl cas 3
+Vitesse Appliquée:200000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 101475 194764489 -561 -27
+got Consigne VT = 200000, Capture VT = 266271, Vitesse L lent= 263676,  Accel L = 27
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 101314 195050405 -566 -25
+got Consigne VT = 200000, Capture VT = 251283, Vitesse L lent= 266026,  Accel L = 25
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 101145 195341091 -570 -18
+got Consigne VT = 200000, Capture VT = 236294, Vitesse L lent= 267906,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 100994 195629103 -556 5
+got Consigne VT = 200000, Capture VT = 221305, Vitesse L lent= 261326,  Accel L = -5
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 100908 195923052 -465 115
+got Consigne VT = 200000, Capture VT = 206314, Vitesse L lent= 218555,  Accel L = -115
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100887 196215350 -295 314
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 138653,  Accel L = -314
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100711 196604760 -277 302
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 130193,  Accel L = -302
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100593 196903636 -347 67
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 163094,  Accel L = -67
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100480 197193744 -435 -197
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 204455,  Accel L = 197
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100359 197477265 -403 -144
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 189414,  Accel L = 144
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100243 197755135 -411 -75
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 193175,  Accel L = 75
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 100116 198043083 -428 8
+got Consigne VT = 200000, Capture VT = 200000, Vitesse L lent= 201165,  Accel L = -8
+asserv trsl cas 1
+Vitesse Trans Appliquée:250000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 99992 198324166 -433 -35
+got Consigne VT = 250000, Capture VT = 209964, Vitesse L lent= 203515,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 99768 198706710 -507 -104
+got Consigne VT = 250000, Capture VT = 224954, Vitesse L lent= 238296,  Accel L = 104
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 99588 199004080 -571 -176
+got Consigne VT = 250000, Capture VT = 244940, Vitesse L lent= 268376,  Accel L = 176
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 99428 199294120 -577 -145
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 271197,  Accel L = 145
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 99259 199579203 -583 -87
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 274017,  Accel L = 87
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 99104 199865345 -561 11
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 263676,  Accel L = -11
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 98953 200146908 -556 24
+got Consigne VT = 300000, Capture VT = 259955, Vitesse L lent= 261326,  Accel L = -24
+asserv trsl cas 4
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 98793 200431778 -546 43
+got Consigne VT = 300000, Capture VT = 274944, Vitesse L lent= 256626,  Accel L = -43
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 98628 200717271 -558 3
+got Consigne VT = 300000, Capture VT = 294930, Vitesse L lent= 262266,  Accel L = -3
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 98400 201103856 -578 -32
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 271667,  Accel L = 32
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 98242 201388448 -576 -31
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 270727,  Accel L = 31
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 98079 201680088 -565 0
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 265556,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 97907 201968529 -570 9
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 267906,  Accel L = -9
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 97740 202243890 -586 -11
+got Consigne VT = 250000, Capture VT = 290015, Vitesse L lent= 275427,  Accel L = 11
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 97573 202529893 -595 -35
+got Consigne VT = 250000, Capture VT = 275024, Vitesse L lent= 279657,  Accel L = 35
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 97340 202910400 -600 -22
+got Consigne VT = 250000, Capture VT = 260036, Vitesse L lent= 282007,  Accel L = 22
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 97168 203199874 -603 -13
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 283417,  Accel L = 13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 96987 203487010 -608 -2
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 285767,  Accel L = 2
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 96812 203766837 -616 -18
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 289527,  Accel L = 18
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 96650 204058268 -603 0
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 283417,  Accel L = 0
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 96494 204344927 -574 39
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 269787,  Accel L = -39
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 96349 204626595 -538 90
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 252866,  Accel L = -90
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 96189 204929775 -528 86
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 248166,  Accel L = -86
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 95987 205315407 -525 33
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 246756,  Accel L = -33
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 95834 205608529 -526 13
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 247226,  Accel L = -13
+asserv trsl cas 1
+Vitesse Trans Appliquée:300000
+LASER_ASSERV Boucle translation movement ok
+laser: dist, time, vel, acc = 95682 205893130 -531 -9
+got Consigne VT = 300000, Capture VT = 259980, Vitesse L lent= 249576,  Accel L = 9
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 95529 206174820 -532 -8
+got Consigne VT = 300000, Capture VT = 274969, Vitesse L lent= 250046,  Accel L = 8
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 95362 206463062 -552 -30
+got Consigne VT = 300000, Capture VT = 289958, Vitesse L lent= 259446,  Accel L = 30
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 95190 206760273 -567 -41
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 266496,  Accel L = 41
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 95003 207056860 -596 -72
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 280127,  Accel L = 72
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 94831 207348246 -599 -53
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 281537,  Accel L = 53
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 94663 207637619 -600 -37
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 282007,  Accel L = 37
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 94435 208020938 -592 0
+got Consigne VT = 300000, Capture VT = 300000, Vitesse L lent= 278247,  Accel L = 0
+asserv trsl cas 3
+Vitesse Appliquée:250000
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 94269 208305266 -589 8
+got Consigne VT = 250000, Capture VT = 290031, Vitesse L lent= 276837,  Accel L = -8
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 94102 208591246 -584 14
+got Consigne VT = 250000, Capture VT = 275044, Vitesse L lent= 274487,  Accel L = -14
+asserv trsl cas 2
+LASER_ASSERV TRSL WARNING changement de vitesse
+laser: dist, time, vel, acc = 93929 208877001 -591 1
+got Consigne VT = 250000, Capture VT = 255058, Vitesse L lent= 277777,  Accel L = -1
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 93752 209166825 -600 -12
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 282007,  Accel L = 12
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 93579 209456671 -604 -23
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 283887,  Accel L = 23
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 93424 209748992 -579 13
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 272137,  Accel L = -13
+asserv trsl cas 3
+LASER ASSERV TRSL WARNING patinage du moteur vitesse
+laser: dist, time, vel, acc = 93223 210129981 -545 63
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 256156,  Accel L = -63
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 93068 210416408 -534 72
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 250986,  Accel L = -72
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect
+laser: dist, time, vel, acc = 92915 210700690 -530 52
+got Consigne VT = 250000, Capture VT = 250000, Vitesse L lent= 249106,  Accel L = -52
+asserv trsl cas 4
+LASER_ASSERV WARNING Boucle translation accel non respect

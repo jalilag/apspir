@@ -1,0 +1,211 @@
+#include "slave.h"
+#include "profile.h"
+#include "errgen.h"
+#include "cantools.h"
+#include "keyword.h"
+#include "SpirallingMaster.h"
+#include "laser_asserv.h"
+
+extern UNS16 errgen_state;
+extern char* errgen_aux;
+
+void laser_asserv_utils_set_MotRot_Accel(void)
+{
+    int index_rot, index_trans;
+    if(slave_get_indexList_from_Profile(PROF_VITROT, &index_rot)){
+        errgen_state = ERR_LASER_ASSERV_GETINDEXROT;
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return;
+    }
+
+    UNS32 accel_T, decel_T;
+    UNS32 accel_R, decel_R;
+    SDOR Accel = {0x6083, 0x00, 0x07};
+    SDOR Decel = {0x6084, 0x00, 0x07};
+    slave_get_indexList_from_Profile(PROF_VITTRANS, &index_trans);
+    if(index_trans >=0)
+    {
+        //lecture des accelerations
+        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Accel,&accel_T)) {
+            errgen_state = ERR_ROT_GET_ACCEL;
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return;
+        }
+        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Decel,&decel_T)) {
+            errgen_state = ERR_ROT_GET_DECEL;
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return;
+        }
+    } else {//aucun moteurs vitesse translation
+        errgen_state = ERR_LASER_ASSERV_GETINDEXTRANS;
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return;
+    }
+    CaptAccel_T = accel_T;
+    CaptDecel_T = decel_T;
+    ConsAccel_T = accel_T;
+    ConsDecel_T = decel_T;
+    //calcul des acceleration rotation correspondante
+
+    if(laser_asserv_CalcRotAccel(&ml, &sl, &accel_T, &accel_R)){
+        errgen_state = ERR_ROT_CALC_ACCEL;
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return;
+    }
+    if(laser_asserv_CalcRotAccel(&ml, &sl, &decel_T, &decel_R)){
+        errgen_state = ERR_ROT_CALC_ACCEL;
+        g_idle_add(errgen_set_safe(NULL), NULL);
+        return;
+    }
+
+
+    //ecriture des accelerations
+    if (accel_R > 1000){
+        if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Accel, &accel_R)){
+            errgen_state = ERR_ROT_WRITE_ACCEL;
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return;
+        }
+    }
+    if (decel_R > 1000){
+        if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Decel, &decel_R)){
+            errgen_state = ERR_ROT_WRITE_ACCEL;
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return;
+        }
+    }
+    CaptAccel_R = accel_R;
+    CaptDecel_R = decel_R;
+    ConsAccel_R = accel_R;
+    ConsDecel_R = decel_R;
+}
+
+
+void laser_asserv_utils_StartRot(void){
+    struct laser_data d;
+    int motrot_index_list[SLAVE_NUMBER_LIMIT-1];//moteurs rotation couple
+    int motrotvel_index;
+
+    if (slave_profile_exist(PROF_VITROT)){
+        if(!run_asserv){
+            //recuperer les parametres du module asserv
+            if(laser_asserv_cst_recup()) laser_asserv_cst_set_default();
+
+            /**Start Moteurs Rotation**/
+            //demarrage du moteur rotation vitesse
+            if(slave_get_indexList_from_Profile(PROF_VITROT, &motrotvel_index)){
+                errgen_state = ERR_LASER_ASSERV_GETINDEXROT;//erreur plusieurs mot rot défini
+                g_idle_add(errgen_set_safe(NULL), NULL);
+                return;
+            }
+            if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrotvel_index)) == SON && slave_get_param_in_num("Active",motrotvel_index)){
+                motor_start(slave_get_node_with_index(motrotvel_index),1);
+            }
+            //demarrage des moteurs rot couple
+            int i=0;
+            slave_get_indexList_from_Profile(PROF_COUPLROT, motrot_index_list);
+            while (motrot_index_list[i]>=0){
+                if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrot_index_list[i])) == SON && slave_get_param_in_num("Active",motrot_index_list[i]))
+                    motor_start(slave_get_node_with_index(motrot_index_list[i]),1);
+                i++;
+            }
+
+            /**Get Laser Start Position et check laser**/
+            if(!((errgen_laserState & MASTER_NOT_STARTED) && (errgen_laserState & SLAVE_NOT_STARTED))){
+                if(laser_asserv_GetStartPosition(&ml, &sl)) {
+                    errgen_state = ERR_LASER_ASSERV_GETSTARTPOS;
+                    g_idle_add(errgen_set_safe(NULL), NULL);
+                    return;
+                }
+                printf("START DISTANCE = %lu", Laser_Asserv_GetStartDistance());
+
+                /**Get_Ref_Position MotRot**/
+                SDOR RefPos_R = {0x6064, 0x00, int32};
+                if (!cantools_read_sdo(slave_get_node_with_index(motrotvel_index),RefPos_R,&MotRot_Ref_Position)) {
+                    errgen_state = ERR_SLAVE_CONFIG_ROT_REFPOS;
+                    g_idle_add(errgen_set_safe(NULL), NULL);
+                    return;
+                }
+                /**Set MotRot Acceleration**/
+                laser_asserv_utils_set_MotRot_Accel();
+
+                /**LANCE ASSERVISSEMENT**/
+                if(laser_asserv_rotation_lance()){
+                    errgen_state = ERR_LASER_ASSERV_START;
+                    g_idle_add(errgen_set_safe(NULL),NULL);
+                }
+            } else {
+                errgen_state = ERR_LASER_INIT_FATAL;
+                g_idle_add(errgen_set_safe(NULL), NULL);
+            }
+        }
+    }
+}
+//on relance la rotation sans acquisition des constantes de démarrage.
+void laser_asserv_utils_resumePose(void){
+    int motrot_index_list[SLAVE_NUMBER_LIMIT-1];//moteurs rotation couple
+    int motrotvel_index;
+    if (slave_profile_exist(PROF_VITROT)){
+        if(!run_asserv){
+            /**Start Moteurs Rotation**/
+            //demarrage du moteur rotation vitesse
+            if(slave_get_indexList_from_Profile(PROF_VITROT, &motrotvel_index)){
+                errgen_state = ERR_LASER_ASSERV_GETINDEXROT;//erreur plusieurs mot rot défini
+                g_idle_add(errgen_set_safe(NULL), NULL);
+                return;
+            }
+            if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrotvel_index)) == SON && slave_get_param_in_num("Active",motrotvel_index)){
+                motor_start(slave_get_node_with_index(motrotvel_index),1);
+            }
+            //demarrage des moteurs rot couple
+            int i=0;
+            slave_get_indexList_from_Profile(PROF_COUPLROT, motrot_index_list);
+            while (motrot_index_list[i]>=0){
+                if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrot_index_list[i])) == SON && slave_get_param_in_num("Active",motrot_index_list[i]))
+                    motor_start(slave_get_node_with_index(motrot_index_list[i]),1);
+                i++;
+            }
+            /**LANCE ASSERVISSEMENT**/
+            if(laser_asserv_rotation_lance()){
+                errgen_state = ERR_LASER_ASSERV_START;
+                g_idle_add(errgen_set_safe(NULL),NULL);
+            }
+        }
+    }
+}
+
+void laser_asserv_utils_StopRot(void){
+    int motrot_index_list[SLAVE_NUMBER_LIMIT-1];//moteurs rotation couple
+    int motrotvel_index;
+    if (slave_profile_exist(PROF_VITROT)){
+        //arrêter les moteurs rotation
+        cantools_ApplyVelRot(0);
+
+        if(slave_get_indexList_from_Profile(PROF_VITROT, &motrotvel_index)){
+            errgen_state = ERR_LASER_ASSERV_GETINDEXROT;//erreur plusieurs mot rot défini
+            g_idle_add(errgen_set_safe(NULL), NULL);
+            return;
+        }
+
+        if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrotvel_index)) == OENABLED) {
+            motor_start(slave_get_node_with_index(motrotvel_index),0);
+        }
+        //stop des moteurs rot couple
+        int i=0;
+        slave_get_indexList_from_Profile(PROF_COUPLROT, motrot_index_list);
+        while (motrot_index_list[i]>=0){
+            if (motor_get_state((UNS16)slave_get_param_in_num("Power",motrot_index_list[i])) == OENABLED)
+                motor_start(slave_get_node_with_index(motrot_index_list[i]),0);
+            i++;
+        }
+        //stopper le thread asservissement
+        if(run_asserv){
+            printf("EXIT ASSERV\n");
+            /**STOPPE ASSERV**/
+            if(laser_asserv_rotation_stop()){
+                errgen_state = ERR_LASER_ASSERV_STOP;
+                g_idle_add(errgen_set_safe(NULL),NULL);
+            }
+        }
+    }
+}

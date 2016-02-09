@@ -8,12 +8,12 @@
 #include "motor.h"
 #include "SpirallingControl.h"
 #include "profile.h"
-#include "serialtools.h"
 //#include <time.h>
 
 //ajout 230116
+#include "serialtools.h"
 #include "errgen.h"
-#include "laser_asserv.h"
+#include "laser_asserv_utils.h"
 //fin ajout 230116
 
 extern int SLAVE_NUMBER;
@@ -21,7 +21,7 @@ extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 void keyword_init () {
 
-    gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+    //gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
 
 /** TITRE DES WINDOWS **/
     gtk_window_set_title(gui_get_window("mainWindow"), APPLI_TITLE);
@@ -92,6 +92,14 @@ gboolean keyword_maj(gpointer data) {
     int l = 0;
     //ajout 230116
     if(!serialtools_in_reinit_laser) serialtools_plotLaserState();
+
+    if(laser_asserv_utils_RotIsActive()){
+        gui_label_set("lab_Start_R", LASER_ASSERV_ROT_ACTIF_LABEL);
+    } else gui_label_set("lab_Start_R", LASER_ASSERV_ROT_INACTIF_LABEL);
+    if(laser_asserv_utils_TransIsActive()){
+        gui_label_set("lab_Start_T", LASER_ASSERV_TRSL_ACTIF_LABEL);
+    } else gui_label_set("lab_Start_T", LASER_ASSERV_TRSL_INACTIF_LABEL);
+
     //fin ajout 230116
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
@@ -102,14 +110,14 @@ gboolean keyword_maj(gpointer data) {
         }
     }
     if (l>0) {
-        gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+        //gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
         gui_widget2show("chargement",NULL);
     } else {
         if (j>0) {
             gui_widget2show("chargement",NULL);
-            gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
+            //gtk_spinner_start(GTK_SPINNER(gui_get_object("chargement")));
         } else {
-            gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
+            //gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
             gui_widget2hide("chargement",NULL);
             if (motor_running) {
                 Exit(0);
@@ -158,20 +166,6 @@ gboolean keyword_maj(gpointer data) {
             gui_local_label_set(strtools_concat("labM",key,"State",NULL),slave_get_param_in_char("State",i),"mainWindow");
             gui_local_image_set(strtools_concat("imgM",key,"StateImg",NULL),slave_get_param_in_char("StateImg",i),2,"mainWindow");
         }
-/*
-	printf("Vitesse %s %s\n",slave_get_param_in_char("SlaveTitle",i),slave_get_param_in_char("Velocity",i));
-        // Ecriture des vitesses
-        FILE* f = fopen(strtools_concat("dat/",slave_get_param_in_char("SlaveTitle",i),"_",profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)),".dat",NULL),"a");
-        char temps[20];
-        time_t now = time(NULL);
-        strftime(temps, 20, "%H:%M:%S", localtime(&now));
-        if (f != NULL) {
-            if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransVit")
-                fputs(strtools_concat(temps," ",slave_get_param_in_char("Velocity",i)," ",slave_get_param_in_char("Vel2send",i),"\n",NULL),f);
-            else
-                fputs(strtools_concat(temps," ",slave_get_param_in_char("Velocity",i),"\n",NULL),f);
-            fclose(f);
-        }*/
     }
 
 
@@ -183,9 +177,9 @@ gboolean keyword_maj(gpointer data) {
         gui_label_set("labTransVel2send",slave_get_param_in_char("Vel2send",slave_get_index_with_node(slave_get_node_with_profile(PROF_COUPLTRANS))));
         gui_label_set("labTransVel",slave_get_param_in_char("Velocity",slave_get_index_with_node(slave_get_node_with_profile(PROF_COUPLTRANS))));
     }//fin ajout 220116
-    if(gui_spinner_is_active("chargement")) {
-        gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
-    }
+//    if(gui_spinner_is_active("chargement")) {
+//        gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
+//    }
 
     gtk_widget_queue_draw(gui_get_widget("mainWindow"));
     return TRUE;
@@ -195,7 +189,7 @@ gboolean keyword_active_maj(gpointer data) {
     UNS8* res = data;
     int i = slave_get_index_with_node(*res);
     int var = slave_get_param_in_num("Active",i);
-    printf("%d %d %d\n",*res,i,var);
+    //printf("%d %d %d\n",*res,i,var);
     int j = i+1;
     if(var == 0) {
         GtkWidget* but = gui_local_get_widget(gui_get_widget("gridState"),strtools_concat("butActive",strtools_gnum2str(&j,0x02),NULL));

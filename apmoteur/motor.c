@@ -14,9 +14,6 @@
 #include "slave.h"
 
 //ajout 220116
-#include "laser_asserv.h"
-#include "laser_simulation.h"
-#include "profile.h"
 #include "errgen.h"
 extern UNS16 errgen_state;
 extern char * errgen_aux;
@@ -213,10 +210,10 @@ int motor_forward(UNS8 node,int polar) {
         dat = 1;
     else
         dat = -1;
-    if (!motor_start(node,0))
-        return 0;
     if (!cantools_write_sdo(node,polar_adress,&dat))
         return 0;
+//    if (!motor_start(node,0))
+//        return 0;
     return 1;
 }
 
@@ -391,112 +388,20 @@ UNS8 motor_get_param_type(char* id) {
 
 INTEGER16 motor_get_couple(INTEGER32 vel) {
     //cas positif
-    if (vel == 0 && vel <= 1) return 0;
-    else if (vel >= 2 && vel < 200000) return 150;
-    else if (vel >= 200000 && vel < 280000) return 1000;
-    else if (vel >= 280000 && vel < 300000) return 800;
-    else if (vel >= 300000 && vel < 320000) return 600;
-    else if (vel >= 320000 && vel < 341000) return 500;
-    else if (vel >= 341000 ) return 400;
+    if (vel == 0 || vel == 1) return 0;
+    else if (vel >= 2 && vel < 200000) return 150;//(150 * vel / 200000);
+    else if (vel >= 200000 && vel < 280000) return (150 + 850 * (vel - 200000) / 80000);
+    else if (vel >= 280000 && vel < 300000) return (1000 - 200 * (vel - 280000) / 20000);
+    else if (vel >= 300000 && vel < 320000) return (800 - 200 * (vel - 300000) / 20000);
+    else if (vel >= 320000 && vel < 341000) return (600 - 100 * (vel - 320000) / 21000);
+    else if (vel >= 341000 ) return 500;
     //cas negatif
     else if (vel == -1) return 0;
-    else if (vel <= -2 && vel > -200000) return -150;
-    else if (vel <= -200000 && vel > -280000) return -1000;
-    else if (vel <= -280000 && vel > -300000) return -800;
-    else if (vel <= -300000 && vel > -320000) return -600;
-    else if (vel <= -320000 && vel > -341000) return -500;
-    else if (vel <= -341000 ) return -400;
+    else if (vel <= -2 && vel > -200000) return -150;//(150 * vel / 200000);
+    else if (vel <= -200000 && vel > -280000) return (-150 + 850 * (vel + 200000) / 80000);
+    else if (vel <= -280000 && vel > -300000) return (-1000 - 200 * (vel + 280000) / 20000);
+    else if (vel <= -300000 && vel > -320000) return (-800 - 200 * (vel + 300000) / 20000);
+    else if (vel <= -320000 && vel > -341000) return (-600 - 100 * (vel + 320000) / 21000);
+    else if (vel <= -341000 ) return -500;
     else return 0;
-}
-
-void motor_set_MotRot_Accel(void)
-{
-    int index_rot, index_trans;
-    //printf("1\n");
-    if(slave_get_indexList_from_Profile(PROF_VITROT, &index_rot)){
-	errgen_state = ERR_LASER_ASSERV_GETINDEXROT;
-	g_idle_add(errgen_set_safe(NULL), NULL);
-        return;
-    }
-
-    UNS32 accel_T, decel_T;
-    UNS32 accel_R, decel_R;
-    SDOR Accel = {0x6083, 0x00, 0x07};
-    SDOR Decel = {0x6084, 0x00, 0x07};
-    //printf("2\n");
-    slave_get_indexList_from_Profile(PROF_VITTRANS, &index_trans);
-    //printf("3\n");
-    if(index_trans >=0)
-    {
-        //lecture des accelerations
-        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Accel,&accel_T)) {
-            errgen_state = ERR_ROT_GET_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-        if (!cantools_read_sdo(slave_get_node_with_index(index_trans),Decel,&decel_T)) {
-            errgen_state = ERR_ROT_GET_DECEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-    } else {//aucun moteurs vitesse translation
-        accel_T = MOTOR_DEFAULT_MOTTRANSACCEL;
-        decel_T = MOTOR_DEFAULT_MOTTRANSACCEL;
-    }
-    CaptAccel_T = accel_T;
-    CaptDecel_T = decel_T;
-    ConsAccel_T = accel_T;
-    ConsDecel_T = decel_T;
-    //calcul des acceleration rotation correspondante
-    //printf("4\n");
-    if(!laser_simu){
-        printf("cas pas laser simu\n");
-        if(laser_asserv_CalcRotAccel(&ml, &sl, &accel_T, &accel_R)){
-            errgen_state = ERR_ROT_CALC_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-        if(laser_asserv_CalcRotAccel(&ml, &sl, &decel_T, &decel_R)){
-            errgen_state = ERR_ROT_CALC_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-    } else {
-        printf("cas laser simu\n");
-        if(laser_asserv_CalcRotAccel(&lsim, NULL, &accel_T, &accel_R)){
-            errgen_state = ERR_ROT_CALC_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-        if(laser_asserv_CalcRotAccel(&lsim, NULL, &decel_T, &decel_R)){
-            errgen_state = ERR_ROT_CALC_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-
-    }
-
-    //printf("5\n");
-    //ecriture des accelerations
-    if (accel_R > 1000){
-        if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Accel, &accel_R)){
-            errgen_state = ERR_ROT_WRITE_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-    }
-    if (decel_R > 1000){
-        if (!cantools_write_sdo(slave_get_node_with_index(index_rot), Decel, &decel_R)){
-            errgen_state = ERR_ROT_WRITE_ACCEL;
-	    g_idle_add(errgen_set_safe(NULL), NULL);
-            return;
-        }
-    }
-    //printf("6\n");
-    CaptAccel_R = accel_R;
-    CaptDecel_R = decel_R;
-    ConsAccel_R = accel_R;
-    ConsDecel_R = decel_R;
-    //printf("A1 = %u, A2 = %u, D1 = %u, D2 = %u\n", accel_T, decel_T, accel_R, decel_R);
-
 }

@@ -145,26 +145,22 @@ static int master_config() {
                 return 0;
             }
 
-         } else if (l == PROF_COUPLROT){
+         } else if (l == PROF_COUPLROT || l == PROF_COUPLTRANS){
             //mapping PDOT maitre
-            if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20300010,0)){
-                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
-                return 0;
-            }
-            //mapping PDOR maitre
-            if(!cantools_PDO_map_local_config( 0x1601+4*i, 0x20320010, 0)){
-                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
-                return 0;
-            }
-         } else if (l == PROF_COUPLTRANS){
-            //mapping PDOT maitre
-            if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20310010,0)){
-                errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
-                return 0;
+            if(l == PROF_COUPLROT){
+                if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20300010,0)){
+                    errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                    return 0;
+                }
+            } else if (l == PROF_COUPLTRANS) {
+                if (!cantools_PDO_map_local_config( 0x1A00+4*i, 0x20310010,0)){
+                    errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
+                    return 0;
+                }
             }
             //mapping PDOR maitre
             UNS32 velIndex = 0x20260020 + 0x10000*i;
-            if(!cantools_PDO_map_local_config( 0x1601+4*i,velIndex,0x20330010,0)){
+            if(!cantools_PDO_map_local_config( 0x1601+4*i,velIndex,0)){
                 errgen_set(ERR_MASTER_CONFIG_MAP, NULL);
                 return 0;
             }

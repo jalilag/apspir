@@ -23,6 +23,8 @@ int cantools_PDO_map_local_config(UNS16 PDOMapIndex, ...);
 int cantools_desactive_PDO_reseau(UNS8 nodeID, UNS16 index);
 void cantools_ApplyVelRot(INTEGER32 vit);
 void cantools_ApplyVelTrans(INTEGER32 vit);
+void cantools_ApplyCouplTrans(INTEGER16 coupl);
+void cantools_ApplyUniqVelTrans(INTEGER32 vit);
 
 //fin ajout 220116
 
