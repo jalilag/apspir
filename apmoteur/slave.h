@@ -78,4 +78,5 @@ char* slave_get_param_in_char(char* parid, int index);
 INTEGER32 slave_get_param_in_num(char* parid, int index);
 void slave_set_param(char* parid, int index,INTEGER32);
 char* slave_get_param_title (char* parid);
+int slave_get_step_with_length(double lrec);
 #endif // _SLAVE_H

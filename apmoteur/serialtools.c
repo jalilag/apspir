@@ -89,11 +89,13 @@ void serialtools_plotLaserState(void) {
     gui_label_set("labLaserDataV",strtools_gnum2str(&res3, 0x10));
 }
 double serialtools_get_laser_data_valid(void) {
-    unsigned long mes1, mes2;
-    Laser_GetUnverifiedData(&sl, &mes1);
-    Laser_GetUnverifiedData(&ml, &mes2);
-    if(errgen_laserState & 0x15) return (double)mes1/10000;
-    else return (double)mes2/10000;
+    if (run_laser == 3) {
+        unsigned long mes1, mes2;
+        Laser_GetUnverifiedData(&sl, &mes1);
+        Laser_GetUnverifiedData(&ml, &mes2);
+        if(errgen_laserState & 0x15) return (double)mes1/10000;
+        else return (double)mes2/10000;
+    } return 0;
 }
 
 double serialtools_get_laser_data(void* las) {

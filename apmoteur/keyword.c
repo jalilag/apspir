@@ -115,11 +115,13 @@ double length_old = 0;
 extern int motor_running;
 int iii = 0;
 gboolean keyword_maj(gpointer data) {
+    // Laser
     serialtools_plotLaserState();
+
     int i = 0,j=0,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
-
+    // Spinner
     int l = 0;
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("State",i) != STATE_DISCONNECTED && slave_get_param_in_num("State",i) != STATE_READY)
@@ -137,25 +139,26 @@ gboolean keyword_maj(gpointer data) {
         gtk_spinner_stop(GTK_SPINNER(gui_get_object("chargement")));
         gui_widget2hide("chargement",NULL);
         if (motor_running) {
-            Exit(0);
-            slave_set_param("State",slave_get_index_with_profile_id("RotVit"),STATE_CONFIG);
+            int state=0;
+            if (motor_get_state((UNS16)slave_get_param_in_num("Power",slave_get_index_with_profile_id("RotVit"))) == OENABLED) {
+                Exit(0);
+                slave_set_param("State",slave_get_index_with_profile_id("RotVit"),STATE_CONFIG);
+            } else Exit(0);
             motor_running = 0;
         }
     }
-    printf("VelS %d\n",slave_get_param_in_num("Vel2send",slave_get_index_with_profile_id("RotVit")));
 
-    // Ecriture du fichier hélice
     if (set_up) {
+        // Ecriture du fichier hélice
         FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"a");
         if (helix_dat != NULL) {
             INTEGER32 rpos = slave_get_param_in_num("Position",slave_get_index_with_node(slave_get_node_with_profile(profile_get_index_with_id("RotVit"))));
-            double rrpos = sin((double)(rot_pos - rpos)*2*M_PI/(51200*500));
-            double length = length_start - serialtools_get_laser_data_valid();
-            fputs(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n",NULL),helix_dat);
+            double rrpos = sin((double)(rpos - rot_pos)*2*M_PI/(51200*500));
+            double length = fabs(length_start - serialtools_get_laser_data_valid());
+            fputs(strtools_replace_char(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n",NULL),',','.'),helix_dat);
             fclose(helix_dat);
-            printf("vel : %d\n",VelocityS_4);
-            printf("slave pos %s\n",slave_get_param_in_char("Position",slave_get_index_with_profile_id("RotVit")));
         }
+        // Ecriture du fichier Vitesse
         FILE* vel_dat = fopen(FILE_VELOCITY,"a");
         if (vel_dat != NULL) {
             double lrec = actual_length;
@@ -163,14 +166,14 @@ gboolean keyword_maj(gpointer data) {
             lrec = actual_length-lrec; // Distance parcourue
             double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
             clock_gettime(CLOCK_MONOTONIC, &tend);
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec;
-            double vlaser = fabs(lrec)/trec; //temps écoulé
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec);
-            // Ajouter les vitesses moteurs
-            printf("%d %d",slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit")),slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")));
-            double vtrans = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit"))*0.817/(51200*125);
-            double vrot = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"))*7/(51200*500);
-            fputs(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," ",strtools_gnum2str(&vtrans,0x10)," ",strtools_gnum2str(&vrot,0x10),"\n",NULL),vel_dat);
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec; //Temps écoulé entre deux mesures
+            double vlaser = fabs(lrec)/trec*60; // Vitesse laser
+            int current_step = slave_get_step_with_length(lrec);
+            printf("STEP %d\n",current_step);
+            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec); // Temps écoulé
+            double vtrans = (double)slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit"))*0.9/(51200*75)*60; // Vitesse trans
+            double vrot = (double)slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"))*current_step/(51200*500)*60; // Vitesse rot
+            fputs(strtools_replace_char(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," ",strtools_gnum2str(&vtrans,0x10)," ",strtools_gnum2str(&vrot,0x10),"\n",NULL),',','.'),vel_dat);
             fclose(vel_dat);
         }
     }

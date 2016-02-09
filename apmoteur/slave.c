@@ -1312,19 +1312,22 @@ int slave_gen_plot() {
     str2build = strtools_concat(str2build, "\nset key outside left horizontal top textcolor rgb \"white\"",NULL);
     str2build = strtools_concat(str2build, "\nset style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 2 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 3 lc rgb '#8B0E6B' pt 1 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 11 lc rgb '#808080' lt 1",NULL);
     str2build = strtools_concat(str2build, "\nset style line 12 lc rgb '#808080' lt 0 lw 1",NULL);
     str2build = strtools_concat(str2build, "\nset border 3 back ls 11",NULL);
-    str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
     str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
     char* str2build2 = str2build;
+    str2build2 = strtools_concat(str2build2, "\nset lmargin 4",NULL);
+    str2build2 = strtools_concat(str2build2, "\nset yrange [0:10]",NULL);
     str2build = strtools_concat("\nset output 'temp.png'",str2build,NULL);
     str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
     str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
-    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
+    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
+    str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
         if (l == 0) {
@@ -1430,3 +1433,14 @@ int slave_gen_plot() {
     return 1;
 }
 
+int slave_get_step_with_length(double lrec) {
+    int i,lm=0,lM=0;
+    printf("LASER %f\n",lrec);
+    for (i=0;i<conf1.step_size;i++) {
+        lM += step[1][i];
+        if (lrec>(double)lm && lrec <= (double)lM)
+            return step[0][i];
+        lm=lM;
+    }
+    return 0;
+}

@@ -14,4 +14,5 @@ gchar* strtools_gnum2str_all_decimal(void * data, UNS8 type);
 char* strtools_hex2bin(UNS16* data,UNS8 type); // Hexa -> binaire
 void strtools_inv_str(char *chaine); // Inversion de chaine
 int strtools_build_file(char* fname, char* str2write);
+char* strtools_replace_char(char* chaine, const char c2find,const char c2replace);
 #endif // _STRING_FUNC_H

@@ -652,7 +652,7 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
                 INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
-                if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"TargetPosition",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
@@ -687,7 +687,7 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
                 INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
-                if (!motor_set_param(slave_get_node_with_index(i),"Position",val)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"TargetPosition",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
@@ -736,7 +736,7 @@ void on_butStartSet_clicked (GtkWidget* but) {
             fputs("#    Distance    Position\n",helix_dat);
             fputs("0 0\n",helix_dat);
             fclose(helix_dat);
-            motor_forward(slave_get_node_with_profile_id("RotVit"),0);
+            motor_forward(slave_get_node_with_profile_id("RotVit"),1);
             motor_start(slave_get_node_with_profile_id("RotVit"),1);
             slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),200000);
             clock_gettime(CLOCK_MONOTONIC, &tstart);
@@ -745,8 +745,8 @@ void on_butStartSet_clicked (GtkWidget* but) {
             if (vel_dat != NULL) {
                 length_start = serialtools_get_laser_data_valid();
                 double length = 0;
-                fputs("# time    Vlaser    Vrot\n",vel_dat);
-                fputs("0 0 0\n",vel_dat);
+                fputs("# time Vlaser Vtrans Vrot\n",vel_dat);
+                fputs("0 0 0 0\n",vel_dat);
                 fclose(vel_dat);
                 set_up = 1;
             }

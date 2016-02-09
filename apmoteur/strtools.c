@@ -101,6 +101,23 @@ int strtools_num_char_in_file(FILE* file, const char* delim) {
     return i;
 
 }
+char* strtools_replace_char(char* chaine, const char c2find,const char c2replace) {
+    int i, N = strlen(chaine);
+    char mot[2];
+    char* chaine2 = "";
+    for (i=0;i<N;i++) {
+        if (chaine[i] == (char)c2find) {
+            mot[0] = c2replace;
+        } else {
+            mot[0] = (char)chaine[i];
+        }
+        mot[1] = '\0';
+        chaine2 = strtools_concat(chaine2,mot,NULL);
+    }
+    return chaine2;
+}
+
+
 
 // Compte le nombre d'occurence d'une chaine de caractère dans une autre chaine de caractère
 int strtools_num_char_in_str(char* strRef, char* str2find) {
