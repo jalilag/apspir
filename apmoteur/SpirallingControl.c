@@ -33,6 +33,8 @@ void* voltage[SLAVE_NUMBER_LIMIT] = {&Voltage_1,&Voltage_2,&Voltage_3,&Voltage_4
 void* velocity[SLAVE_NUMBER_LIMIT] = {&VelocityR_1,&VelocityR_2,&VelocityR_3,&VelocityR_4,&VelocityR_5};
 void* vel2send[SLAVE_NUMBER_LIMIT] = {&VelocityS_1,&VelocityS_2,&VelocityS_3,&VelocityS_4,&VelocityS_5};
 void* position[SLAVE_NUMBER_LIMIT] = {&PositionR_1,&PositionR_2,&PositionR_3,&PositionR_4,&PositionR_5};
+void* acc2send[SLAVE_NUMBER_LIMIT] = {&AccelerationS_1,&AccelerationS_2,&AccelerationS_3,&AccelerationS_4,&AccelerationS_5};
+void* dcc2send[SLAVE_NUMBER_LIMIT] = {&DecelerationS_1,&DecelerationS_2,&DecelerationS_3,&DecelerationS_4,&DecelerationS_5};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 /** STRUCTURE **/
@@ -67,7 +69,9 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"Volt",0x04,voltage,VOLTAGE},
     {"Velinc",0x04,(void*)velocity_inc,DEFAULT},
     {"Velocity",0x04,velocity,DEFAULT},
-    {"Vel2send",0x04,vel2send,DEFAULT}
+    {"Vel2send",0x04,vel2send,DEFAULT},
+    {"Acc2send",0x07,acc2send,DEFAULT},
+    {"Dcc2send",0x07,dcc2send,DEFAULT}
 };
     // Acces variables distantes
 volatile PARAM pardata[PARAM_NUMBER] = {
@@ -104,7 +108,9 @@ volatile LOCVAR local[LOCVAR_NUMBER] = {
     {0x20180108,0x200F0008}, //Temp
     {0x606C0020,0x20140020}, //Vel R
     {0x60FF0020,0x20190020}, //Vel S
-    {0x60640020,0x201E0020} //Profile
+    {0x60640020,0x201E0020}, //Position
+    {0x60830020,0x20230020}, //Acceleration
+    {0x60840020,0x20280020} //Deceleration
 };
 
 /** PARAMETRES GENERAUX **/
@@ -120,12 +126,13 @@ int current_menu = 0;
     // Pose is running
 int set_up = 0;
     // Variable de temps
-volatile struct timespec tstart={0,0}, tend={0,0};
+double time_start, time_actual_laser, time_actual_sync;
     // Incrémentation du moteur rotvit
-INTEGER32 rot_pos;
+INTEGER32 rot_pos_start, rot_pos_actual;
+int current_step,num_of_cycle_cor = 1,num_of_cycle_nom = 1;
     // Mesure laser
-double length_start,actual_length;
-
+double length_start,length_actual_laser,length_actual_sync,length_covered_laser,length_covered_sync;
+double mean_velocity;
 
 /** FONCTIONS **/
     // A définir mettre a jour

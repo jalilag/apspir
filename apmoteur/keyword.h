@@ -246,7 +246,11 @@ gboolean keyword_active_maj(gpointer data);
 #define STATE_SON_TXT "Mise en marche"
 #define STATE_READY_TXT "Pret"
 
-
+// LASER STATE
+#define LASER_STATE_OFF 0
+#define LASER_STATE_INIT 1
+#define LASER_STATE_PREOP 2
+#define LASER_STATE_READY 3
 // INIT STATE ERROR
 #define ERROR_STATE_NULL 0
 #define ERROR_STATE_LSS 1

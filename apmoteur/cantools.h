@@ -18,5 +18,6 @@ int cantools_PDO_trans(UNS8 nodeID, UNS16 index, UNS8 trans,UNS16 inhibit,UNS16 
 int cantools_PDO_map_config(UNS8 nodeID, UNS16 PDOMapIndex,...);
 int cantools_sync(int start);
 gpointer cantools_init_loop(gpointer data);
+double cantools_get_time(void);
 
 #endif

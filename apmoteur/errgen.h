@@ -39,13 +39,14 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_INIT_LOOP_RUN                    0x0004
 #define ERR_GUI_LOOP_RUN                     0x0005
 #define ERR_LASER_LOOP_RUN                   0x0006
+#define ERR_VELOCITY_MEAN_LOOP               0x0007
 
-#define ERR_FILE_OPEN                        0x0006
-#define ERR_FILE_EMPTY                       0x0007
-#define ERR_FILE_GEN                         0x0008
-#define ERR_FILE_SLAVE_DEF                   0x0009
-#define ERR_FILE_PROFILE                     0x000A
-#define ERR_FILE_PROFILE_INVALID_PARAM       0x000B
+#define ERR_FILE_OPEN                        0x0010
+#define ERR_FILE_EMPTY                       0x0011
+#define ERR_FILE_GEN                         0x0012
+#define ERR_FILE_SLAVE_DEF                   0x0013
+#define ERR_FILE_PROFILE                     0x0014
+#define ERR_FILE_PROFILE_INVALID_PARAM       0x0015
 
 #define ERR_MASTER_CONFIG                    0x0040
 #define ERR_MASTER_STOP_SYNC                 0x0041

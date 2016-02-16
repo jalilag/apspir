@@ -69,6 +69,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="SpirallingMaster.h" />
+		<Unit filename="asserv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="asserv.h" />
 		<Unit filename="cantools.c">
 			<Option compilerVar="CC" />
 		</Unit>

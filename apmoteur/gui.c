@@ -274,7 +274,7 @@ void gui_init() {
     builder = gtk_builder_new (); // Variable globale
 
     // Import GLADE
-    gtk_builder_add_from_file (builder, "XMLappli/Gappli_v1.glade", NULL);
+    gtk_builder_add_from_file (builder, "XMLappli/Gappli_v2.glade", NULL);
 
     // CSS
     GFile * file = g_file_new_for_path ("./stylesheet.css");
@@ -308,8 +308,8 @@ GtkGrid* gui_local_grid_set(gchar* gridID,char* gridTitle,gint numcol,char* colo
     gtk_widget_set_halign(GTK_WIDGET(grid),GTK_ALIGN_FILL);
     gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid)), "box");
     gtk_style_context_add_class (gtk_widget_get_style_context(GTK_WIDGET(grid)), strtools_concat(color,"Box",NULL));
-    gtk_widget_set_margin_top (GTK_WIDGET(grid),10);
-    gtk_widget_set_margin_bottom (GTK_WIDGET(grid),10);
+    gtk_widget_set_margin_top (GTK_WIDGET(grid),5);
+    gtk_widget_set_margin_bottom (GTK_WIDGET(grid),0);
     gtk_widget_set_margin_right (GTK_WIDGET(grid),10);
     gtk_widget_set_margin_left (GTK_WIDGET(grid),10);
     return grid;

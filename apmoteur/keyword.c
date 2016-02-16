@@ -117,7 +117,6 @@ int iii = 0;
 gboolean keyword_maj(gpointer data) {
     // Laser
     serialtools_plotLaserState();
-
     int i = 0,j=0,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
@@ -147,39 +146,11 @@ gboolean keyword_maj(gpointer data) {
             motor_running = 0;
         }
     }
-
-    if (set_up) {
-        // Ecriture du fichier hélice
-        FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"a");
-        if (helix_dat != NULL) {
-            INTEGER32 rpos = slave_get_param_in_num("Position",slave_get_index_with_node(slave_get_node_with_profile(profile_get_index_with_id("RotVit"))));
-            double rrpos = sin((double)(rpos - rot_pos)*2*M_PI/(51200*500));
-            double length = fabs(length_start - serialtools_get_laser_data_valid());
-            fputs(strtools_replace_char(strtools_concat(strtools_gnum2str(&length,0x10)," ",strtools_gnum2str(&rrpos,0x10),"\n",NULL),',','.'),helix_dat);
-            fclose(helix_dat);
-        }
-        // Ecriture du fichier Vitesse
-        FILE* vel_dat = fopen(FILE_VELOCITY,"a");
-        if (vel_dat != NULL) {
-            double lrec = actual_length;
-            actual_length = serialtools_get_laser_data_valid();
-            lrec = actual_length-lrec; // Distance parcourue
-            double trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec;
-            clock_gettime(CLOCK_MONOTONIC, &tend);
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - trec; //Temps écoulé entre deux mesures
-            double vlaser = fabs(lrec)/trec*60; // Vitesse laser
-            int current_step = slave_get_step_with_length(lrec);
-            printf("STEP %d\n",current_step);
-            trec = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec); // Temps écoulé
-            double vtrans = (double)slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("TransVit"))*0.9/(51200*75)*60; // Vitesse trans
-            double vrot = (double)slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"))*current_step/(51200*500)*60; // Vitesse rot
-            fputs(strtools_replace_char(strtools_concat(strtools_gnum2str(&trec,0x10)," ",strtools_gnum2str(&vlaser,0x10)," ",strtools_gnum2str(&vtrans,0x10)," ",strtools_gnum2str(&vrot,0x10),"\n",NULL),',','.'),vel_dat);
-            fclose(vel_dat);
-        }
-    }
     slave_gen_plot();
 
     for (i=0; i<SLAVE_NUMBER; i++) {
+        if (motor_get_slippage((UNS16)slave_get_param_in_num("Power",i)))
+            gui_push_state("Slippage");
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
         if (slave_get_param_in_num("Active",i) == 1 ) {

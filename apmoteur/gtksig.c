@@ -19,6 +19,7 @@
 #include "slave.h"
 #include "profile.h"
 #include "serialtools.h"
+#include "asserv.h"
 
 GtkBuilder *builder;
 
@@ -435,9 +436,9 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) {
                 errgen_set(ERR_SLAVE_CONFIG,NULL);
             motor_start(*dat,1);
             if (gui_but_is_checked("radForward"))
-                motor_forward(*dat,0);
-            else
                 motor_forward(*dat,1);
+            else
+                motor_forward(*dat,0);
 
             gtk_button_set_image(GTK_BUTTON(pEntry),GTK_WIDGET(gtk_image_new_from_file("images/unlock.png")));
         } else if (pold == profile_get_index_with_id("Libre")) {
@@ -589,7 +590,7 @@ void on_butTransUp_clicked (GtkWidget* pEntry) {
     for (i=0; i<SLAVE_NUMBER;i++) {
         if (slave_get_param_in_num("Active",i)) {
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
-                motor_set_param(slave_get_node_with_index(i),"Couple",800);
+                motor_set_param(slave_get_node_with_index(i),"Couple",1000);
                 motor_forward(slave_get_node_with_index(i),0);
                 motor_start(slave_get_node_with_index(i),1);
             }
@@ -612,7 +613,7 @@ void on_butTransDown_clicked (GtkWidget* pEntry) {
     for (i=0; i<SLAVE_NUMBER;i++) {
         if (slave_get_param_in_num("Active",i)) {
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "TransCouple") {
-                motor_set_param(slave_get_node_with_index(i),"Couple",800);
+                motor_set_param(slave_get_node_with_index(i),"Couple",1000);
                 motor_forward(slave_get_node_with_index(i),1);
                 motor_start(slave_get_node_with_index(i),1);
             }
@@ -686,7 +687,7 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
                 if (!motor_forward(slave_get_node_with_index(i),1)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
-                INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
+                INTEGER32 val = (int)((double)STEP_PER_REV*ROT_REDUCTION/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
                 if (!motor_set_param(slave_get_node_with_index(i),"TargetPosition",val)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
@@ -726,44 +727,80 @@ void on_butLaserLoad_clicked (GtkWidget* but) {
 
 void on_butStartSet_clicked (GtkWidget* but) {
     if (set_up == 0) {
-        INTEGER32 rpos = slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit"));
-        FILE* helix_dat = fopen(FILE_HELIX_RECORDED,"w");
-        if (helix_dat != NULL) {
-            rot_pos = rpos;
-            length_start = serialtools_get_laser_data_valid();
-            actual_length = length_start;
-            double length = 0;
-            fputs("#    Distance    Position\n",helix_dat);
-            fputs("0 0\n",helix_dat);
-            fclose(helix_dat);
-            motor_forward(slave_get_node_with_profile_id("RotVit"),1);
-            motor_start(slave_get_node_with_profile_id("RotVit"),1);
-            slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),200000);
-            clock_gettime(CLOCK_MONOTONIC, &tstart);
-            clock_gettime(CLOCK_MONOTONIC, &tend);
-            FILE* vel_dat = fopen(FILE_VELOCITY,"w");
-            if (vel_dat != NULL) {
-                length_start = serialtools_get_laser_data_valid();
-                double length = 0;
-                fputs("# time Vlaser Vtrans Vrot\n",vel_dat);
-                fputs("0 0 0 0\n",vel_dat);
-                fclose(vel_dat);
-                set_up = 1;
-            }
+        // Test du statut (moteur,laser)
+        int i,j=0,k=0,l=0,m=0;
+        for (i=0;i<SLAVE_NUMBER;i++) {
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "TransVit") j++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "TransCouple") k++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotVit") l++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
+        }
+        if (j + k != 2) return;
+        if (l != 1 && m != 1) return;
+        if (run_laser != LASER_STATE_READY) return;
+        // initialisation des variables
+        if (!asserv_init()) return;
+        // Démarrage des moteurs
+        for (i=0;i<SLAVE_NUMBER;i++) {
+            if (slave_get_param_in_num("Active",i) && (
+//                slave_get_profile_id_with_index(i) == "TransVit" ||
+//                slave_get_profile_id_with_index(i) == "TransCouple" ||
+                slave_get_profile_id_with_index(i) == "RotVit"
+                //slave_get_profile_id_with_index(i) == "RotCouple")
+                ))
+                if(!motor_start(slave_get_node_with_index(i),1)) {
+                    return;
+                }
+        }
+        set_up = 1;
+        // Thread de calcul de la vitesse moyenne
+        GError * mean_vel_err;
+        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, &mean_vel_err);
+        if (velthread == NULL) {
+            set_up = 0;
+            errgen_set(ERR_VELOCITY_MEAN_LOOP,NULL);
         }
     }
 }
 
 void on_butContinueSet_clicked (GtkWidget* but) {
     if (set_up == 0) {
+        // Test du statut (moteur,laser)
+        int i,j=0,k=0,l=0,m=0;
+        for (i=0;i<SLAVE_NUMBER;i++) {
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "TransVit") j++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "TransCouple") k++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotVit") l++;
+            if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
+        }
+        if (j + k != 2) return;
+        if (l != 1 && m != 1) return;
+        if (run_laser != LASER_STATE_READY) return;
+        // Démarrage des moteurs
+        for (i=0;i<SLAVE_NUMBER;i++) {
+            if (slave_get_param_in_num("Active",i) && (
+                slave_get_profile_id_with_index(i) == "TransVit" ||
+                slave_get_profile_id_with_index(i) == "TransCouple" ||
+                slave_get_profile_id_with_index(i) == "RotVit" ||
+                slave_get_profile_id_with_index(i) == "RotCouple"))
+                if(!motor_start(slave_get_node_with_index(i),1)) {
+                    return;
+                }
+        }
         set_up = 1;
+        // Thread de calcul de la vitesse moyenne
+        GError * mean_vel_err;
+        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, &mean_vel_err);
+        if (velthread == NULL) {
+            set_up = 0;
+            errgen_set(ERR_VELOCITY_MEAN_LOOP,NULL);
+        }
     }
 }
 
 void on_butStopSet_clicked (GtkWidget* but) {
     if (set_up == 1) {
-        slave_set_param("Vel2send",slave_get_index_with_profile_id("RotVit"),0);
         set_up = 0;
-        motor_start(slave_get_node_with_profile_id("RotVit"),0);
+        Exit(0);
     }
 }

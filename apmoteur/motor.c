@@ -71,6 +71,14 @@ int motor_get_target(UNS16 state) {
     }
 }
 
+int motor_get_slippage(UNS16 state) {
+    char *bstate = strtools_hex2bin(&state,0x06);
+    if (bstate != NULL) {
+        if (bstate[13] == '1') return 1;
+        else return 0;
+    }
+}
+
 char* motor_get_state_title(UNS8 key) {
     if (key == 0x00) {
         return NOT_DEFINED_txt;

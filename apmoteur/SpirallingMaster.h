@@ -47,5 +47,15 @@ extern INTEGER32 PositionR_2;		/* Mapped at index 0x201F, subindex 0x00*/
 extern INTEGER32 PositionR_3;		/* Mapped at index 0x2020, subindex 0x00*/
 extern INTEGER32 PositionR_4;		/* Mapped at index 0x2021, subindex 0x00*/
 extern INTEGER32 PositionR_5;		/* Mapped at index 0x2022, subindex 0x00*/
+extern UNS32 AccelerationS_1;		/* Mapped at index 0x2023, subindex 0x00*/
+extern UNS32 AccelerationS_2;		/* Mapped at index 0x2024, subindex 0x00*/
+extern UNS32 AccelerationS_3;		/* Mapped at index 0x2025, subindex 0x00*/
+extern UNS32 AccelerationS_4;		/* Mapped at index 0x2026, subindex 0x00*/
+extern UNS32 AccelerationS_5;		/* Mapped at index 0x2027, subindex 0x00*/
+extern UNS32 DecelerationS_1;		/* Mapped at index 0x2028, subindex 0x00*/
+extern UNS32 DecelerationS_2;		/* Mapped at index 0x2029, subindex 0x00*/
+extern UNS32 DecelerationS_3;		/* Mapped at index 0x202A, subindex 0x00*/
+extern UNS32 DecelerationS_4;		/* Mapped at index 0x202B, subindex 0x00*/
+extern UNS32 DecelerationS_5;		/* Mapped at index 0x202C, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H

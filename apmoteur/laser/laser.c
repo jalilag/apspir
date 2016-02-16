@@ -29,14 +29,13 @@ static struct laser_data LastLaserData;//dernière donnée vérifiée
 static int MasterControl = 1;//flag indiquant quel laser détient le contrôle 0 ou 1
 //MasterControl: dans Laser_GetData et VerifyMeasureConsistency
 
-unsigned long GetDate_us(void)
-{
+unsigned long GetDate_us(void) {
         static unsigned long InitDate=0;
         struct timespec t1;
         clock_gettime(CLOCK_MONOTONIC,&t1);//alternative à tester clock_gettime(CLOCK_REALTIME, &t1);
-        if(InitDate == 0)
-                InitDate=(t1.tv_sec * 1000000 + t1.tv_nsec / 1000);
-        return (t1.tv_sec * 1000000 + t1.tv_nsec / 1000 - InitDate);
+//        if(InitDate == 0)
+//                InitDate=(t1.tv_sec * 1000000 + t1.tv_nsec / 1000);
+        return (t1.tv_sec * 1000000 + t1.tv_nsec / 1000);
 }
 
 static int isopen[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -109,8 +108,7 @@ void Laser_Init_Minimal(laser * l){
   l->running = 0;
   l->ready_for_analyse = 0;
 }
-int Laser_serial_config(void)
-{
+int Laser_serial_config(void) {
     pid_t pid = fork();
     if (pid < 0) {
         printf("A fork error in Laser_serial_config has occurred.\n");

@@ -32,6 +32,7 @@ CONFIG conf1;
 static int step[2][20] = {{0}};
 static int support[20]={0};
 
+extern double time_start,time_actual_sync,time_actual_laser;
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -41,6 +42,33 @@ int slave_config(UNS8 nodeID) {
     if (!slave_config_com(nodeID)) return 0;
     /* CONFIG FIXE */
     if (!slave_config_with_file(nodeID)) return 0;
+
+    if (slave_get_profile_with_node(nodeID) == profile_get_index_with_id("RotVit")) {
+        if(!cantools_PDO_map_config(nodeID,0x1A02,0x606C0020,0x60640020,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1802,0x01,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if(!cantools_PDO_map_config(nodeID,0x1600,0x60FF0020,0x60830020,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if(!cantools_PDO_map_config(nodeID,0x1601,0x60840020,0)) {
+            errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1400,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1401,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+    }
     return 1;
 }
 
@@ -57,7 +85,7 @@ static int slave_config_com(UNS8 nodeID) {
         return 0;
     }
     /** CONFIGURATION PDOT **/
-    // StatusWord, Error Code, Voltage, Temp
+    // StatusWord, Error Code
     if(!cantools_PDO_map_config(nodeID,0x1A00,0x60410010,0x603F0010,0)) {
         errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
         return 0;
@@ -881,6 +909,9 @@ int slave_get_profile_with_index(int i) {
        // exit(EXIT_FAILURE);
     }
 }
+char* slave_get_profile_id_with_index(int i) {
+    return profile_get_id_with_index(slave_get_profile_with_index(i));
+}
 void slave_set_profile_with_index(int i, int dat) {
     if (i<SLAVE_NUMBER) {
         pthread_mutex_lock (&lock_slave);
@@ -1198,14 +1229,11 @@ gboolean slave_gui_load_visu(gpointer data) {
         int i=4,j;
         char chaine[1024] = "";
         while(fgets(chaine,1024,helix_fn) != NULL) {
-            printf("%s\n",chaine);
             if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
                 conf1.time = dattime;
-                printf("-1\n");
                 valid++;
             }
             if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
-                printf("-2\n");
                 conf1.pipeLength = datpipe;
                 valid++;
             }
@@ -1243,10 +1271,14 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_widget_destroy(gui_local_get_widget(gridPar,"gridHelix"));
     if (gui_local_get_widget(gridPar,"gridVel") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gridPar,"gridVel"));
+    if (gui_local_get_widget(gridPar,"gridErr") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gridPar,"gridErr"));
     GtkGrid* grid = gui_local_grid_set("gridHelix",NULL,conf1.pipeLength,"");
-    GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,conf1.pipeLength,"");
-    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(grid),0,1,1,1);
-    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridVel),1,1,1,1);
+    GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,1,"");
+    GtkGrid* gridErr = gui_local_grid_set("gridErr",NULL,1,"");
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(grid),0,0,1,2);
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridVel),1,0,1,1);
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridErr),1,1,1,1);
     if (valid == 3 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
@@ -1279,8 +1311,8 @@ gboolean slave_gui_load_visu(gpointer data) {
                 j = i+1;
                 GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x04),NULL),"X","bold","blue",NULL);
                 if (l == 0) gtk_grid_attach(grid,lab,l,3,1,1);
-                else if (l == conf1.pipeLength) gtk_grid_attach(grid,lab,l-2,3,2,1);
-                else gtk_grid_attach(grid,lab,l-2,3,3,1);
+                else if (l == conf1.pipeLength) gtk_grid_attach(grid,lab,l,3,1,1);
+                else gtk_grid_attach(grid,lab,l,3,1,1);
             }
         }
         gtk_grid_set_column_homogeneous(grid,TRUE);
@@ -1288,6 +1320,8 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_grid_attach(GTK_GRID(grid),labplot,0,0,conf1.pipeLength,1);
         GtkWidget* labplotvel = gui_create_widget("img","imgPlotVel",NULL,NULL);
         gtk_grid_attach(GTK_GRID(gridVel),labplotvel,0,0,1,1);
+        GtkWidget* labploterr = gui_create_widget("img","imgPlotErr",NULL,NULL);
+        gtk_grid_attach(GTK_GRID(gridErr),labploterr,0,0,1,1);
         slave_gen_plot();
     } else {
         GtkWidget* labplot = gui_create_widget("lab","labConfigError",CONFIG_NOT_SET,"bold","cell2","red",NULL);
@@ -1309,25 +1343,36 @@ int slave_gen_plot() {
     INTEGER32 wgrid = gtk_widget_get_allocated_width(grid);
     INTEGER32 wgridVel = gtk_widget_get_allocated_width(gridVel);
     char* str2build = "";
-    str2build = strtools_concat(str2build, "\nset key outside left horizontal top textcolor rgb \"white\"",NULL);
     str2build = strtools_concat(str2build, "\nset style line 1 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 2 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 3 lc rgb '#8B0E6B' pt 1 ps 1 lt 1 lw 2",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 4 lc rgb '#619FD2' pt 1 ps 1 lt 1 lw 2",NULL);
+    str2build = strtools_concat(str2build, "\nset style line 5 lc rgb '#DFB53E' pt 1 ps 1 lt 1 lw 2",NULL);
     str2build = strtools_concat(str2build, "\nset style line 11 lc rgb '#808080' lt 1",NULL);
     str2build = strtools_concat(str2build, "\nset style line 12 lc rgb '#808080' lt 0 lw 1",NULL);
     str2build = strtools_concat(str2build, "\nset border 3 back ls 11",NULL);
     str2build = strtools_concat(str2build, "\nset rmargin 0",NULL);
     char* str2build2 = str2build;
-    str2build2 = strtools_concat(str2build2, "\nset lmargin 4",NULL);
-    str2build2 = strtools_concat(str2build2, "\nset yrange [0:10]",NULL);
+    char* str2build3 = str2build;
+    str2build = strtools_concat(str2build, "\nset key outside left horizontal top textcolor rgb \"white\"",NULL);
     str2build = strtools_concat("\nset output 'temp.png'",str2build,NULL);
-    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
-    str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
-    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
+    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",200 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
     str2build = strtools_concat(str2build, "\nset lmargin 0",NULL);
+
+    str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
+    str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
+    str2build2 = strtools_concat(str2build2, "\nset lmargin 4",NULL);
+    str2build2 = strtools_concat(str2build2, "\nset yrange [0:4]",NULL);
+    str2build2 = strtools_concat(str2build2, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
+
+    str2build3 = strtools_concat("\nset output 'temp_err.png'",str2build3,NULL);
+    str2build3 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build3,NULL);
+    str2build3 = strtools_concat(str2build3, "\nset lmargin 4",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset yrange [0:1000000]",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
         if (l == 0) {
@@ -1373,7 +1418,7 @@ int slave_gen_plot() {
                 "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             }
         }
-        str2build = strtools_concat(str2build, "title \"Courbe théorique\"",NULL);
+        str2build = strtools_concat(str2build, " title \"Courbe théorique\"",NULL);
 
         y1 += step[1][l];
         coord[l] = y1;
@@ -1381,17 +1426,21 @@ int slave_gen_plot() {
     }
     if (set_up) {
         str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 title \"Courbe réelle\" with lines linestyle 2",NULL);
-        double temps = (double)tend.tv_sec + 1.0e-9*tend.tv_nsec - (double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec+15;
-        if (temps < 30)
+        double temps = time_actual_sync- time_start + 15;
+        if (temps < 30) {
             str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
-        else {
+            str2build3 = strtools_concat(str2build3, "\nset xrange [0:30]",NULL);
+        } else {
             INTEGER32 deb = (int)temps - (int)30;
             INTEGER32 fin = (int)(temps);
             str2build2 = strtools_concat(str2build2, "\nset xrange [",strtools_gnum2str(&deb,0x04),":",strtools_gnum2str(&fin,0x04),"]",NULL);
+            str2build3 = strtools_concat(str2build3, "\nset xrange [",strtools_gnum2str(&deb,0x04),":",strtools_gnum2str(&fin,0x04),"]",NULL);
         }
-        str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY,"\" using 1:2 title \"Vit. Laser\" with lines linestyle 1",NULL);
-        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY,"\" using 1:3 title \"Vit. Translation\" with lines linestyle 2",NULL);
-        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY,"\" using 1:4 title \"Vit. Rotation\" with lines linestyle 3",NULL);
+        str2build2 = strtools_concat(str2build2,"\nplot \"",FILE_VELOCITY_LASER,"\" using 1:2 title \"Vit. Laser Mean\" with lines linestyle 2",NULL);
+        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY_LASER,"\" using 1:3 title \"Vit. Laser Inst.\" with lines linestyle 3",NULL);
+        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY_SYNC,"\" using 1:2 title \"Vit. Translation\" with lines linestyle 4",NULL);
+        str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY_SYNC,"\" using 1:3 title \"Vit. Rotation\" with lines linestyle 5",NULL);
+        str2build3 = strtools_concat(str2build3,"\nplot \"",FILE_ERROR,"\" using 1:2 title \"Erreur\" with lines linestyle 2",NULL);
         if(!strtools_build_file("script_vel.gnu",str2build2)) {
             if (str2build2 != "") free(str2build2);
             return 0;
@@ -1411,6 +1460,26 @@ int slave_gen_plot() {
         // Verifier si une image existe
         gtk_image_clear(GTK_IMAGE(lab2));
         gtk_image_set_from_file(GTK_IMAGE(lab2),"temp_vel.png");
+        if(!strtools_build_file("script_err.gnu",str2build3)) {
+            if (str2build3 != "") free(str2build3);
+            return 0;
+        }
+        pid_t pidErr = fork();
+        if (pidErr < 0) {
+            printf("A fork error has occurred.\n");
+            exit(-1);
+        } else {
+            if (pidErr == 0) {
+                execlp("gnuplot","gnuplot", "script_err.gnu",NULL);
+            } else {
+                wait(0);
+            }
+        }
+        GtkWidget* lab3 = gui_local_get_widget (gridPar,"imgPlotErr");
+        // Verifier si une image existe
+        gtk_image_clear(GTK_IMAGE(lab3));
+        gtk_image_set_from_file(GTK_IMAGE(lab3),"temp_err.png");
+
     }
     if(!strtools_build_file("script.gnu",str2build)) {
         if (str2build != "") free(str2build);
@@ -1435,12 +1504,27 @@ int slave_gen_plot() {
 
 int slave_get_step_with_length(double lrec) {
     int i,lm=0,lM=0;
-    printf("LASER %f\n",lrec);
+    if (lrec <= 0.01) lrec = 0;
     for (i=0;i<conf1.step_size;i++) {
         lM += step[1][i];
         if (lrec>(double)lm && lrec <= (double)lM)
             return step[0][i];
         lm=lM;
     }
-    return 0;
+    return 10000000;
+}
+
+INTEGER32 slave_get_position_with_length (double l) {
+    int i, l_cumul=0;
+    INTEGER32 pos=0;
+    if (l <= 0.01) l=0;
+    for (i=0;i<conf1.step_size;i++) {
+        if (l_cumul + step[1][i] < l) {
+            l_cumul += step[1][i];
+            pos += 51200*500*step[1][i]/step[0][i];
+        } else {
+            pos += 51200*500*(l-l_cumul)/step[0][i];
+        }
+    }
+    return pos;
 }

@@ -5,6 +5,8 @@
 #include "serialtools.h"
 #include "gui.h"
 #include "strtools.h"
+#include <time.h>
+
 
 
 extern UNS16 errgen_state;
@@ -20,7 +22,7 @@ void serialtools_minimum_init(void){
 	Laser_Init_Minimal(&lsim);
 }
 void serialtools_plotLaserState(void) {
-    if (run_laser == 0) {
+    if (run_laser == LASER_STATE_OFF) {
         GtkWidget* but = gui_get_widget("butLaserLoad");
         if (but != NULL) {
             if (gtk_style_context_has_class(gtk_widget_get_style_context(but),"butRed")) {
@@ -29,7 +31,7 @@ void serialtools_plotLaserState(void) {
             }
             gtk_button_set_image(GTK_BUTTON(but),GTK_WIDGET(gtk_image_new_from_icon_name("gtk-connect",GTK_ICON_SIZE_DND)));
         }
-    } else if (run_laser == 3) {
+    } else if (run_laser == LASER_STATE_READY) {
         GtkWidget* but = gui_get_widget("butLaserLoad");
         if (but != NULL) {
             if (gtk_style_context_has_class(gtk_widget_get_style_context(but),"butGreen")) {
@@ -77,25 +79,40 @@ void serialtools_plotLaserState(void) {
         gui_image_set("imgLaserStateD", "gtk-yes", 2);
     }
 
-    //affichage mesures non vérifiées
-    double res1 = serialtools_get_laser_data(&sl);
-    gui_label_set("labLaserDataD", strtools_gnum2str(&res1, 0x10));
-
-    double res2 = serialtools_get_laser_data(&ml);
-    gui_label_set("labLaserDataG", strtools_gnum2str(&res2, 0x10));
-
     //Affichage mesure retenue
-    double res3 = serialtools_get_laser_data_valid();
-    gui_label_set("labLaserDataV",strtools_gnum2str(&res3, 0x10));
+    double res3,t3;
+    if (serialtools_get_laser_data_valid(&res3,&t3)) {
+        gui_label_set("labLaserDataV",strtools_gnum2str(&res3, 0x10));
+
+        //affichage mesures non vérifiées
+        double res1 = serialtools_get_laser_data(&sl);
+        gui_label_set("labLaserDataD", strtools_gnum2str(&res1, 0x10));
+
+        double res2 = serialtools_get_laser_data(&ml);
+        gui_label_set("labLaserDataG", strtools_gnum2str(&res2, 0x10));
+    }
 }
-double serialtools_get_laser_data_valid(void) {
-    if (run_laser == 3) {
+int serialtools_get_laser_data_valid(double* length, double* actTime) {
+    if (run_laser == LASER_STATE_READY) {
         unsigned long mes1, mes2;
+        struct laser_data d;
+        double l;
+        Laser_GetData(&ml, &sl, &d);
         Laser_GetUnverifiedData(&sl, &mes1);
         Laser_GetUnverifiedData(&ml, &mes2);
-        if(errgen_laserState & 0x15) return (double)mes1/10000;
-        else return (double)mes2/10000;
-    } return 0;
+        if(errgen_laserState & 0x15) {
+            l = (double)mes1/10000;
+            *length = l;
+            *actTime = (double)d.t/1000000;
+            return 1;
+        } else {
+            l = (double)mes2/10000;
+            *length = l;
+            *actTime = (double)d.t/1000000;
+            return 1;
+        }
+    }
+    return 0;
 }
 
 double serialtools_get_laser_data(void* las) {
@@ -117,28 +134,28 @@ void serialtools_check_laser_500ms(void){
     if((errgen_laserState & ERR_LASER_FATAL) == ERR_LASER_FATAL){
         errgen_state = LASER_ERROR(ERR_LASER_FATAL);
         g_idle_add(errgen_set_safe(NULL),NULL);
-        run_laser = 0;
+        run_laser = LASER_STATE_OFF;
         serialtools_exit_laser();
 
     }
 }
 gpointer serialtools_init(gpointer data) {
-    run_laser = 1;
+    run_laser = LASER_STATE_INIT;
     unsigned int Lstate = serialtools_init_laser();
     if(Lstate == ERR_LASER_INIT_FATAL){
         errgen_state = ERR_LASER_INIT_FATAL;
         g_idle_add(errgen_set_safe(NULL),NULL);
-        run_laser = 0;
+        run_laser = LASER_STATE_OFF;
     } else if (Lstate == ERR_LASER_SERIAL_CONFIG){
         errgen_state = ERR_LASER_SERIAL_CONFIG;
         g_idle_add(errgen_set_safe(NULL),NULL);
-        run_laser = 0;
+        run_laser = LASER_STATE_OFF;
     } else if (Lstate == ERR_LASER_STARTCHECKTHREAD){
        errgen_state = ERR_LASER_STARTCHECKTHREAD;
        g_idle_add(errgen_set_safe(NULL),NULL);
-        run_laser = 0;
+        run_laser = LASER_STATE_OFF;
     } else
-        run_laser = 2;
+        run_laser = LASER_STATE_PREOP;
     return 0;
 }
 

@@ -294,11 +294,11 @@ gpointer cantools_init_loop(gpointer data) {
     g_timeout_add(500,keyword_maj,NULL);
 
     while (run_init == 1) {
-        if (run_laser == 2) {
+        if (run_laser == LASER_STATE_PREOP) {
             g_thread_join (lthread);
-            run_laser = 3;
+            run_laser = LASER_STATE_READY;
         }
-        if (run_laser == 3) serialtools_check_laser_500ms();
+        if (run_laser == LASER_STATE_READY) serialtools_check_laser_500ms();
         j++;
         MasterState = 0;
         for (i=0; i<SLAVE_NUMBER;i++) {
@@ -324,7 +324,6 @@ gpointer cantools_init_loop(gpointer data) {
                     errgen_aux = slave_get_title_with_index(i);
                     g_idle_add(errgen_set_safe(NULL),NULL);
                     slave_set_param("Active",i,STATE_DISCONNECTED);
-                    printf("State disc\n");
                 } else {
                     slave_set_param("State",i,STATE_PREOP);
                 }
@@ -382,4 +381,10 @@ gpointer cantools_init_loop(gpointer data) {
         usleep(1000000);
     }
     return 0;
+}
+
+double cantools_get_time(void) {
+    struct timespec t={0,0};
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return (double)t.tv_sec + 1.0e-9*t.tv_nsec;
 }

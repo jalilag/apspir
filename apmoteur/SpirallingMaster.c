@@ -41,6 +41,16 @@ INTEGER32 PositionR_2 = 0x0;		/* Mapped at index 0x201F, subindex 0x00 */
 INTEGER32 PositionR_3 = 0x0;		/* Mapped at index 0x2020, subindex 0x00 */
 INTEGER32 PositionR_4 = 0x0;		/* Mapped at index 0x2021, subindex 0x00 */
 INTEGER32 PositionR_5 = 0x0;		/* Mapped at index 0x2022, subindex 0x00 */
+UNS32 AccelerationS_1 = 0x0;		/* Mapped at index 0x2023, subindex 0x00 */
+UNS32 AccelerationS_2 = 0x0;		/* Mapped at index 0x2024, subindex 0x00 */
+UNS32 AccelerationS_3 = 0x0;		/* Mapped at index 0x2025, subindex 0x00 */
+UNS32 AccelerationS_4 = 0x0;		/* Mapped at index 0x2026, subindex 0x00 */
+UNS32 AccelerationS_5 = 0x0;		/* Mapped at index 0x2027, subindex 0x00 */
+UNS32 DecelerationS_1 = 0x0;		/* Mapped at index 0x2028, subindex 0x00 */
+UNS32 DecelerationS_2 = 0x0;		/* Mapped at index 0x2029, subindex 0x00 */
+UNS32 DecelerationS_3 = 0x0;		/* Mapped at index 0x202A, subindex 0x00 */
+UNS32 DecelerationS_4 = 0x0;		/* Mapped at index 0x202B, subindex 0x00 */
+UNS32 DecelerationS_5 = 0x0;		/* Mapped at index 0x202C, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -2054,6 +2064,66 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, int32, sizeof (INTEGER32), (void*)&PositionR_5 }
                      };
 
+/* index 0x2023 :   Mapped variable AccelerationS_1 */
+                    subindex SpirallingMaster_Index2023[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&AccelerationS_1 }
+                     };
+
+/* index 0x2024 :   Mapped variable AccelerationS_2 */
+                    subindex SpirallingMaster_Index2024[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&AccelerationS_2 }
+                     };
+
+/* index 0x2025 :   Mapped variable AccelerationS_3 */
+                    subindex SpirallingMaster_Index2025[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&AccelerationS_3 }
+                     };
+
+/* index 0x2026 :   Mapped variable AccelerationS_4 */
+                    subindex SpirallingMaster_Index2026[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&AccelerationS_4 }
+                     };
+
+/* index 0x2027 :   Mapped variable AccelerationS_5 */
+                    subindex SpirallingMaster_Index2027[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&AccelerationS_5 }
+                     };
+
+/* index 0x2028 :   Mapped variable DecelerationS_1 */
+                    subindex SpirallingMaster_Index2028[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_1 }
+                     };
+
+/* index 0x2029 :   Mapped variable DecelerationS_2 */
+                    subindex SpirallingMaster_Index2029[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_2 }
+                     };
+
+/* index 0x202A :   Mapped variable DecelerationS_3 */
+                    subindex SpirallingMaster_Index202A[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_3 }
+                     };
+
+/* index 0x202B :   Mapped variable DecelerationS_4 */
+                    subindex SpirallingMaster_Index202B[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_4 }
+                     };
+
+/* index 0x202C :   Mapped variable DecelerationS_5 */
+                    subindex SpirallingMaster_Index202C[] =
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_5 }
+                     };
+
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
@@ -2171,6 +2241,16 @@ const indextable SpirallingMaster_objdict[] =
   { (subindex*)SpirallingMaster_Index2020,sizeof(SpirallingMaster_Index2020)/sizeof(SpirallingMaster_Index2020[0]), 0x2020},
   { (subindex*)SpirallingMaster_Index2021,sizeof(SpirallingMaster_Index2021)/sizeof(SpirallingMaster_Index2021[0]), 0x2021},
   { (subindex*)SpirallingMaster_Index2022,sizeof(SpirallingMaster_Index2022)/sizeof(SpirallingMaster_Index2022[0]), 0x2022},
+  { (subindex*)SpirallingMaster_Index2023,sizeof(SpirallingMaster_Index2023)/sizeof(SpirallingMaster_Index2023[0]), 0x2023},
+  { (subindex*)SpirallingMaster_Index2024,sizeof(SpirallingMaster_Index2024)/sizeof(SpirallingMaster_Index2024[0]), 0x2024},
+  { (subindex*)SpirallingMaster_Index2025,sizeof(SpirallingMaster_Index2025)/sizeof(SpirallingMaster_Index2025[0]), 0x2025},
+  { (subindex*)SpirallingMaster_Index2026,sizeof(SpirallingMaster_Index2026)/sizeof(SpirallingMaster_Index2026[0]), 0x2026},
+  { (subindex*)SpirallingMaster_Index2027,sizeof(SpirallingMaster_Index2027)/sizeof(SpirallingMaster_Index2027[0]), 0x2027},
+  { (subindex*)SpirallingMaster_Index2028,sizeof(SpirallingMaster_Index2028)/sizeof(SpirallingMaster_Index2028[0]), 0x2028},
+  { (subindex*)SpirallingMaster_Index2029,sizeof(SpirallingMaster_Index2029)/sizeof(SpirallingMaster_Index2029[0]), 0x2029},
+  { (subindex*)SpirallingMaster_Index202A,sizeof(SpirallingMaster_Index202A)/sizeof(SpirallingMaster_Index202A[0]), 0x202A},
+  { (subindex*)SpirallingMaster_Index202B,sizeof(SpirallingMaster_Index202B)/sizeof(SpirallingMaster_Index202B[0]), 0x202B},
+  { (subindex*)SpirallingMaster_Index202C,sizeof(SpirallingMaster_Index202C)/sizeof(SpirallingMaster_Index202C[0]), 0x202C},
 };
 
 const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -2289,6 +2369,16 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 		case 0x2020: i = 108;break;
 		case 0x2021: i = 109;break;
 		case 0x2022: i = 110;break;
+		case 0x2023: i = 111;break;
+		case 0x2024: i = 112;break;
+		case 0x2025: i = 113;break;
+		case 0x2026: i = 114;break;
+		case 0x2027: i = 115;break;
+		case 0x2028: i = 116;break;
+		case 0x2029: i = 117;break;
+		case 0x202A: i = 118;break;
+		case 0x202B: i = 119;break;
+		case 0x202C: i = 120;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

@@ -73,10 +73,12 @@ gboolean slave_gui_load_state(gpointer data);
 int slave_check_profile_file();
 int slave_read_definition();
 gboolean slave_gui_load_visu(gpointer data);
+char* slave_get_profile_id_with_index(int i);
 
 char* slave_get_param_in_char(char* parid, int index);
 INTEGER32 slave_get_param_in_num(char* parid, int index);
 void slave_set_param(char* parid, int index,INTEGER32);
 char* slave_get_param_title (char* parid);
 int slave_get_step_with_length(double lrec);
+INTEGER32 slave_get_position_with_length (double l);
 #endif // _SLAVE_H
