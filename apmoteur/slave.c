@@ -32,7 +32,7 @@ CONFIG conf1;
 static int step[2][20] = {{0}};
 static int support[20]={0};
 
-extern double time_start,time_actual_sync,time_actual_laser;
+extern double time_start,time_actual_sync,time_actual_laser,min_length;
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -42,33 +42,8 @@ int slave_config(UNS8 nodeID) {
     if (!slave_config_com(nodeID)) return 0;
     /* CONFIG FIXE */
     if (!slave_config_with_file(nodeID)) return 0;
-
-    if (slave_get_profile_with_node(nodeID) == profile_get_index_with_id("RotVit")) {
-        if(!cantools_PDO_map_config(nodeID,0x1A02,0x606C0020,0x60640020,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-        if (!cantools_PDO_trans(nodeID,0x1802,0x01,0x0000,0x0000)) {
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-        if(!cantools_PDO_map_config(nodeID,0x1600,0x60FF0020,0x60830020,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-        if(!cantools_PDO_map_config(nodeID,0x1601,0x60840020,0)) {
-            errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-        if (!cantools_PDO_trans(nodeID,0x1400,0xFF,0x0000,0x0000)) {
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-        if (!cantools_PDO_trans(nodeID,0x1401,0xFF,0x0000,0x0000)) {
-            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
-            return 0;
-        }
-    }
+    /* SPECIFIC CONFIG */
+    if (!slave_config_specific(nodeID)) return 0;
     return 1;
 }
 
@@ -111,6 +86,54 @@ static int slave_config_com(UNS8 nodeID) {
     if (!cantools_PDO_trans(nodeID,0x1803,0xFF,0x0000,0x0000)) {
         errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
         return 0;
+    }
+    return 1;
+}
+
+static int slave_config_specific(UNS8 nodeID) {
+    if (slave_get_profile_with_node(nodeID) == profile_get_index_with_id("RotVit")) {
+        if(!cantools_PDO_map_config(nodeID,0x1A02,0x606C0020,0x60640020,0)) { // vel,pos
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1802,0x01,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if(!cantools_PDO_map_config(nodeID,0x1600,0x60FF0020,0x60830020,0)) { // Vitesse, acc
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if(!cantools_PDO_map_config(nodeID,0x1601,0x60840020,0)) { //dcc
+            errgen_set(ERR_SLAVE_CONFIG_PDOR,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1400,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1401,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+    }
+    if (slave_get_profile_with_node(nodeID) == profile_get_index_with_id("RotCouple")) {
+        if(!cantools_PDO_map_config(nodeID,0x1A02,0x606C0020,0)) { // vel
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1802,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if(!cantools_PDO_map_config(nodeID,0x1600,0x60710010,0)) { // Couple
+            errgen_set(ERR_SLAVE_CONFIG_PDOT,slave_get_title_with_node(nodeID));
+            return 0;
+        }
+        if (!cantools_PDO_trans(nodeID,0x1400,0xFF,0x0000,0x0000)) {
+            errgen_set(ERR_SLAVE_CONFIG_ACTIVE_PDO,slave_get_title_with_node(nodeID));
+            return 0;
+        }
     }
     return 1;
 }
@@ -265,6 +288,8 @@ int slave_gui_param_gen(int ind) {
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix"));
     if (gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridGeom"));
+    if (gui_local_get_widget(gui_get_widget("boxParam"),"gridAsserv") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gui_get_widget("boxParam"),"gridAsserv"));
     if (ind == 0) {
         // grid
         GtkGrid* grid = gui_local_grid_set("gridMotor",MOTOR_PARAM_TITLE,6,"black");
@@ -478,8 +503,46 @@ int slave_gui_param_gen(int ind) {
         GtkWidget* lab6 = gui_create_widget("lab","labLengthDefined",strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat3,0x02),NULL),"fontBBig","bold","cell2","greenColor",NULL);
         gtk_grid_attach(grid,lab6,2,2,2,1);
         gtk_widget_set_halign(lab6,GTK_ALIGN_START);
+    } else if(ind == 4) {
+        // grid
+        GtkGrid* grid = gui_local_grid_set("gridAsserv",ASSERV_PARAM_TITLE,12,"black");
+        gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
+        gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
+        GtkWidget* lab1 = gui_create_widget("lab","labTransType",TRANSLATION_TYPE,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab1,GTK_ALIGN_START);
+        GtkWidget* rad1 = gui_create_widget("radio","radCouple",TRANSLATION_TYPE_TORQUE,NULL);
+        gtk_widget_set_halign(rad1,GTK_ALIGN_START);
+        GtkWidget* rad2 = gui_create_widget("radio","radVit",TRANSLATION_TYPE_SPEED,NULL);
+        gtk_widget_set_halign(rad2,GTK_ALIGN_START);
+        GtkWidget* rad3 = gui_create_widget("radio","radTreuil",TRANSLATION_TYPE_TREUIL,NULL);
+        gtk_widget_set_halign(rad3,GTK_ALIGN_START);
+        gtk_radio_button_join_group(GTK_RADIO_BUTTON(rad2),GTK_RADIO_BUTTON(rad1));
+        gtk_radio_button_join_group(GTK_RADIO_BUTTON(rad3),GTK_RADIO_BUTTON(rad1));
+        GtkWidget* lab2 = gui_create_widget("lab","labVitRotMax",ROT_VIT_MAX,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab2,GTK_ALIGN_START);
+        GtkWidget* ent2 = gui_create_widget("ent","entVitRotMax",NULL,NULL);
+        gtk_widget_set_halign(ent2,GTK_ALIGN_START);
+        GtkWidget* lab3 = gui_create_widget("lab","labPeriodSync",SYNC_PERIOD,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab3,GTK_ALIGN_START);
+        GtkWidget* ent3 = gui_create_widget("ent","entPeriodSync",NULL,NULL);
+        gtk_widget_set_halign(ent3,GTK_ALIGN_START);
+        GtkWidget* lab4 = gui_create_widget("lab","labPeriodCor",CORRECTION_PERIOD,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab4,GTK_ALIGN_START);
+        GtkWidget* ent4 = gui_create_widget("ent","entPeriodCor",NULL,NULL);
+        gtk_widget_set_halign(ent4,GTK_ALIGN_START);
+        gtk_grid_attach(grid,lab1,0,1,1,1);
+        gtk_grid_attach(grid,rad1,1,1,1,1);
+        gtk_grid_attach(grid,rad2,2,1,1,1);
+        gtk_grid_attach(grid,rad3,3,1,1,1);
+        gtk_grid_attach(grid,lab2,0,2,1,1);
+        gtk_grid_attach(grid,ent2,1,2,1,1);
+        gtk_grid_attach(grid,lab3,0,3,1,1);
+        gtk_grid_attach(grid,ent3,1,3,1,1);
+        gtk_grid_attach(grid,lab4,0,4,1,1);
+        gtk_grid_attach(grid,ent4,1,4,1,1);
     }
     gtk_widget_show_all(gui_get_widget("boxParam"));
+
 }
 /**
 * Definition des esclaves
@@ -1365,13 +1428,13 @@ int slave_gen_plot() {
     str2build2 = strtools_concat("\nset output 'temp_vel.png'",str2build2,NULL);
     str2build2 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build2,NULL);
     str2build2 = strtools_concat(str2build2, "\nset lmargin 4",NULL);
-    str2build2 = strtools_concat(str2build2, "\nset yrange [0:4]",NULL);
+    str2build2 = strtools_concat(str2build2, "\nset yrange [0:6]",NULL);
     str2build2 = strtools_concat(str2build2, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
 
     str2build3 = strtools_concat("\nset output 'temp_err.png'",str2build3,NULL);
     str2build3 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build3,NULL);
-    str2build3 = strtools_concat(str2build3, "\nset lmargin 4",NULL);
-    str2build3 = strtools_concat(str2build3, "\nset yrange [0:1000000]",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset lmargin 5",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset yrange [-250000:250000]",NULL);
     str2build3 = strtools_concat(str2build3, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
@@ -1504,7 +1567,7 @@ int slave_gen_plot() {
 
 int slave_get_step_with_length(double lrec) {
     int i,lm=0,lM=0;
-    if (lrec <= 0.01) lrec = 0;
+    if (lrec <= min_length) return step[0][0];
     for (i=0;i<conf1.step_size;i++) {
         lM += step[1][i];
         if (lrec>(double)lm && lrec <= (double)lM)

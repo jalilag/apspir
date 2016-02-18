@@ -28,7 +28,7 @@ extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
-extern int set_up;
+extern int set_up,trans_direction,rot_direction;
 extern int run_laser;
 extern GThread* lthread;
 extern CONFIG conf1;
@@ -61,6 +61,7 @@ void gtksig_init () {
     g_signal_connect (gtk_builder_get_object (builder, "butParamProfile"), "clicked", G_CALLBACK (on_butParamProfile_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamGeom"), "clicked", G_CALLBACK (on_butParamGeom_clicked),NULL);
     g_signal_connect (gtk_builder_get_object (builder, "butParamHelix"), "clicked", G_CALLBACK (on_butParamHelix_clicked),NULL);
+    g_signal_connect (gtk_builder_get_object (builder, "butParamAsserv"), "clicked", G_CALLBACK (on_butParamAsserv_clicked),NULL);
 
     // Mise en place
     g_signal_connect (gtk_builder_get_object (builder, "butTransUp"), "clicked", G_CALLBACK (on_butTransUp_clicked),NULL);
@@ -115,9 +116,8 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransCouple") &&
         slave_get_param_in_num("Active",i))
-            motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple(0));
+            motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple_for_trans(0));
     }
-//    sleep(1);
     for (i=0; i<SLAVE_NUMBER; i++) {
         if ((slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransVit") ||
         slave_get_param_in_num("SlaveProfile",i) == profile_get_index_with_id("TransCouple")) &&
@@ -128,7 +128,7 @@ void on_butVelStart_active_notify(GtkWidget* pEntry) {
             } else if (j == 0) {
                 if (motor_get_state((UNS16)slave_get_param_in_num("Power",i)) == OENABLED) {
                     motor_running = 1;
-//                    motor_start(slave_get_node_with_index(i),0);
+                    motor_start(slave_get_node_with_index(i),0);
                 }
             }
         }
@@ -159,7 +159,7 @@ void on_radBackward_toggled(GtkWidget* pEntry) {
                     errgen_set(ERR_MOTOR_BACKWARD,slave_get_title_with_index(i));
                     return;
                 }
-                motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple(0));
+//                motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple_for_trans(0));
             }
         }
     }
@@ -183,7 +183,7 @@ void on_radForward_toggled(GtkWidget* pEntry) {
                     errgen_set(ERR_MOTOR_BACKWARD,slave_get_title_with_index(i));
                     return;
                 }
-                motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple(0));
+//                motor_set_param(slave_get_node_with_index(i),"Torque",motor_get_couple_for_trans(0));
             }
         }
     }
@@ -200,7 +200,7 @@ void on_butVelUp_clicked(GtkWidget* pEntry) {
             for (j=0;j<SLAVE_NUMBER;j++) {
                 if (slave_get_param_in_num("SlaveProfile",j) == profile_get_index_with_id("TransCouple") &&
                 slave_get_param_in_num("Active",j)) {
-                    motor_set_param(slave_get_node_with_index(j),"Torque",motor_get_couple(vel));
+                    motor_set_param(slave_get_node_with_index(j),"Torque",motor_get_couple_for_trans(vel));
                 }
             }
             slave_set_param("Vel2send",i,vel);
@@ -222,7 +222,7 @@ void on_butVelDown_clicked(GtkWidget* pEntry) {
             for (j=0;j<SLAVE_NUMBER;j++) {
                 if (slave_get_param_in_num("SlaveProfile",j) == profile_get_index_with_id("TransCouple") &&
                 slave_get_param_in_num("Active",j))
-                    motor_set_param(slave_get_node_with_index(j),"Torque",motor_get_couple(vel));
+                    motor_set_param(slave_get_node_with_index(j),"Torque",motor_get_couple_for_trans(vel));
 
             }
         }
@@ -306,6 +306,13 @@ void on_butParamGeom_clicked(GtkWidget* pEntry) {
 **/
 void on_butParamHelix_clicked(GtkWidget* pEntry) {
     current_menu = 3;
+    slave_gui_param_gen(current_menu);
+}
+/**
+* Bouton Header parametre asservissement
+**/
+void on_butParamAsserv_clicked(GtkWidget* pEntry) {
+    current_menu = 4;
     slave_gui_param_gen(current_menu);
 }
 /**
@@ -650,15 +657,16 @@ void on_butRotRight_clicked (GtkWidget* pEntry) {
             printf("i : %d node %x Profile %s\n",i,slave_get_node_with_index(i),profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)));
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
                 if (!motor_forward(slave_get_node_with_index(i),0)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",270000)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"VelocityEnd",270000)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
                 INTEGER32 val = (int)((double)51200*500/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
                 if (!motor_set_param(slave_get_node_with_index(i),"TargetPosition",val)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Couple",500)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"Torque",500)) return;
                 if (!motor_forward(slave_get_node_with_index(i),0)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
             }
@@ -685,15 +693,16 @@ void on_butRotLeft_clicked (GtkWidget* pEntry) {
             printf("i : %d node %x Profile %s\n",i,slave_get_node_with_index(i),profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)));
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotVit") {
                 if (!motor_forward(slave_get_node_with_index(i),1)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",270000)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"VelocityEnd",270000)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",1)) return;
                 INTEGER32 val = (int)((double)STEP_PER_REV*ROT_REDUCTION/360*(int)gtk_adjustment_get_value(gui_get_adjust("adjustStep")));
                 if (!motor_set_param(slave_get_node_with_index(i),"TargetPosition",val)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"VelocityMax",285000)) return;
             }
             if (profile_get_id_with_index(slave_get_param_in_num("SlaveProfile",i)) == "RotCouple") {
                 if (!motor_set_param(slave_get_node_with_index(i),"Profile",4)) return;
-                if (!motor_set_param(slave_get_node_with_index(i),"Couple",500)) return;
+                if (!motor_set_param(slave_get_node_with_index(i),"Torque",500)) return;
                 if (!motor_forward(slave_get_node_with_index(i),1)) return;
                 if (!motor_start(slave_get_node_with_index(i),1)) return;
             }
@@ -742,16 +751,16 @@ void on_butStartSet_clicked (GtkWidget* but) {
         if (!asserv_init()) return;
         // Démarrage des moteurs
         for (i=0;i<SLAVE_NUMBER;i++) {
-            if (slave_get_param_in_num("Active",i) && (
-//                slave_get_profile_id_with_index(i) == "TransVit" ||
-//                slave_get_profile_id_with_index(i) == "TransCouple" ||
-                slave_get_profile_id_with_index(i) == "RotVit"
-                //slave_get_profile_id_with_index(i) == "RotCouple")
-                ))
-                if(!motor_start(slave_get_node_with_index(i),1)) {
-                    return;
-                }
+            if (slave_get_param_in_num("Active",i)) {
+                if (slave_get_profile_id_with_index(i) == "TransCouple")
+                    if (!motor_forward(slave_get_node_with_index(i),0)) return;
+                if (slave_get_profile_id_with_index(i) == "TransCouple" ||
+                slave_get_profile_id_with_index(i) == "RotVit" ||
+                slave_get_profile_id_with_index(i) == "RotCouple")
+                    if(!motor_start(slave_get_node_with_index(i),1)) return;
+            }
         }
+        slave_set_param("Couple2send",slave_get_index_with_profile_id("RotCouple"),motor_get_couple_for_rot(0));
         set_up = 1;
         // Thread de calcul de la vitesse moyenne
         GError * mean_vel_err;
@@ -776,17 +785,18 @@ void on_butContinueSet_clicked (GtkWidget* but) {
         if (j + k != 2) return;
         if (l != 1 && m != 1) return;
         if (run_laser != LASER_STATE_READY) return;
-        // Démarrage des moteurs
+        // Configuration des moteurs
         for (i=0;i<SLAVE_NUMBER;i++) {
-            if (slave_get_param_in_num("Active",i) && (
-                slave_get_profile_id_with_index(i) == "TransVit" ||
-                slave_get_profile_id_with_index(i) == "TransCouple" ||
-                slave_get_profile_id_with_index(i) == "RotVit" ||
-                slave_get_profile_id_with_index(i) == "RotCouple"))
-                if(!motor_start(slave_get_node_with_index(i),1)) {
-                    return;
-                }
+                if (slave_get_profile_id_with_index(i) == "TransCouple")
+                    if (!motor_forward(slave_get_node_with_index(i),trans_direction)) return;
+                if (slave_get_profile_id_with_index(i) == "RotVit" || slave_get_profile_id_with_index(i) == "RotCouple")
+                    if (!motor_forward(slave_get_node_with_index(i),rot_direction)) return;
+
         }
+        //Demarrage des moteurs
+//        if(!motor_start(slave_get_node_with_index(i),1)) return;
+
+        slave_set_param("Couple2send",slave_get_index_with_profile_id("RotCouple"),motor_get_couple_for_rot(0));
         set_up = 1;
         // Thread de calcul de la vitesse moyenne
         GError * mean_vel_err;

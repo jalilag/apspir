@@ -57,5 +57,10 @@ extern UNS32 DecelerationS_2;		/* Mapped at index 0x2029, subindex 0x00*/
 extern UNS32 DecelerationS_3;		/* Mapped at index 0x202A, subindex 0x00*/
 extern UNS32 DecelerationS_4;		/* Mapped at index 0x202B, subindex 0x00*/
 extern UNS32 DecelerationS_5;		/* Mapped at index 0x202C, subindex 0x00*/
+extern INTEGER16 CoupleS_1;		/* Mapped at index 0x202D, subindex 0x00*/
+extern INTEGER16 CoupleS_2;		/* Mapped at index 0x202E, subindex 0x00*/
+extern INTEGER16 CoupleS_3;		/* Mapped at index 0x202F, subindex 0x00*/
+extern INTEGER16 CoupleS_4;		/* Mapped at index 0x2030, subindex 0x00*/
+extern INTEGER16 CoupleS_5;		/* Mapped at index 0x2031, subindex 0x00*/
 
 #endif // SPIRALLINGMASTER_H

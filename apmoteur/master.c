@@ -152,8 +152,6 @@ void SpirallingMaster_stopped(CO_Data* d) {
 }
 
 void SpirallingMaster_post_sync(CO_Data* d) {
-//    printf("POST SYNC\n");
-//    printf("Setup %d\n",set_up);
     if (set_up) {
         time_actual_sync = cantools_get_time();
         printf("time %f %f\n",time_actual_sync,time_start);

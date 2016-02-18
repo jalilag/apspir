@@ -1,5 +1,5 @@
 Current ; 100
 Profile ; 4
-Torque ; 500
+Torque ; 1000
 TorqueVel ; 0
 Pdot3 ; 0X606C0020

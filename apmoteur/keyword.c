@@ -45,19 +45,19 @@ void keyword_init () {
     // Valeur par défaut
 /** BOX TRANSLATION **/
     // Labels boutons
-    gui_label_set("labBoxTranslation",BOX_TRANS_TITLE);
-    gui_label_set("labDirection",DIRECTION);
-    gui_label_set("labVelStop",ACTIVE);
-    gui_label_set("labSetVel",VELOCITY_SET);
-    gui_label_set("labWriteVel",VELOCITY_SEND);
-    gui_label_set("labReadVel",VELOCITY_ACTUAL);
-
-
-    gui_button_set("radForward",FORWARD,NULL);
-    gui_button_set("butVelUp",NULL,"gtk-add");
-    gui_button_set("butVelDown",NULL,"gtk-remove");
-
-    gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
+//    gui_label_set("labBoxTranslation",BOX_TRANS_TITLE);
+//    gui_label_set("labDirection",DIRECTION);
+//    gui_label_set("labVelStop",ACTIVE);
+//    gui_label_set("labSetVel",VELOCITY_SET);
+//    gui_label_set("labWriteVel",VELOCITY_SEND);
+//    gui_label_set("labReadVel",VELOCITY_ACTUAL);
+//
+//
+//    gui_button_set("radForward",FORWARD,NULL);
+//    gui_button_set("butVelUp",NULL,"gtk-add");
+//    gui_button_set("butVelDown",NULL,"gtk-remove");
+//
+//    gtk_switch_set_active(gui_get_switch("butVelStart"),FALSE);
 
 /** BOX SET UP **/
     gui_label_set("labBoxSetUp",BOX_SETUP_TITLE);
@@ -81,10 +81,12 @@ void keyword_init () {
     gui_button_set("butParamProfile",PROFIL_PARAM_TITLE,"gtk-save");
     gui_button_set("butParamHelix",HELIX_PARAM_TITLE,"gtk-save");
     gui_button_set("butParamGeom",GEOM_PARAM_TITLE,"gtk-save");
+    gui_button_set("butParamAsserv",ASSERV_PARAM_TITLE,"gtk-save");
     gtk_button_set_image(gui_get_button("butParamMotor"),GTK_WIDGET(gtk_image_new_from_file("images/moteur.png")));
     gtk_button_set_image(gui_get_button("butParamProfile"),GTK_WIDGET(gtk_image_new_from_file("images/profil.png")));
     gtk_button_set_image(gui_get_button("butParamHelix"),GTK_WIDGET(gtk_image_new_from_file("images/spiral.png")));
     gtk_button_set_image(gui_get_button("butParamGeom"),GTK_WIDGET(gtk_image_new_from_file("images/geom.png")));
+    gtk_button_set_image(gui_get_button("butParamAsserv"),GTK_WIDGET(gtk_image_new_from_file("images/geom.png")));
 
 /** BOX LASER **/
     gui_image_set("imgLaserStateG", "gtk-no", 2);
@@ -141,7 +143,7 @@ gboolean keyword_maj(gpointer data) {
             int state=0;
             if (motor_get_state((UNS16)slave_get_param_in_num("Power",slave_get_index_with_profile_id("RotVit"))) == OENABLED) {
                 Exit(0);
-                slave_set_param("State",slave_get_index_with_profile_id("RotVit"),STATE_CONFIG);
+                slave_set_param("State",slave_get_index_with_profile_id("RotVit"),STATE_PREOP);
             } else Exit(0);
             motor_running = 0;
         }
@@ -149,8 +151,8 @@ gboolean keyword_maj(gpointer data) {
     slave_gen_plot();
 
     for (i=0; i<SLAVE_NUMBER; i++) {
-        if (motor_get_slippage((UNS16)slave_get_param_in_num("Power",i)))
-            gui_push_state("Slippage");
+//        if (motor_get_slippage((UNS16)slave_get_param_in_num("Power",i)))
+//            gui_push_state("Slippage");
         j = i+1; k=0;
         key = strtools_gnum2str(&j,0x02);
         if (slave_get_param_in_num("Active",i) == 1 ) {

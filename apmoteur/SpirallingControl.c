@@ -35,6 +35,7 @@ void* vel2send[SLAVE_NUMBER_LIMIT] = {&VelocityS_1,&VelocityS_2,&VelocityS_3,&Ve
 void* position[SLAVE_NUMBER_LIMIT] = {&PositionR_1,&PositionR_2,&PositionR_3,&PositionR_4,&PositionR_5};
 void* acc2send[SLAVE_NUMBER_LIMIT] = {&AccelerationS_1,&AccelerationS_2,&AccelerationS_3,&AccelerationS_4,&AccelerationS_5};
 void* dcc2send[SLAVE_NUMBER_LIMIT] = {&DecelerationS_1,&DecelerationS_2,&DecelerationS_3,&DecelerationS_4,&DecelerationS_5};
+void* couple2send[SLAVE_NUMBER_LIMIT] = {&CoupleS_1,&CoupleS_2,&CoupleS_3,&CoupleS_4,&CoupleS_5};
 INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT]={0};
 INTEGER32 old_voltage [SLAVE_NUMBER_LIMIT]={0};
 /** STRUCTURE **/
@@ -71,7 +72,8 @@ volatile PARVAR vardata[VAR_NUMBER] = {
     {"Velocity",0x04,velocity,DEFAULT},
     {"Vel2send",0x04,vel2send,DEFAULT},
     {"Acc2send",0x07,acc2send,DEFAULT},
-    {"Dcc2send",0x07,dcc2send,DEFAULT}
+    {"Dcc2send",0x07,dcc2send,DEFAULT},
+    {"Couple2send",0x03,couple2send,DEFAULT}
 };
     // Acces variables distantes
 volatile PARAM pardata[PARAM_NUMBER] = {
@@ -88,6 +90,7 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {VELOCITY_INC,"Velinc",0x0000,0x00,0x04,0,500000,ERR_SET_VELOCITY_INC,0x0000,0x0000},
     {DECELERATION_QS,"Dccqs",0x6085,0x00,0x07,0,1000000,ERR_SET_DECELERATION_QS,ERR_READ_DECELERATION_QS,ERR_SAVE_DECELERATION_QS},
     {TORQUE,"Torque",0x6071,0x00,0x03,0,1000,ERR_SET_TORQUE,ERR_READ_TORQUE,ERR_SAVE_TORQUE},
+    {TORQUE,"TorqueR",0x6077,0x00,0x03,0,1000,ERR_SET_TORQUE,ERR_READ_TORQUE,ERR_SAVE_TORQUE},
     {TORQUE_RAMP,"TorqueSlope",0x6087,0x00,0x07,0,10000,ERR_SET_TORQUE_SLOPE,ERR_READ_TORQUE_SLOPE,ERR_SAVE_TORQUE_SLOPE},
     {TORQUE_VELOCITY,"TorqueVel",0x2704,0x00,0x05,0,255,ERR_SET_TORQUE_VELOCITY,ERR_READ_TORQUE_VELOCITY,ERR_SAVE_TORQUE_VELOCITY},
     {TORQUE_VELOCITY_MAKEUP,"TorqueVelMake",0x2703,0x00,0x07,0,10000000,ERR_SET_TORQUE_VELOCITY_MAKEUP,ERR_READ_TORQUE_VELOCITY_MAKEUP,ERR_SAVE_TORQUE_VELOCITY_MAKEUP},
@@ -96,7 +99,8 @@ volatile PARAM pardata[PARAM_NUMBER] = {
     {VELOCITY,"Velocity",0x60FF,0x00,0x04,0,1000000,ERR_SET_VELOCITY,ERR_READ_VELOCITY,ERR_SAVE_VELOCITY},
     {TARGET_POSITION,"TargetPosition",0x607A,0x00,0x04,0,26000000,ERR_SET_POSITION,ERR_READ_POSITION,ERR_SAVE_POSITION},
     {CONTROL_WORD,"ControlWord",0x6040,0x00,0x06,0,0XFFFF,ERR_SET_CONTROL,ERR_READ_CONTROL,ERR_SAVE_CONTROL},
-    {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,512000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX},
+    {MAX_VELOCITY,"VelocityMax",0x6081,0x00,0x07,0,400000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX},
+    {MAX_VELOCITY,"VelocityEnd",0x6082,0x00,0x07,0,400000,ERR_SET_VELOCITY_MAX,ERR_READ_VELOCITY_MAX,ERR_SAVE_VELOCITY_MAX},
     {POSITION,"Position",0x6064,0x00,0x04,0,999999999,0,ERR_READ_POSITION,0}
 };
 
@@ -110,7 +114,8 @@ volatile LOCVAR local[LOCVAR_NUMBER] = {
     {0x60FF0020,0x20190020}, //Vel S
     {0x60640020,0x201E0020}, //Position
     {0x60830020,0x20230020}, //Acceleration
-    {0x60840020,0x20280020} //Deceleration
+    {0x60840020,0x20280020}, //Deceleration
+    {0x60710010,0x202D0010} //Couple
 };
 
 /** PARAMETRES GENERAUX **/
@@ -127,13 +132,16 @@ int current_menu = 0;
 int set_up = 0;
     // Variable de temps
 double time_start, time_actual_laser, time_actual_sync;
+double tsync;
     // Incrémentation du moteur rotvit
 INTEGER32 rot_pos_start, rot_pos_actual;
-int current_step,num_of_cycle_cor = 1,num_of_cycle_nom = 1;
+int current_step;
+INTEGER32 vitesse_max = 300000;
+double min_length = 0.001;
     // Mesure laser
 double length_start,length_actual_laser,length_actual_sync,length_covered_laser,length_covered_sync;
 double mean_velocity;
-
+int trans_direction=0,rot_direction=0;
 /** FONCTIONS **/
     // A définir mettre a jour
 void catch_signal(int sig) {
@@ -186,20 +194,20 @@ int main(int argc,char **argv) {
     }
 
     // Configuration du socket
-    pid_t pid = fork();
-
-    if (pid < 0) {
-        printf("A fork error has occurred.\n");
-        exit(-1);
-    } else {
-        if (pid == 0) {
-            execlp("./load_can.sh","load_can.sh",NULL);
-            errgen_state = ERR_DRIVER_UP;
-            g_idle_add(errgen_set_safe(NULL),NULL);
-        } else {
-            wait(0);
-        }
-    }
+//    pid_t pid = fork();
+//
+//    if (pid < 0) {
+//        printf("A fork error has occurred.\n");
+//        exit(-1);
+//    } else {
+//        if (pid == 0) {
+//            execlp("./load_can.sh","load_can.sh",NULL);
+//            errgen_state = ERR_DRIVER_UP;
+//            g_idle_add(errgen_set_safe(NULL),NULL);
+//        } else {
+//            wait(0);
+//        }
+//    }
 
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
@@ -223,10 +231,10 @@ int main(int argc,char **argv) {
     }
 
 // Ouverture du port CAN
-    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
-        errgen_state = ERR_DRIVER_OPEN;
-        g_idle_add(errgen_set_safe(NULL),NULL);
-    }
+//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
+//        errgen_state = ERR_DRIVER_OPEN;
+//        g_idle_add(errgen_set_safe(NULL),NULL);
+//    }
 
 
 // Definition des esclaves

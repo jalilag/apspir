@@ -51,6 +51,11 @@ UNS32 DecelerationS_2 = 0x0;		/* Mapped at index 0x2029, subindex 0x00 */
 UNS32 DecelerationS_3 = 0x0;		/* Mapped at index 0x202A, subindex 0x00 */
 UNS32 DecelerationS_4 = 0x0;		/* Mapped at index 0x202B, subindex 0x00 */
 UNS32 DecelerationS_5 = 0x0;		/* Mapped at index 0x202C, subindex 0x00 */
+INTEGER16 CoupleS_1 = 0x0;		/* Mapped at index 0x202D, subindex 0x00 */
+INTEGER16 CoupleS_2 = 0x0;		/* Mapped at index 0x202E, subindex 0x00 */
+INTEGER16 CoupleS_3 = 0x0;		/* Mapped at index 0x202F, subindex 0x00 */
+INTEGER16 CoupleS_4 = 0x0;		/* Mapped at index 0x2030, subindex 0x00 */
+INTEGER16 CoupleS_5 = 0x0;		/* Mapped at index 0x2031, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -2124,6 +2129,36 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&DecelerationS_5 }
                      };
 
+/* index 0x202D :   Mapped variable CoupleS_1 */
+                    subindex SpirallingMaster_Index202D[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&CoupleS_1 }
+                     };
+
+/* index 0x202E :   Mapped variable CoupleS_2 */
+                    subindex SpirallingMaster_Index202E[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&CoupleS_2 }
+                     };
+
+/* index 0x202F :   Mapped variable CoupleS_3 */
+                    subindex SpirallingMaster_Index202F[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&CoupleS_3 }
+                     };
+
+/* index 0x2030 :   Mapped variable CoupleS_4 */
+                    subindex SpirallingMaster_Index2030[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&CoupleS_4 }
+                     };
+
+/* index 0x2031 :   Mapped variable CoupleS_5 */
+                    subindex SpirallingMaster_Index2031[] =
+                     {
+                       { RW, int16, sizeof (INTEGER16), (void*)&CoupleS_5 }
+                     };
+
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
@@ -2251,6 +2286,11 @@ const indextable SpirallingMaster_objdict[] =
   { (subindex*)SpirallingMaster_Index202A,sizeof(SpirallingMaster_Index202A)/sizeof(SpirallingMaster_Index202A[0]), 0x202A},
   { (subindex*)SpirallingMaster_Index202B,sizeof(SpirallingMaster_Index202B)/sizeof(SpirallingMaster_Index202B[0]), 0x202B},
   { (subindex*)SpirallingMaster_Index202C,sizeof(SpirallingMaster_Index202C)/sizeof(SpirallingMaster_Index202C[0]), 0x202C},
+  { (subindex*)SpirallingMaster_Index202D,sizeof(SpirallingMaster_Index202D)/sizeof(SpirallingMaster_Index202D[0]), 0x202D},
+  { (subindex*)SpirallingMaster_Index202E,sizeof(SpirallingMaster_Index202E)/sizeof(SpirallingMaster_Index202E[0]), 0x202E},
+  { (subindex*)SpirallingMaster_Index202F,sizeof(SpirallingMaster_Index202F)/sizeof(SpirallingMaster_Index202F[0]), 0x202F},
+  { (subindex*)SpirallingMaster_Index2030,sizeof(SpirallingMaster_Index2030)/sizeof(SpirallingMaster_Index2030[0]), 0x2030},
+  { (subindex*)SpirallingMaster_Index2031,sizeof(SpirallingMaster_Index2031)/sizeof(SpirallingMaster_Index2031[0]), 0x2031},
 };
 
 const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -2379,6 +2419,11 @@ const indextable * SpirallingMaster_scanIndexOD (UNS16 wIndex, UNS32 * errorCode
 		case 0x202A: i = 118;break;
 		case 0x202B: i = 119;break;
 		case 0x202C: i = 120;break;
+		case 0x202D: i = 121;break;
+		case 0x202E: i = 122;break;
+		case 0x202F: i = 123;break;
+		case 0x2030: i = 124;break;
+		case 0x2031: i = 125;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

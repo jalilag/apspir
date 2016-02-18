@@ -25,7 +25,8 @@ int motor_switch_on(UNS8 node);
 int switch_motor_off(UNS8 node);
 int motor_start(UNS8 node,int start); // SON -> OP
 int motor_forward(UNS8 node,int polar ); // Polarity
-int motor_get_couple(INTEGER32 vel);
+int motor_get_couple_for_trans(INTEGER32 vel);
+INTEGER32 motor_get_couple_for_rot(INTEGER32 vel);
 
 int motor_set_param(UNS8 node,char* id,INTEGER32 dat);
 int motor_get_param(UNS8 node,char* id,INTEGER32* dat);

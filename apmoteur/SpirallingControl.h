@@ -4,11 +4,11 @@
 // DONNEE PROGRAMME
 #define SLAVE_NUMBER_LIMIT 10 // Nombre d'esclave
 #define PROFILE_NUMBER 5 // Nombre de profile
-#define PARAM_NUMBER 23 // Nombre max de profile
-#define VAR_NUMBER 20
-#define LOCVAR_NUMBER 9
+#define PARAM_NUMBER 25 // Nombre max de profile
+#define VAR_NUMBER 21
+#define LOCVAR_NUMBER 10
 
-#define CYCLE_PERIOD 0x0007A120 // Sync tou les 500000us = 500ms
+#define CYCLE_PERIOD 0x000186A0 // Sync tou les 500000us = 500ms
 #define HB_CONS_BASE 0x000003E8 // Verification du heartbeat tout les 1000ms
 #define HB_CONS_BASE_OFFSET 0x00000032 // Décalage de vérification 50ms
 #define HB_PROD 0x01F4 // Hearbeat esclave envoyé tout les 500ms

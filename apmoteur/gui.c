@@ -326,6 +326,7 @@ GtkWidget* gui_create_widget(gchar* type,gchar* labid, gchar* labtxt, ...) {
         if (labtxt != NULL) gtk_entry_set_text(GTK_ENTRY(lab),labtxt);
     }
     else if (type == "combo") lab = gtk_combo_box_text_new();
+    else if (type == "radio") lab = gtk_radio_button_new_with_label(NULL,labtxt);
     else if (type == "but") {
         lab = gtk_button_new_with_label(labtxt);
         gtk_button_set_always_show_image(GTK_BUTTON(lab),TRUE);

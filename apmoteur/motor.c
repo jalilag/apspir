@@ -404,13 +404,15 @@ UNS8 motor_get_param_type(char* id) {
     exit(1);
 }
 
-int motor_get_couple(INTEGER32 vel) {
+int motor_get_couple_for_trans(INTEGER32 vel) {
     if (vel >= 0 && vel < 200000) return 150;
-//    else if (vel >= 100000 && vel < 150000) return 600;
-//    else if (vel >= 150000 && vel < 200000) return 800;
     else if (vel >= 200000 && vel < 280000) return 1000;
     else if (vel >= 280000 && vel < 300000) return 800;
     else if (vel >= 300000 && vel < 320000) return 600;
     else if (vel >= 320000 && vel < 341000) return 500;
     else if (vel >= 341000 ) return 400;
+}
+INTEGER32 motor_get_couple_for_rot(INTEGER32 vel) {
+    if (vel == 0) return 50;
+    else return 1000;
 }

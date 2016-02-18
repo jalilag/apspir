@@ -10,7 +10,7 @@ set style line 12 lc rgb '#808080' lt 0 lw 1
 set border 3 back ls 11
 set rmargin 0
 set lmargin 4
-set yrange [0:100000]
+set yrange [-250000:250000]
 set key inside right horizontal top textcolor rgb "white"
-set xrange [10:40]
+set xrange [0:30]
 plot "config/step_error.txt" using 1:2 title "Erreur" with lines linestyle 2

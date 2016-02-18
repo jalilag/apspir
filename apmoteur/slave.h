@@ -67,6 +67,8 @@ char* slave_get_profile_name(int index);
 int slave_config(UNS8 nodeID);
 static int slave_config_com(UNS8 nodeID);
 int slave_config_with_file(UNS8 node);
+static int slave_config_specific(UNS8 nodeID);
+
 int slave_gui_param_gen(int ind);
 int slave_save_param (int index);
 gboolean slave_gui_load_state(gpointer data);

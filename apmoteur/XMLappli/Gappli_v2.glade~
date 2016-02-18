@@ -542,7 +542,6 @@
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="margin_left">5</property>
-                    <property name="margin_bottom">5</property>
                     <child>
                       <object class="GtkLabel" id="labBoxSetUp">
                         <property name="visible">True</property>
@@ -778,7 +777,6 @@
                     <property name="halign">start</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">10</property>
-                    <property name="margin_bottom">5</property>
                     <child>
                       <object class="GtkLabel" id="labTitleSetUp">
                         <property name="visible">True</property>
@@ -1201,8 +1199,9 @@
           <object class="GtkButtonBox" id="buttonbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="margin_right">10</property>
+            <property name="halign">center</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
             <child>
               <object class="GtkButton" id="butParamMotor">
                 <property name="label" translatable="yes">Gestion des moteurs</property>
@@ -1222,7 +1221,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -1245,7 +1244,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -1270,7 +1269,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -1295,14 +1294,35 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="butParamAsserv">
+                <property name="label" translatable="yes">button</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">center</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <style>
+                  <class name="fontBBig"/>
+                  <class name="stdButton"/>
+                  <class name="butBlack2"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
         </child>
