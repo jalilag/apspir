@@ -119,29 +119,39 @@ volatile LOCVAR local[LOCVAR_NUMBER] = {
 };
 
 /** PARAMETRES GENERAUX **/
-int run_init = 1;
-int run_gui_loop = 0;
-int run_laser = 0;
+int run_init = 1; // Boucle init
+int run_gui_loop = 0; // Boucle graphique
+int run_laser = 0; // Etat laser
+int set_up = 0; // Pose is running
 GThread * lthread;
 GMutex lock_gui_box;
-UNS16 errgen_state = 0x0000;
-char* errgen_aux = NULL;
-    // Menu courant
-int current_menu = 0;
-    // Pose is running
-int set_up = 0;
-    // Variable de temps
+UNS16 errgen_state = 0x0000; // Erreur
+char* errgen_aux = NULL; // Info erreur
+int current_menu = 0; // Menu courant parametre
+/** PARAMETRE CALCUL **/
+// TEMPS
 double time_start, time_actual_laser, time_actual_sync;
-double tsync;
-    // Incrémentation du moteur rotvit
-INTEGER32 rot_pos_start, rot_pos_actual;
-int current_step;
-INTEGER32 vitesse_max = 300000;
+double tcalc;
+UNS32 tsync;
+// Incrémentation du moteur rotvit
+INTEGER32 rot_pos_start, rot_pos_actual=0;
+// Limite calcul
+INTEGER32 vitesse_max;
 double min_length = 0.001;
-    // Mesure laser
-double length_start,length_actual_laser,length_actual_sync,length_covered_laser,length_covered_sync;
+int max_error;
+// Distance
+double length_start,length_actual_laser,length_actual_sync;
+double length_covered_laser,length_covered_sync;
+// Vitesses
 double mean_velocity;
-int trans_direction=0,rot_direction=0;
+INTEGER32 trans_vel=0;
+// Autres param_tres
+int rot_direction=0;
+int trans_direction = 0;
+int trans_type=0;
+int current_step;
+INTEGER32 rot_pos_err_in_step,rot_pos_err_mean_in_step;
+double rot_pos_err_in_mm,rot_pos_err_mean_in_mm;
 /** FONCTIONS **/
     // A définir mettre a jour
 void catch_signal(int sig) {
@@ -159,7 +169,7 @@ void catch_signal(int sig) {
 **/
 void Exit(int type) {
     int i = 0;
-    gtk_switch_set_active(gui_get_switch("butVelStart"),0);
+//    gtk_switch_set_active(gui_get_switch("butVelStart"),0);
     for (i=0; i<SLAVE_NUMBER; i++) {
         if (slave_get_param_in_num("Active",i)) {
             motor_start(slave_get_node_with_index(i),0);
@@ -242,6 +252,11 @@ int main(int argc,char **argv) {
         run_init = -1;
         errgen_state = ERR_FILE_SLAVE_DEF;
         errgen_aux = FILE_SLAVE_CONFIG;
+        g_idle_add(errgen_set_safe(NULL),NULL);
+    }
+    if (!slave_check_asserv_config()) {
+        errgen_state = ERR_FILE_SLAVE_DEF;
+        errgen_aux = FILE_ASSERV_CONFIG;
         g_idle_add(errgen_set_safe(NULL),NULL);
     }
 // Control des fichiers de configuration

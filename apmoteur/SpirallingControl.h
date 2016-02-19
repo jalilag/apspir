@@ -16,6 +16,7 @@
 #define FILE_SLAVE_CONFIG "config/slave_config.txt"
 #define FILE_HELIX_CONFIG "config/helix_config.txt"
 #define FILE_GEOM_CONFIG "config/geom_config.txt"
+#define FILE_ASSERV_CONFIG "config/asserv_config.txt"
 #define FILE_HELIX_RECORDED "config/helix_record.txt"
 #define FILE_VELOCITY_LASER "config/velocity_laser.txt"
 #define FILE_VELOCITY_SYNC "config/velocity_sync.txt"
@@ -29,6 +30,8 @@
 #define STEP_PER_REV 51200
 #define ROT_REDUCTION 500
 #define TRANS_REDUCTION 75
+
+#define CONST_NUMBER_LIMIT 7
 // PROFILE
 void catch_signal(int sig);
 void Exit(int type);

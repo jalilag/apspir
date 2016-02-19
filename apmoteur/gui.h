@@ -23,6 +23,7 @@ const gchar* gui_entry_get(gchar* ent_id);
 void gui_push_state(char * txtState);
 int but_is_checked(char* labid); // Savoir si un bouton est coché
 gint64 gui_str2num(const gchar *txtdata); // Convertit str en double
+double gui_str2double(const gchar *txtdata); // Convertit str en double
 void gui_widget2show(char* s1,...); // Affiche les widget en arg
 void gui_widget2hide(char* s1,...);
 void gui_info_box(char* boxTitle, char* boxContent, char* icon);

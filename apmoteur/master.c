@@ -39,7 +39,8 @@ char* baud_rate="1M";
 extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern int SLAVE_NUMBER,set_up;
 extern LOCVAR local[LOCVAR_NUMBER];
-extern double time_actual_sync,time_start;
+extern double time_actual_sync;
+extern UNS32 tsync;
 
 /*****************************************************************************/
 
@@ -77,7 +78,7 @@ static int master_config() {
         errgen_set(ERR_MASTER_START_SYNC,NULL);
         return 0;
     }
-    dat = CYCLE_PERIOD; // Affectation de la periode de synchro
+    dat = tsync; // Affectation de la periode de synchro
     if(!cantools_write_local(0x1006,0x00,&dat,sizeof(UNS32))) {
         errgen_set(ERR_MASTER_SET_PERIOD,NULL);
         return 0;
@@ -154,7 +155,6 @@ void SpirallingMaster_stopped(CO_Data* d) {
 void SpirallingMaster_post_sync(CO_Data* d) {
     if (set_up) {
         time_actual_sync = cantools_get_time();
-        printf("time %f %f\n",time_actual_sync,time_start);
         asserv_check();
     }
     sendPDOevent(d);

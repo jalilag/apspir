@@ -55,4 +55,8 @@ void on_butLaserLoad_clicked (GtkWidget* but);
 void on_butStartSet_clicked (GtkWidget* but);
 void on_butContinueSet_clicked (GtkWidget* but);
 void on_butStopSet_clicked (GtkWidget* but);
+
+void on_radCouple_toggled(GtkWidget* but);
+void on_radVit_toggled(GtkWidget* but);
+void on_radTreuil_toggled(GtkWidget* but);
 #endif

@@ -1,0 +1,6 @@
+TransType 1
+RotDirection 0
+VitRotMax 300000,000
+PeriodSync 100,000
+PeriodCor 500,000
+ErrorMax 10,000

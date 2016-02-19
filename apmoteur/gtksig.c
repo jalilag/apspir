@@ -28,7 +28,7 @@ extern PROF profiles[PROFILE_NUMBER];
 extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
-extern int set_up,trans_direction,rot_direction;
+extern int set_up,trans_direction,rot_direction,trans_type;
 extern int run_laser;
 extern GThread* lthread;
 extern CONFIG conf1;
@@ -744,23 +744,14 @@ void on_butStartSet_clicked (GtkWidget* but) {
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotVit") l++;
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
         }
-        if (j + k != 2) return;
-        if (l != 1 && m != 1) return;
+        if (trans_type == 1 && k < 2) return;
+        if (trans_type == 2 && j< 1 && k < 1) return;
+        if (l < 1 && m < 1) return;
         if (run_laser != LASER_STATE_READY) return;
         // initialisation des variables
+        if (!asserv_motor_config()) return;
         if (!asserv_init()) return;
-        // Démarrage des moteurs
-        for (i=0;i<SLAVE_NUMBER;i++) {
-            if (slave_get_param_in_num("Active",i)) {
-                if (slave_get_profile_id_with_index(i) == "TransCouple")
-                    if (!motor_forward(slave_get_node_with_index(i),0)) return;
-                if (slave_get_profile_id_with_index(i) == "TransCouple" ||
-                slave_get_profile_id_with_index(i) == "RotVit" ||
-                slave_get_profile_id_with_index(i) == "RotCouple")
-                    if(!motor_start(slave_get_node_with_index(i),1)) return;
-            }
-        }
-        slave_set_param("Couple2send",slave_get_index_with_profile_id("RotCouple"),motor_get_couple_for_rot(0));
+        if (!asserv_motor_start()) return;
         set_up = 1;
         // Thread de calcul de la vitesse moyenne
         GError * mean_vel_err;
@@ -812,5 +803,42 @@ void on_butStopSet_clicked (GtkWidget* but) {
     if (set_up == 1) {
         set_up = 0;
         Exit(0);
+    }
+}
+
+void on_radCouple_toggled(GtkWidget* but) {
+    GtkWidget* par = gui_get_widget("boxParam");
+    GtkWidget* lab1 = gui_local_get_widget(par,"labVitTrans");
+    GtkWidget* ent1 = gui_local_get_widget(par,"entVitTrans");
+    if (lab1 != NULL && ent1 != NULL) {
+        gtk_widget_destroy(lab1);
+        gtk_widget_destroy(ent1);
+        gtk_widget_show_all(gui_get_widget("boxParam"));
+    }
+}
+void on_radVit_toggled(GtkWidget* but) {
+    GtkWidget* par = gui_get_widget("boxParam");
+    GtkWidget* lab1 = gui_local_get_widget(par,"labVitTrans");
+    GtkWidget* ent1 = gui_local_get_widget(par,"entVitTrans");
+    if (lab1 == NULL && ent1 == NULL) {
+        GtkWidget* grid = gui_local_get_widget(par,"gridAsserv");
+        GtkWidget* lab1 = gui_create_widget("lab","labVitTrans",TRANS_SPEED,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab1,GTK_ALIGN_START);
+        GtkWidget* ent1 = gui_create_widget("ent","entVitTrans",NULL,NULL);
+        gtk_widget_set_halign(ent1,GTK_ALIGN_START);
+        gtk_grid_attach(GTK_GRID(grid),lab1,0,2,1,1);
+        gtk_grid_attach(GTK_GRID(grid),ent1,1,2,1,1);
+        gtk_widget_show_all(gui_get_widget("boxParam"));
+    }
+}
+void on_radTreuil_toggled(GtkWidget* but) {
+    GtkWidget* par = gui_get_widget("boxParam");
+    GtkWidget* lab1 = gui_local_get_widget(par,"labVitTrans");
+    GtkWidget* ent1 = gui_local_get_widget(par,"entVitTrans");
+    if (lab1 != NULL && ent1 != NULL) {
+        gtk_widget_destroy(lab1);
+        gtk_widget_destroy(ent1);
+        gtk_widget_show_all(gui_get_widget("boxParam"));
+
     }
 }

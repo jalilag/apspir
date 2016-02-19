@@ -14,6 +14,7 @@
 #include "gtksig.h"
 #include "profile.h"
 #include <time.h>
+#include "asserv.h"
 
 extern pthread_mutex_t lock_slave;
 extern GMutex lock_gui, lock_err;
@@ -32,7 +33,10 @@ CONFIG conf1;
 static int step[2][20] = {{0}};
 static int support[20]={0};
 
-extern double time_start,time_actual_sync,time_actual_laser,min_length;
+extern double time_start,time_actual_sync,time_actual_laser,min_length,tcalc;
+extern int trans_type,rot_direction,max_error;
+extern INTEGER32 trans_vel,vitesse_max;
+extern UNS32 tsync;
 /**
 * Configuration des esclaves
 * 0: Echec; 1 Reussite
@@ -511,11 +515,14 @@ int slave_gui_param_gen(int ind) {
         GtkWidget* lab1 = gui_create_widget("lab","labTransType",TRANSLATION_TYPE,"cell2","bold",NULL);
         gtk_widget_set_halign(lab1,GTK_ALIGN_START);
         GtkWidget* rad1 = gui_create_widget("radio","radCouple",TRANSLATION_TYPE_TORQUE,NULL);
+        g_signal_connect (rad1, "toggled", G_CALLBACK (on_radCouple_toggled),NULL);
         gtk_widget_set_halign(rad1,GTK_ALIGN_START);
         GtkWidget* rad2 = gui_create_widget("radio","radVit",TRANSLATION_TYPE_SPEED,NULL);
         gtk_widget_set_halign(rad2,GTK_ALIGN_START);
+        g_signal_connect (rad2, "toggled", G_CALLBACK (on_radVit_toggled),NULL);
         GtkWidget* rad3 = gui_create_widget("radio","radTreuil",TRANSLATION_TYPE_TREUIL,NULL);
         gtk_widget_set_halign(rad3,GTK_ALIGN_START);
+        g_signal_connect (rad3, "toggled", G_CALLBACK (on_radTreuil_toggled),NULL);
         gtk_radio_button_join_group(GTK_RADIO_BUTTON(rad2),GTK_RADIO_BUTTON(rad1));
         gtk_radio_button_join_group(GTK_RADIO_BUTTON(rad3),GTK_RADIO_BUTTON(rad1));
         GtkWidget* lab2 = gui_create_widget("lab","labVitRotMax",ROT_VIT_MAX,"cell2","bold",NULL);
@@ -530,19 +537,73 @@ int slave_gui_param_gen(int ind) {
         gtk_widget_set_halign(lab4,GTK_ALIGN_START);
         GtkWidget* ent4 = gui_create_widget("ent","entPeriodCor",NULL,NULL);
         gtk_widget_set_halign(ent4,GTK_ALIGN_START);
+        GtkWidget* lab6 = gui_create_widget("lab","labErrorMax",MAX_ERROR,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab6,GTK_ALIGN_START);
+        GtkWidget* ent6 = gui_create_widget("ent","entErrorMax",NULL,NULL);
+        gtk_widget_set_halign(ent6,GTK_ALIGN_START);
+        GtkWidget* lab7 = gui_create_widget("lab","labRotDirection",ROT_DIRECTION,"cell2","bold",NULL);
+        gtk_widget_set_halign(lab7,GTK_ALIGN_START);
+        GtkWidget* rad4 = gui_create_widget("radio","radDroit",HELIX_RIGHT,NULL);
+        gtk_widget_set_halign(rad1,GTK_ALIGN_START);
+        GtkWidget* rad5 = gui_create_widget("radio","radGauche",HELIX_LEFT,NULL);
+        gtk_widget_set_halign(rad2,GTK_ALIGN_START);
+        gtk_radio_button_join_group(GTK_RADIO_BUTTON(rad5),GTK_RADIO_BUTTON(rad4));
         gtk_grid_attach(grid,lab1,0,1,1,1);
         gtk_grid_attach(grid,rad1,1,1,1,1);
         gtk_grid_attach(grid,rad2,2,1,1,1);
         gtk_grid_attach(grid,rad3,3,1,1,1);
-        gtk_grid_attach(grid,lab2,0,2,1,1);
-        gtk_grid_attach(grid,ent2,1,2,1,1);
-        gtk_grid_attach(grid,lab3,0,3,1,1);
-        gtk_grid_attach(grid,ent3,1,3,1,1);
-        gtk_grid_attach(grid,lab4,0,4,1,1);
-        gtk_grid_attach(grid,ent4,1,4,1,1);
+        gtk_grid_attach(grid,lab7,0,3,1,1);
+        gtk_grid_attach(grid,rad4,1,3,1,1);
+        gtk_grid_attach(grid,rad5,2,3,1,1);
+        gtk_grid_attach(grid,lab2,0,4,1,1);
+        gtk_grid_attach(grid,ent2,1,4,1,1);
+        gtk_grid_attach(grid,lab3,0,5,1,1);
+        gtk_grid_attach(grid,ent3,1,5,1,1);
+        gtk_grid_attach(grid,lab4,0,6,1,1);
+        gtk_grid_attach(grid,ent4,1,6,1,1);
+        gtk_grid_attach(grid,lab6,0,7,1,1);
+        gtk_grid_attach(grid,ent6,1,7,1,1);
+        FILE* asserv_fn = fopen(FILE_ASSERV_CONFIG,"r");
+        if (asserv_fn != NULL) {
+            char title[20];
+            double datTransType,datRotDir,datTimeSync,datTimeCor,datMaxError,datVmax,datV;
+            char chaine[1024] = "";
+            while(fgets(chaine,1024,asserv_fn) != NULL) {
+                if (sscanf(chaine,"%19s %lf",title,&datTransType) == 2 && strcmp(title,"TransType") == 0) {
+                    if ((int)datTransType == 1) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rad1),TRUE);
+                    if ((int)datTransType == 2) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rad2),TRUE);
+                    if ((int)datTransType == 3) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rad3),TRUE);
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datRotDir) == 2 && strcmp(title,"RotDirection") == 0) {
+                    if ((int)datRotDir == 0) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rad4),TRUE);
+                    if ((int)datRotDir == 1) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rad5),TRUE);
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datV) == 2 && strcmp(title,"VitTrans") == 0) {
+                    GtkWidget* ent5 = gui_local_get_widget(gui_get_widget("boxParam"),"entVitTrans");
+                    if (ent5 != NULL)
+                        gtk_entry_set_text(GTK_ENTRY(ent5), strtools_gnum2str(&datV,0x10));
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datVmax) == 2 && strcmp(title,"VitRotMax") == 0) {
+                    INTEGER32 dat = (INTEGER32)datVmax;
+                    gtk_entry_set_text(GTK_ENTRY(ent2), strtools_gnum2str(&dat,0x04));
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datTimeSync) == 2 && strcmp(title,"PeriodSync") == 0) {
+                    INTEGER32 dat = (INTEGER32)datTimeSync;
+                    gtk_entry_set_text(GTK_ENTRY(ent3), strtools_gnum2str(&dat,0x04));
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datTimeCor) == 2 && strcmp(title,"PeriodCor") == 0) {
+                    INTEGER32 dat = (INTEGER32)datTimeCor;
+                    gtk_entry_set_text(GTK_ENTRY(ent4), strtools_gnum2str(&dat,0x04));
+                }
+                if (sscanf(chaine,"%19s %lf",title,&datMaxError) == 2 && strcmp(title,"ErrorMax") == 0) {
+                    INTEGER32 dat = (INTEGER32)datMaxError;
+                    gtk_entry_set_text(GTK_ENTRY(ent6), strtools_gnum2str(&dat,0x04));
+                }
+            }
+            fclose(asserv_fn);
+        }
     }
     gtk_widget_show_all(gui_get_widget("boxParam"));
-
 }
 /**
 * Definition des esclaves
@@ -631,6 +692,7 @@ int slave_save_param (int index) {
             Exit(1);
             execlp("./SpirallingControl","SpirallingControl",NULL);
         }
+        return 1;
     } else if (index == 1) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridProfile");
         GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listDelField");
@@ -706,7 +768,7 @@ int slave_save_param (int index) {
         gui_widget2hide("windowParams",NULL);
         gui_info_box(SAVE,SAVE_SUCCESS,NULL);
         g_idle_add(slave_gui_load_visu,NULL);
-
+        return 1;
     } else if (index == 3) {
         GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
         GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
@@ -771,6 +833,49 @@ int slave_save_param (int index) {
         gui_widget2hide("windowParams",NULL);
         gui_info_box(SAVE,SAVE_SUCCESS,NULL);
         g_idle_add(slave_gui_load_visu,NULL);
+        return 1;
+    } else if(index == 4) {
+        GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridAsserv");
+        int N = CONST_NUMBER_LIMIT+1,i,ii;
+        i = 1;
+        char* str2build = "";
+        while(i < N) {
+            if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
+                const char* name = gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),1,i));
+                if (asserv_get_const_index_with_id((char*)name) != -1) {
+                    if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))) == 0 ) {
+                        gui_info_popup(EMPTY_FIELD_ERROR,NULL);
+                        return 0;
+                    }
+                    double val = gui_str2double(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,i))));
+                    if(!asserv_check_const(asserv_get_const_name_with_id((char*)name),val)) return 0;
+                    str2build = strtools_concat(str2build,asserv_get_const_name_with_id((char*)name)," ",strtools_gnum2str(&val,0x10),"\n",NULL);
+                }
+                if (strcmp(gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i)),strtools_concat("lab","TransType",NULL)) == 0) {
+                    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_grid_get_child_at(GTK_GRID(grid),1,i))))
+                        str2build = strtools_concat(str2build,"TransType 1\n",NULL);
+                    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_grid_get_child_at(GTK_GRID(grid),2,i))))
+                        str2build = strtools_concat(str2build,"TransType 2\n",NULL);
+                    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_grid_get_child_at(GTK_GRID(grid),3,i))))
+                        str2build = strtools_concat(str2build,"TransType 3\n",NULL);
+                }
+                if (strcmp(gtk_widget_get_name(gtk_grid_get_child_at(GTK_GRID(grid),0,i)),strtools_concat("lab","RotDirection",NULL)) == 0) {
+                    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_grid_get_child_at(GTK_GRID(grid),1,i))))
+                        str2build = strtools_concat(str2build,"RotDirection 0\n",NULL);
+                    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_grid_get_child_at(GTK_GRID(grid),2,i))))
+                        str2build = strtools_concat(str2build,"RotDirection 1\n",NULL);
+                }
+            }
+            i++;
+        }
+        if(!strtools_build_file(FILE_ASSERV_CONFIG,str2build)) {
+            if (str2build != "") free(str2build);
+            return 0;
+        }
+        if (str2build != "") free(str2build);
+        if(!slave_load_const()) {printf("Error\n");return 0;}
+        gui_widget2hide("windowParams",NULL);
+        gui_info_box(SAVE,SAVE_SUCCESS,NULL);
     }
 }
 /**
@@ -1336,12 +1441,37 @@ gboolean slave_gui_load_visu(gpointer data) {
         gtk_widget_destroy(gui_local_get_widget(gridPar,"gridVel"));
     if (gui_local_get_widget(gridPar,"gridErr") != NULL)
         gtk_widget_destroy(gui_local_get_widget(gridPar,"gridErr"));
+    if (gui_local_get_widget(gridPar,"gridErrlab") != NULL)
+        gtk_widget_destroy(gui_local_get_widget(gridPar,"gridErrlab"));
     GtkGrid* grid = gui_local_grid_set("gridHelix",NULL,conf1.pipeLength,"");
     GtkGrid* gridVel = gui_local_grid_set("gridVel",NULL,1,"");
     GtkGrid* gridErr = gui_local_grid_set("gridErr",NULL,1,"");
+    GtkGrid* gridErrlab = gui_local_grid_set("gridErrlab",NULL,1,"");
     gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(grid),0,0,1,2);
     gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridVel),1,0,1,1);
-    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridErr),1,1,1,1);
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridErr),1,1,1,2);
+    gtk_grid_attach(GTK_GRID(gridPar),GTK_WIDGET(gridErrlab),0,2,1,1);
+    GtkWidget* labErr = gui_create_widget("lab",NULL,NULL,"cell",NULL);
+    GtkWidget* labErr1 = gui_create_widget("lab","labErrInst",ERROR_INST,"cell","bold",NULL);
+    GtkWidget* labErr2 = gui_create_widget("lab","labErrMean",ERROR_MEAN,"cell","bold","botBottom",NULL);
+    GtkWidget* labErr3 = gui_create_widget("lab","labUnitMm",UNIT_MM,"cell","bold",NULL);
+    GtkWidget* labErr4 = gui_create_widget("lab","labUnitStep",UNIT_STEP,"cell","bold","botRight",NULL);
+    GtkWidget* labErr5 = gui_create_widget("lab","labErrInstMm",DEFAULT,"cell",NULL);
+    GtkWidget* labErr6 = gui_create_widget("lab","labErrInstStep",DEFAULT,"cell","botRight",NULL);
+    GtkWidget* labErr7 = gui_create_widget("lab","labErrMeanMm",DEFAULT,"cell","botBottom",NULL);
+    GtkWidget* labErr8 = gui_create_widget("lab","labErrMeanStep",DEFAULT,"cell","botRight","botBottom",NULL);
+
+    gtk_grid_attach(gridErrlab,labErr,0,0,1,1);
+    gtk_grid_attach(gridErrlab,labErr1,0,1,1,1);
+    gtk_grid_attach(gridErrlab,labErr2,0,2,1,1);
+    gtk_grid_attach(gridErrlab,labErr3,1,0,1,1);
+    gtk_grid_attach(gridErrlab,labErr4,2,0,1,1);
+    gtk_grid_attach(gridErrlab,labErr5,1,1,1,1);
+    gtk_grid_attach(gridErrlab,labErr6,2,1,1,1);
+    gtk_grid_attach(gridErrlab,labErr7,1,2,1,1);
+    gtk_grid_attach(gridErrlab,labErr8,2,2,1,1);
+    gtk_widget_set_halign(labErr1,GTK_ALIGN_START);
+    gtk_widget_set_halign(labErr2,GTK_ALIGN_START);
     if (valid == 3 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
@@ -1419,7 +1549,7 @@ int slave_gen_plot() {
     char* str2build3 = str2build;
     str2build = strtools_concat(str2build, "\nset key outside left horizontal top textcolor rgb \"white\"",NULL);
     str2build = strtools_concat("\nset output 'temp.png'",str2build,NULL);
-    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",200 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
+    str2build = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgrid,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build,NULL);
     str2build = strtools_concat(str2build, "\nset xrange [0:30]",NULL);
     str2build = strtools_concat(str2build, "\nset yrange [-1:1]",NULL);
     str2build = strtools_concat(str2build, "\nset sample 10000",NULL);
@@ -1432,9 +1562,10 @@ int slave_gen_plot() {
     str2build2 = strtools_concat(str2build2, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
 
     str2build3 = strtools_concat("\nset output 'temp_err.png'",str2build3,NULL);
-    str2build3 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",100 enhanced font 'Verdana,8' background rgb 'black'",str2build3,NULL);
-    str2build3 = strtools_concat(str2build3, "\nset lmargin 5",NULL);
-    str2build3 = strtools_concat(str2build3, "\nset yrange [-250000:250000]",NULL);
+    str2build3 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build3,NULL);
+    str2build3 = strtools_concat(str2build3, "\nset lmargin 7",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset yrange [-25000:150000]",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset grid",NULL);
     str2build3 = strtools_concat(str2build3, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
@@ -1504,6 +1635,7 @@ int slave_gen_plot() {
         str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY_SYNC,"\" using 1:2 title \"Vit. Translation\" with lines linestyle 4",NULL);
         str2build2 = strtools_concat(str2build2,", \"",FILE_VELOCITY_SYNC,"\" using 1:3 title \"Vit. Rotation\" with lines linestyle 5",NULL);
         str2build3 = strtools_concat(str2build3,"\nplot \"",FILE_ERROR,"\" using 1:2 title \"Erreur\" with lines linestyle 2",NULL);
+        str2build3 = strtools_concat(str2build3,",\"",FILE_ERROR,"\" ","using 1:3 title \"Erreur moyenne\" with lines linestyle 1",NULL);
         if(!strtools_build_file("script_vel.gnu",str2build2)) {
             if (str2build2 != "") free(str2build2);
             return 0;
@@ -1590,4 +1722,54 @@ INTEGER32 slave_get_position_with_length (double l) {
         }
     }
     return pos;
+}
+
+int slave_load_const() {
+    FILE* asserv_fn = fopen(FILE_ASSERV_CONFIG,"r");
+    if (asserv_fn == NULL) return 0;
+    char title[20];
+    double datTransType,datRotDir,datTimeSync,datTimeCor,datMaxError,datVmax,datV;
+    char chaine[1024] = "";
+    int i = 0;
+    while(fgets(chaine,1024,asserv_fn) != NULL) {
+        if (sscanf(chaine,"%19s %lf",title,&datTransType) == 2 && strcmp(title,"TransType") == 0) {
+            trans_type=(int)datTransType;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datRotDir) == 2 && strcmp(title,"RotDirection") == 0) {
+            rot_direction = (int)datRotDir;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datV) == 2 && strcmp(title,"VitTrans") == 0) {
+            trans_vel = (INTEGER32)datV/60*STEP_PER_REV*TRANS_REDUCTION/WHEEL_PERIMETER;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datVmax) == 2 && strcmp(title,"VitRotMax") == 0) {
+            vitesse_max = (INTEGER32)datV;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datTimeSync) == 2 && strcmp(title,"PeriodSync") == 0) {
+            tsync = (UNS32)datTimeSync*1000;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datTimeCor) == 2 && strcmp(title,"PeriodCor") == 0) {
+            tcalc = datTimeCor/1000;
+            i++;
+        }
+        if (sscanf(chaine,"%19s %lf",title,&datMaxError) == 2 && strcmp(title,"ErrorMax") == 0) {
+            max_error = (int)datMaxError;
+            i++;
+        }
+    }
+    fclose(asserv_fn);
+    if(i>=6) return 1;
+    else return 0;
+}
+
+int slave_check_asserv_config() {
+    if(!slave_load_const()) {
+        char* str2build = "TransType 1 \nRotDirection 0 \nVitRotMax 300000 \nPeriodSync 100 \nPeriodCor 500 \nErrorMax 2 \n";
+        if(!strtools_build_file(FILE_ASSERV_CONFIG,str2build)) return 0;
+    }
+    return 1;
 }

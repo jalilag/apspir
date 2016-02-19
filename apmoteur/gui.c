@@ -216,6 +216,9 @@ int gui_switch_is_active(char* labid) {
 gint64 gui_str2num(const gchar *txtdata) {
     return g_ascii_strtoll(txtdata,NULL,10);
 }
+double gui_str2double(const gchar *txtdata) {
+    return g_strtod(txtdata,NULL);
+}
 
 void gui_widget2show(gchar* s1,...) {
     gtk_widget_show(gui_get_widget(s1));

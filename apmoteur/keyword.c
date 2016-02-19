@@ -21,6 +21,8 @@ extern INTEGER32 rot_pos; // Position de démarrage moteur
 extern double length_start,actual_length; // Longueur de début
 extern CONFIG conf1;
 extern struct timespec tstart, tend;
+extern INTEGER32 rot_pos_err_in_step,rot_pos_err_mean_in_step;
+extern double rot_pos_err_in_mm,rot_pos_err_mean_in_mm;
 
 void keyword_init () {
 
@@ -119,6 +121,10 @@ int iii = 0;
 gboolean keyword_maj(gpointer data) {
     // Laser
     serialtools_plotLaserState();
+    gui_local_label_set("labErrInstMm",strtools_gnum2str(&rot_pos_err_in_mm,0x10),"gridVisu");
+    gui_local_label_set("labErrMeanMm",strtools_gnum2str(&rot_pos_err_mean_in_mm,0x10),"gridVisu");
+    gui_local_label_set("labErrInstStep",strtools_gnum2str(&rot_pos_err_in_step,0x04),"gridVisu");
+    gui_local_label_set("labErrMeanStep",strtools_gnum2str(&rot_pos_err_mean_in_step,0x04),"gridVisu");
     int i = 0,j=0,k;
     char* key;
     char* item2show[7] = {"State","StateError","Power","PowerError","Temp","Volt",NULL};
