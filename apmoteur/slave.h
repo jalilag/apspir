@@ -30,7 +30,7 @@ typedef struct CONFIG CONFIG;
 struct CONFIG {
     int time; // s
     int pipeLength; // m
-    int length2pipe;
+    double length2pipe;
     int step_size;
     int support_size;
 };

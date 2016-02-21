@@ -481,20 +481,20 @@ void on_butFree_clicked(GtkWidget* pEntry,void* data) {
 void on_butAddStep_clicked(GtkWidget* pEntry) {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
     GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
-    int i = 4,j;
+    int i = 3,j;
     while(gtk_grid_get_child_at(GTK_GRID(grid),1,i) != NULL) {
         i++;
     }
-    if (i == 4) {
+    if (i == 3) {
         // Lab title
         GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
+        gtk_grid_attach(GTK_GRID(grid),lab4,1,2,1,1);
         gtk_widget_set_halign(lab4,GTK_ALIGN_START);
         GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
+        gtk_grid_attach(GTK_GRID(grid),lab5,2,2,1,1);
         gtk_widget_set_halign(lab5,GTK_ALIGN_START);
     }
-    j = i-3;
+    j = i-2;
     GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x02),NULL),strtools_gnum2str(&j,0x02),"fontBig","bold","cell2",NULL);
     GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entHelix_",strtools_gnum2str(&j,0x02),NULL),NULL,NULL);
     GtkWidget* ent2 = gui_create_widget("ent",strtools_concat("entLength_",strtools_gnum2str(&j,0x02),NULL),NULL,NULL);
@@ -513,9 +513,9 @@ void on_butDelStep_clicked(GtkWidget* pEntry) {
     if (ind != -1) {
         const gchar* key = gtk_combo_box_get_active_id(GTK_COMBO_BOX(comb));
         int k = gui_str2num(key);
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),0,k+3));
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),1,k+3));
-        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),2,k+3));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),0,k+2));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),1,k+2));
+        gtk_widget_destroy (gtk_grid_get_child_at(GTK_GRID(grid),2,k+2));
         gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT(comb), ind);
     }
 }
@@ -524,9 +524,9 @@ void on_lengthDef_changed (GtkWidget* pEntry) {
     GtkWidget* grid = gui_local_get_widget(gui_get_widget("boxParam"),"gridHelix");
     GtkWidget* lab = gui_local_get_widget(gui_get_widget("boxParam"),"labLengthDefined");
     GtkWidget* comb = gui_local_get_widget(gui_get_widget("boxParam"),"listStep");
-    int pipeLength = gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2))));
+    int pipeLength = gui_str2num(gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))));
 
-    int i=4,ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+    int i=3,ii=0,N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
     int dat=0;
     while(ii < N) {
         if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {

@@ -31,7 +31,7 @@ extern struct timespec tstart, tend;
 CONFIG conf1;
 
 static int step[2][20] = {{0}};
-static int support[20]={0};
+static double support[20]={0};
 
 extern double time_start,time_actual_sync,time_actual_laser,min_length,tcalc;
 extern int trans_type,rot_direction,max_error;
@@ -388,15 +388,15 @@ int slave_gui_param_gen(int ind) {
         FILE* geom_fn = fopen(FILE_GEOM_CONFIG,"r");
         if (geom_fn != NULL) {
             char title[20];
-            int datreflect,dat1;
+            double datreflect,dat1;
             int i=4,j;
             char chaine[1024] = "";
             while(fgets(chaine,1024,geom_fn) != NULL) {
                 printf("%s\n",chaine);
-                if (sscanf(chaine,"%19s %d",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
-                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entLength2Pipe")), strtools_gnum2str(&datreflect,0x04));
+                if (sscanf(chaine,"%19s %lf",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
+                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entLength2Pipe")), strtools_gnum2str(&datreflect,0x10));
                 }
-                if (sscanf(chaine,"--%d",&dat1) == 1) {
+                if (sscanf(chaine,"--%lf",&dat1) == 1) {
                     if (i == 4) {
                         // Lab title
                         GtkWidget* lab4 = gui_create_widget("lab","labSupportTitle",SUPPORT_TITLE,"fontBig","bold","cell2",NULL);
@@ -408,7 +408,7 @@ int slave_gui_param_gen(int ind) {
                     }
                     j = i-3;
                     GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);
-                    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entSupport_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x04),NULL);
+                    GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entSupport_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x10),NULL);
                     gtk_widget_set_halign(lab,GTK_ALIGN_START);
                     gtk_widget_set_halign(ent1,GTK_ALIGN_START);
 
@@ -429,17 +429,17 @@ int slave_gui_param_gen(int ind) {
         gtk_box_pack_start (gui_get_box("boxParam"),GTK_WIDGET(grid),TRUE,TRUE,0);
         gtk_box_reorder_child(gui_get_box("boxParam"),GTK_WIDGET(grid),2);
         // Labs
-        GtkWidget* lab = gui_create_widget("lab","labTimeSet",strtools_concat(TIME_2_SET," : ",NULL),"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(grid,lab,0,1,1,1);
-        GtkWidget* ent = gui_create_widget("ent","entTimeSet",NULL,NULL);
-        gtk_grid_attach(grid,ent,1,1,1,1);
-        gtk_widget_set_halign(lab,GTK_ALIGN_START);
-        gtk_widget_set_halign(ent,GTK_ALIGN_START);
+//        GtkWidget* lab = gui_create_widget("lab","labTimeSet",strtools_concat(TIME_2_SET," : ",NULL),"fontBig","bold","cell2",NULL);
+//        gtk_grid_attach(grid,lab,0,1,1,1);
+//        GtkWidget* ent = gui_create_widget("ent","entTimeSet",NULL,NULL);
+//        gtk_grid_attach(grid,ent,1,1,1,1);
+//        gtk_widget_set_halign(lab,GTK_ALIGN_START);
+//        gtk_widget_set_halign(ent,GTK_ALIGN_START);
         GtkWidget* lab7 = gui_create_widget("lab","labPipeLength",strtools_concat(PIPE_LENGTH," : ",NULL),"fontBig","bold","cell2",NULL);
-        gtk_grid_attach(grid,lab7,0,2,1,1);
+        gtk_grid_attach(grid,lab7,0,1,1,1);
         GtkWidget* ent7 = gui_create_widget("ent","entPipeLength",NULL,NULL);
         g_signal_connect (G_OBJECT(ent7), "changed", G_CALLBACK (on_lengthDef_changed),NULL);
-        gtk_grid_attach(grid,ent7,1,2,1,1);
+        gtk_grid_attach(grid,ent7,1,1,1,1);
         gtk_widget_set_halign(ent7,GTK_ALIGN_START);
         gtk_widget_set_halign(lab7,GTK_ALIGN_START);
         // but add
@@ -465,30 +465,30 @@ int slave_gui_param_gen(int ind) {
         if (helix_fn != NULL) {
             char title[20];
             int dattime, dat1,dat2,datpipe;
-            int i=4,j;
+            int i=3,j;
             char chaine[1024] = "";
             while(fgets(chaine,1024,helix_fn) != NULL) {
-                if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
-                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
-                }
+//                if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
+//                    gtk_entry_set_text(GTK_ENTRY(gui_local_get_widget(gui_get_widget("boxParam"),"entTimeSet")), strtools_gnum2str(&dattime,0x04));
+//                }
                 if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
                     gtk_entry_set_text(GTK_ENTRY(ent7), strtools_gnum2str(&datpipe,0x04));
                 }
 
                 if (sscanf(chaine,"%d %d",&dat1,&dat2) == 2) {
                     dat3+=dat2;
-                    if (i == 4) {
+                    if (i == 3) {
                         // Lab title
                         GtkWidget* lab4 = gui_create_widget("lab","labStepTitle",HELIX_STEP_TITLE,"fontBig","bold","cell2",NULL);
-                        gtk_grid_attach(GTK_GRID(grid),lab4,1,3,1,1);
+                        gtk_grid_attach(GTK_GRID(grid),lab4,1,2,1,1);
 
                         gtk_widget_set_halign(lab4,GTK_ALIGN_START);
                         GtkWidget* lab5 = gui_create_widget("lab","labLengthTitle",HELIX_LENGTH,"fontBig","bold","cell2",NULL);
-                        gtk_grid_attach(GTK_GRID(grid),lab5,2,3,1,1);
+                        gtk_grid_attach(GTK_GRID(grid),lab5,2,2,1,1);
                         gtk_widget_set_halign(lab5,GTK_ALIGN_START);
 
                     }
-                    j = i-3;
+                    j = i-2;
                     GtkWidget* lab = gui_create_widget("lab",strtools_concat("labHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&j,0x04),"fontBig","bold","cell2",NULL);
                     GtkWidget* ent1 = gui_create_widget("ent",strtools_concat("entHelix_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat1,0x04),NULL);
                     GtkWidget* ent2 = gui_create_widget("ent",strtools_concat("entLength_",strtools_gnum2str(&j,0x04),NULL),strtools_gnum2str(&dat2,0x04),NULL);
@@ -505,7 +505,7 @@ int slave_gui_param_gen(int ind) {
             fclose(helix_fn);
         }
         GtkWidget* lab6 = gui_create_widget("lab","labLengthDefined",strtools_concat(LENGTH_DEFINED," : ",strtools_gnum2str(&dat3,0x02),NULL),"fontBBig","bold","cell2","greenColor",NULL);
-        gtk_grid_attach(grid,lab6,2,2,2,1);
+        gtk_grid_attach(grid,lab6,2,1,2,1);
         gtk_widget_set_halign(lab6,GTK_ALIGN_START);
     } else if(ind == 4) {
         // grid
@@ -776,27 +776,27 @@ int slave_save_param (int index) {
         char *errortxt="";
         char* str2build ="";
 
+//        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))) == 0 ) {
+//            gui_info_popup(TIME_ERROR,NULL);
+//            return 0;
+//        }
+//        const char* timetxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
+//        int time = gui_str2num(timetxt);
+//        if (time > TIME_SET_LIMIT)
+//            str2build = strtools_concat(str2build,"Time ",timetxt,"\n",NULL);
+//        else {
+//            int t = TIME_SET_LIMIT;
+//            gui_info_popup(strtools_concat(TIME_MIN_ERROR, " ", strtools_gnum2str(&t,0x04)," s",NULL),NULL);
+//            return 0;
+//        }
         if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1))) == 0 ) {
-            gui_info_popup(TIME_ERROR,NULL);
-            return 0;
-        }
-        const char* timetxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
-        int time = gui_str2num(timetxt);
-        if (time > TIME_SET_LIMIT)
-            str2build = strtools_concat(str2build,"Time ",timetxt,"\n",NULL);
-        else {
-            int t = TIME_SET_LIMIT;
-            gui_info_popup(strtools_concat(TIME_MIN_ERROR, " ", strtools_gnum2str(&t,0x04)," s",NULL),NULL);
-            return 0;
-        }
-        if (gtk_entry_get_text_length (GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2))) == 0 ) {
             gui_info_popup(PIPE_LENGTH_ERROR,NULL);
             return 0;
         }
-        const char* pipeLengthtxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,2)));
+        const char* pipeLengthtxt = gtk_entry_get_text(GTK_ENTRY(gtk_grid_get_child_at(GTK_GRID(grid),1,1)));
         int pipeLength = gui_str2num(pipeLengthtxt);
         str2build = strtools_concat(str2build,"Pipe ",pipeLengthtxt,"\n",NULL);
-        int ii=0,i = 4, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
+        int ii=0,i = 3, N = gtk_tree_model_iter_n_children(gtk_combo_box_get_model(GTK_COMBO_BOX(comb)),NULL);
         int dat1 = 0;
         while(ii < N) {
             if (gtk_grid_get_child_at(GTK_GRID(grid),0,i) != NULL) {
@@ -820,6 +820,7 @@ int slave_save_param (int index) {
             }
             i++;
         }
+        printf("pipelength %d %d",pipeLength,dat1);
         if (pipeLength < dat1) {
             gui_info_popup(OVER_LENGTH_ERROR,NULL);
             return 0;
@@ -1394,13 +1395,13 @@ gboolean slave_gui_load_visu(gpointer data) {
     if (helix_fn != NULL) {
         char title[20];
         int dattime, dat1,dat2,datpipe;
-        int i=4,j;
+        int i=3,j;
         char chaine[1024] = "";
         while(fgets(chaine,1024,helix_fn) != NULL) {
-            if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
-                conf1.time = dattime;
-                valid++;
-            }
+//            if (sscanf(chaine,"%19s %d",title,&dattime) == 2 && strcmp(title,"Time") == 0) {
+//                conf1.time = dattime;
+//                valid++;
+//            }
             if (sscanf(chaine,"%19s %d",title,&datpipe) == 2 && strcmp(title,"Pipe") == 0) {
                 conf1.pipeLength = datpipe;
                 valid++;
@@ -1417,15 +1418,15 @@ gboolean slave_gui_load_visu(gpointer data) {
     FILE* geom_fn = fopen(FILE_GEOM_CONFIG,"r");
     if (geom_fn != NULL) {
         char title[20];
-        int datreflect,dat3;
+        double datreflect,dat3;
         int i=4,j;
         char chaine[1024] = "";
         while(fgets(chaine,1024,geom_fn) != NULL) {
-            if (sscanf(chaine,"%19s %d",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
+            if (sscanf(chaine,"%19s %lf",title,&datreflect) == 2 && strcmp(title,"Length2Pipe") == 0) {
                 conf1.length2pipe = datreflect;
                 valid++;
             }
-            if (sscanf(chaine,"--%d",&dat3) == 1) {
+            if (sscanf(chaine,"--%lf",&dat3) == 1) {
                 support[i2] = dat3;
                 i2++;
                 conf1.support_size = i2;
@@ -1472,7 +1473,7 @@ gboolean slave_gui_load_visu(gpointer data) {
     gtk_grid_attach(gridErrlab,labErr8,2,2,1,1);
     gtk_widget_set_halign(labErr1,GTK_ALIGN_START);
     gtk_widget_set_halign(labErr2,GTK_ALIGN_START);
-    if (valid == 3 && i1>0 && i2>0) {
+    if (valid == 2 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
         gtk_level_bar_set_min_value(GTK_LEVEL_BAR(lev),0);
@@ -1498,7 +1499,7 @@ gboolean slave_gui_load_visu(gpointer data) {
         }
         int l;
         for (i=0; i<conf1.support_size; i++) {
-            l = conf1.length2pipe+conf1.pipeLength-support[i];
+            l = conf1.length2pipe+conf1.pipeLength-(int)support[i];
 
             if (l >= 0 && l <= conf1.pipeLength) {
                 j = i+1;
@@ -1612,8 +1613,10 @@ int slave_gen_plot() {
                 "*x+",k,")*g",strtools_gnum2str(&l,0x02),"(x) with lines linestyle 1",NULL);
             }
         }
-        str2build = strtools_concat(str2build, " title \"Courbe théorique\"",NULL);
-
+        if (l<conf1.step_size-1)
+            str2build = strtools_concat(str2build, " title \"\"",NULL);
+        else
+            str2build = strtools_concat(str2build, " title \"Courbe théorique\"",NULL);
         y1 += step[1][l];
         coord[l] = y1;
         if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);

@@ -131,7 +131,6 @@ int asserv_check() {
     if (t-time_actual_laser >= tcalc) {
         rot_pos_actual = slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit"));
         printf("rot_pos 2 %d %d %d\n",rot_pos_start,rot_pos_actual,PositionR_4);
-
         INTEGER32 vel_rot_actual = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"));
         // longueur, temps et vitesse actuelle
         double vel_actual = fabs((l - length_actual_laser)/(t-time_actual_laser));
