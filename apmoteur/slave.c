@@ -1720,9 +1720,9 @@ INTEGER32 slave_get_position_with_length (double l) {
     for (i=0;i<conf1.step_size;i++) {
         if (l_cumul + step[1][i] < l) {
             l_cumul += step[1][i];
-            pos += 51200*500*step[1][i]/step[0][i];
+            pos += STEP_PER_REV*ROT_REDUCTION*step[1][i]/step[0][i];
         } else {
-            pos += 51200*500*(l-l_cumul)/step[0][i];
+            pos += STEP_PER_REV*ROT_REDUCTION*(l-l_cumul)/step[0][i];
         }
     }
     return pos;

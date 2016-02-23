@@ -131,8 +131,21 @@ int asserv_check() {
         return 0;
     }
     if (t-time_actual_laser >= tcalc) {
+    // Asservissement translation
+        if (trans_type == 2) {
+            int j1 = slave_get_index_with_profile_id("TransVit");
+            int j2 = slave_get_index_with_profile_id("TransCouple");
+            INTEGER32 vt =slave_get_param_in_num("Velocity",j1);
+            INTEGER32 mv = mean_velocity*STEP_PER_REV*TRANS_REDUCTION/WHEEL_PERIMETER/60;
+            if ( mv < 0.90* vt && vt -20000 > 0) {
+                slave_set_param("Vel2send",j1,vt-20000);
+                slave_set_param("Couple2send",j2,motor_get_couple_for_trans(vt-20000));
+            } else if (mv > 0.90* vt && vt < 0.95*trans_vel && vt+20000 < trans_vel) {
+                slave_set_param("Vel2send",j1,vt-20000);
+                slave_set_param("Couple2send",j2,motor_get_couple_for_trans(vt+20000));
+            }
+        }
         rot_pos_actual = abs(slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit")));
-        printf("rot_pos 2 %d %d %d\n",rot_pos_start,rot_pos_actual,PositionR_4);
         INTEGER32 vel_rot_actual = abs(slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")));
         // longueur, temps et vitesse actuelle
         double vel_actual = fabs((l - length_actual_laser)/(t-time_actual_laser));

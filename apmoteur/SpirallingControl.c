@@ -204,20 +204,20 @@ int main(int argc,char **argv) {
     }
 
     // Configuration du socket
-    pid_t pid = fork();
-
-    if (pid < 0) {
-        printf("A fork error has occurred.\n");
-        exit(-1);
-    } else {
-        if (pid == 0) {
-            execlp("./load_can.sh","load_can.sh",NULL);
-            errgen_state = ERR_DRIVER_UP;
-            g_idle_add(errgen_set_safe(NULL),NULL);
-        } else {
-            wait(0);
-        }
-    }
+//    pid_t pid = fork();
+//
+//    if (pid < 0) {
+//        printf("A fork error has occurred.\n");
+//        exit(-1);
+//    } else {
+//        if (pid == 0) {
+//            execlp("./load_can.sh","load_can.sh",NULL);
+//            errgen_state = ERR_DRIVER_UP;
+//            g_idle_add(errgen_set_safe(NULL),NULL);
+//        } else {
+//            wait(0);
+//        }
+//    }
 
 // Handler pour arret manuel
 	signal(SIGTERM, catch_signal);
@@ -241,10 +241,10 @@ int main(int argc,char **argv) {
     }
 
 // Ouverture du port CAN
-    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
-        errgen_state = ERR_DRIVER_OPEN;
-        g_idle_add(errgen_set_safe(NULL),NULL);
-    }
+//    if(!canOpen(&MasterBoard,&SpirallingMaster_Data)) {
+//        errgen_state = ERR_DRIVER_OPEN;
+//        g_idle_add(errgen_set_safe(NULL),NULL);
+//    }
 
 
 // Definition des esclaves
