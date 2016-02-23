@@ -40,6 +40,8 @@ static char* errgen_get_content(UNS16 dat);
 #define ERR_GUI_LOOP_RUN                     0x0005
 #define ERR_LASER_LOOP_RUN                   0x0006
 #define ERR_VELOCITY_MEAN_LOOP               0x0007
+#define ERR_VEL_STOP_LOOP                    0x0008
+#define ERR_SUPPORT_STOP                     0x0009
 
 #define ERR_FILE_OPEN                        0x0010
 #define ERR_FILE_EMPTY                       0x0011

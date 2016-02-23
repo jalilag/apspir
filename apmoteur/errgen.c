@@ -80,6 +80,15 @@ static char* errgen_get_title(UNS16 dat) {
     else if (dat == ERR_DRIVER_OPEN) return ERR_DRIVER_OPEN_TITLE;
     else if (dat == ERR_INIT_LOOP_RUN) return ERR_INIT_LOOP_RUN_TITLE;
     else if (dat == ERR_GUI_LOOP_RUN) return ERR_GUI_LOOP_RUN_TITLE;
+    else if (dat == ERR_LASER_LOOP_RUN) return ERR_LASER_LOOP_RUN_TITLE;
+    else if (dat == ERR_VELOCITY_MEAN_LOOP) return ERR_VELOCITY_MEAN_LOOP_TITLE;
+    else if (dat == ERR_VEL_STOP_LOOP) return ERR_VEL_STOP_LOOP_TITLE;
+    else if (dat == ERR_SUPPORT_STOP) return ERR_SUPPORT_STOP_TITLE;
+
+#define ERR_LASER_LOOP_RUN                   0x0006
+#define ERR_VELOCITY_MEAN_LOOP               0x0007
+#define ERR_VEL_STOP_LOOP                    0x0008
+#define ERR_SUPPORT_STOP                     0x0009
 
     else if (dat == ERR_FILE_OPEN) return ERR_FILE_OPEN_TITLE;
     else if (dat == ERR_FILE_EMPTY) return ERR_FILE_EMPTY_TITLE;
@@ -170,6 +179,10 @@ static char* errgen_get_content(UNS16 dat) {
     else if (dat == ERR_DRIVER_OPEN) return ERR_DRIVER_OPEN_CONTENT;
     else if (dat == ERR_INIT_LOOP_RUN) return ERR_INIT_LOOP_RUN_CONTENT;
     else if (dat == ERR_GUI_LOOP_RUN) return ERR_GUI_LOOP_RUN_CONTENT;
+    else if (dat == ERR_LASER_LOOP_RUN) return ERR_LASER_LOOP_RUN_CONTENT;
+    else if (dat == ERR_VELOCITY_MEAN_LOOP) return ERR_VELOCITY_MEAN_LOOP_CONTENT;
+    else if (dat == ERR_VEL_STOP_LOOP) return ERR_VEL_STOP_LOOP_CONTENT;
+    else if (dat == ERR_SUPPORT_STOP) return ERR_SUPPORT_STOP_CONTENT;
 
     else if (dat == ERR_FILE_OPEN) return ERR_FILE_OPEN_CONTENT;
     else if (dat == ERR_FILE_EMPTY) return ERR_FILE_EMPTY_CONTENT;

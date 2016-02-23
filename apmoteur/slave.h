@@ -86,4 +86,7 @@ INTEGER32 slave_get_position_with_length (double l);
 
 int slave_load_const();
 int slave_check_asserv_config();
+
+void slave_support_init();
+int slave_support_check(double l);
 #endif // _SLAVE_H

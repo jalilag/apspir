@@ -41,6 +41,7 @@ extern int SLAVE_NUMBER,set_up;
 extern LOCVAR local[LOCVAR_NUMBER];
 extern double time_actual_sync;
 extern UNS32 tsync;
+extern UNS16 errgen_state;
 
 /*****************************************************************************/
 
@@ -155,7 +156,12 @@ void SpirallingMaster_stopped(CO_Data* d) {
 void SpirallingMaster_post_sync(CO_Data* d) {
     if (set_up) {
         time_actual_sync = cantools_get_time();
-        asserv_check();
+        if(!asserv_check()) {
+            GThread * velstop = g_thread_try_new ("vel_stop", asserv_motor_stop,NULL, NULL);
+            if (velstop == NULL) {
+                errgen_set(ERR_VEL_STOP_LOOP,NULL);
+            }
+        }
     }
     sendPDOevent(d);
 }

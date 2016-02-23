@@ -14,6 +14,7 @@
 #include "keyword.h"
 #include <gtk/gtk.h>
 #include "master.h"
+#include "errgen.h"
 #define NUMBER_VELOCITY 20
 
 // Variable externe
@@ -25,7 +26,9 @@ extern int current_step, SLAVE_NUMBER,set_up,trans_type,trans_direction,rot_dire
 extern INTEGER32 vitesse_max;
 extern INTEGER32 rot_pos_err_in_step,rot_pos_err_mean_in_step;
 extern double rot_pos_err_in_mm,rot_pos_err_mean_in_mm;
+extern UNS16 errgen_state;
 
+// Static
 static INTEGER32 vel_cor_old=0;
 static double vel_rot_cor_old = 0,rot_pos_err_cumul=0;
 static INTEGER32 rot_pos_err_old = 0;
@@ -33,7 +36,7 @@ static int ind=0;
 
 CONS cst[CONST_NUMBER_LIMIT] = {
     {"TransType",1,1,3},
-    {"VitTrans",3,1,3},
+    {"VitTrans",3,0.5,4.3},
     {"RotDirection",0,0,1},
     {"VitRotMax",300000,1,300000},
     {"PeriodSync",100,50,1000},
@@ -79,7 +82,7 @@ int asserv_init() {
     if(!serialtools_get_laser_data_valid(&l,&t)) {
         return 0;
     }
-
+    slave_support_init();
     // Initialisation des variables globales
     length_start = l;
     length_actual_laser = length_start;
@@ -90,9 +93,9 @@ int asserv_init() {
     time_actual_laser = time_start;
     time_actual_sync = time_start;
     current_step = slave_get_step_with_length(0);
-    rot_pos_start = slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit"));
+    rot_pos_start = abs(slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit")));
     rot_pos_actual = rot_pos_start;
-    printf("rot_pos 1 %d %d %d\n",rot_pos_start,rot_pos_actual,PositionR_4);
+    printf("rot_pos 1 %d %d \n",rot_pos_start,rot_pos_actual);
     rot_pos_err_cumul = 0;
     rot_pos_err_in_step = 0;
     ind = 0;
@@ -125,18 +128,21 @@ int asserv_check() {
     INTEGER32 rot_pos_theo;
     // Mesure laser
     if (!serialtools_get_laser_data_valid(&l,&t)) {
-        set_up = 0;
         return 0;
     }
     if (t-time_actual_laser >= tcalc) {
-        rot_pos_actual = slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit"));
+        rot_pos_actual = abs(slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit")));
         printf("rot_pos 2 %d %d %d\n",rot_pos_start,rot_pos_actual,PositionR_4);
-        INTEGER32 vel_rot_actual = slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit"));
+        INTEGER32 vel_rot_actual = abs(slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")));
         // longueur, temps et vitesse actuelle
         double vel_actual = fabs((l - length_actual_laser)/(t-time_actual_laser));
         length_actual_laser = l;
         length_covered_laser = fabs(length_actual_laser - length_start);
         time_actual_laser = t;
+        if (slave_support_check(length_actual_laser)) {
+            errgen_state = ERR_SUPPORT_STOP;
+            return 0;
+        }
         // Calcul de la longueur laser ajustée au temps synchro
         double dt = time_actual_sync - time_actual_laser;
         length_actual_sync = mean_velocity*dt+length_actual_laser;
@@ -186,6 +192,7 @@ int asserv_check() {
         // Correction de la vitesse
         int num_of_cycle_cor = 1;
         int i = slave_get_index_with_profile_id("RotVit");
+        int j = slave_get_index_with_profile_id("RotCouple");
         INTEGER32 rot_pos_err_new = rot_pos_err_in_step - rot_pos_err_old/2;
         INTEGER32 rot_pos_err_res = rot_pos_err_old/2;
         rot_pos_err_old = rot_pos_err_new;
@@ -198,7 +205,7 @@ int asserv_check() {
             vel_rot_cor = vel_rot_cor/num_of_cycle_cor;
             vel_rot = vel_rot_cor + vel_rot_nom;
         }
-        INTEGER32 acc_rot = (vel_rot-slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")))/tcalc;
+        INTEGER32 acc_rot = (vel_rot-vel_rot_actual)/tcalc;
         printf("---------\nSYNCRO\n---------\n");
         printf("current step           : %d\n",current_step);
         printf("time                  : %f %f\n",time_actual_laser, time_actual_sync);
@@ -218,8 +225,8 @@ int asserv_check() {
         if (vel_rot<=0) vel_rot = 0;
         if (acc_rot>0) slave_set_param("Acc2send",i,acc_rot);
         else slave_set_param("Dcc2send",i,abs(acc_rot));
-        slave_set_param("Couple2send",i,motor_get_couple_for_rot(vel_rot));
-        printf("Couple                 : %d",slave_get_param_in_num("Couple2send",slave_get_index_with_profile_id("RotVit")));
+        slave_set_param("Couple2send",j,motor_get_couple_for_rot(vel_rot));
+        printf("Couple                 : %d\n",slave_get_param_in_num("Couple2send",slave_get_index_with_profile_id("RotCouple")));
         slave_set_param("Vel2send",i,vel_rot);
         printf("Vel %d Vel2send %d Acc2send %d\n",slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")),slave_get_param_in_num("Vel2send",slave_get_index_with_profile_id("RotVit")),slave_get_param_in_num("Acc2send",slave_get_index_with_profile_id("RotVit")));
     }
@@ -250,11 +257,14 @@ gpointer asserv_calc_mean_velocity(gpointer data) {
             }
         }
     }
+    mean_velocity = 0;
+    if (errgen_state != 0x0000) g_idle_add(errgen_set_safe(NULL),NULL);
+
     return 0;
 }
 
 int asserv_motor_config() {
-    if (trans_type == 1) trans_vel = 250000;
+    if (trans_type == 1) trans_vel = 200000;
     if (trans_type == 3) trans_vel = 0;
     int i;
     for (i=0;i<SLAVE_NUMBER;i++) {
@@ -263,6 +273,7 @@ int asserv_motor_config() {
                 if (trans_type < 3) {
                     if (!motor_forward(slave_get_node_with_index(i),trans_direction)) return 0;
                     INTEGER32 acc = 1000/tcalc;
+                    printf("acc %d",acc);
                     if(!motor_set_param(slave_get_node_with_index(i),"TorqueSlope",acc)) return 0;
                     if(!motor_set_param(slave_get_node_with_index(i),"Torque",1000)) return 0;
                 }
@@ -276,19 +287,23 @@ int asserv_motor_config() {
                 }
             }
             if (slave_get_profile_id_with_index(i) == "RotVit") {
-                if (!motor_forward(slave_get_node_with_index(i),trans_direction)) return 0;
+                if (!motor_forward(slave_get_node_with_index(i),rot_direction)) return 0;
                 INTEGER32 rot_vel;
                 if (trans_vel == 0) rot_vel = 0;
-                else rot_vel = STEP_PER_REV*rot_direction/(current_step/(trans_vel/STEP_PER_REV/TRANS_REDUCTION*WHEEL_PERIMETER));
+                else rot_vel = ROT_REDUCTION*trans_vel*WHEEL_PERIMETER/(TRANS_REDUCTION*slave_get_step_with_length(0));
                 INTEGER32 acc = rot_vel/tcalc;
                 slave_set_param("Acc2send",i,acc);
                 slave_set_param("Vel2send",i,rot_vel);
             }
             if(slave_get_profile_id_with_index(i) == "RotCouple") {
                 if (!motor_forward(slave_get_node_with_index(i),rot_direction)) return 0;
-                INTEGER32 acc = 1000/tcalc;
+                INTEGER32 rot_vel;
+                if (trans_vel == 0) rot_vel = 0;
+                else rot_vel = ROT_REDUCTION*trans_vel*WHEEL_PERIMETER/(TRANS_REDUCTION*slave_get_step_with_length(0));
+
+                INTEGER32 acc = motor_get_couple_for_rot(rot_vel)/tcalc;
                 if(!motor_set_param(slave_get_node_with_index(i),"TorqueSlope",acc)) return 0;
-                slave_set_param("Couple2send",i,1000);
+                slave_set_param("Couple2send",i,motor_get_couple_for_rot(rot_vel));
             }
         }
     }
@@ -306,7 +321,7 @@ int asserv_motor_start() {
                     if(!motor_start(slave_get_node_with_index(i),1)) return 0;
             }
         }
-    } else if (trans_direction == 2) {
+    } else if (trans_type == 2) {
         for (i=0;i<SLAVE_NUMBER;i++) {
             if (slave_get_param_in_num("Active",i)) {
                 if (slave_get_profile_id_with_index(i) == "TransCouple" ||
@@ -316,7 +331,7 @@ int asserv_motor_start() {
                     if(!motor_start(slave_get_node_with_index(i),1)) return 0;
             }
         }
-    } else if (trans_direction == 3) {
+    } else if (trans_type == 3) {
         for (i=0;i<SLAVE_NUMBER;i++) {
             if (slave_get_param_in_num("Active",i)) {
                 if (slave_get_profile_id_with_index(i) == "RotVit" ||
@@ -326,4 +341,16 @@ int asserv_motor_start() {
         }
     }
     return 1;
+}
+gpointer asserv_motor_stop (gpointer data) {
+    set_up = 0;
+    int i = slave_get_index_with_profile_id("RotVit");
+    INTEGER32 vel_rot = slave_get_param_in_num("Velocity",i);
+    if (vel_rot == 0) vel_rot = 300000;
+    INTEGER32 dcc = vel_rot/tcalc;
+    slave_set_param("Dcc2send",i,dcc);
+    printf("vel_rot %d dcc %d %d\n",vel_rot,dcc,i);
+    usleep(200000);
+    Exit(0);
+    return 0;
 }

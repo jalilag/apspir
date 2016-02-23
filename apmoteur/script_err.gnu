@@ -11,7 +11,7 @@ set border 3 back ls 11
 set rmargin 0
 set lmargin 7
 set yrange [-25000:150000]
-set grid
+set grid lc rgb '#808080' lt 1
 set key inside right horizontal top textcolor rgb "white"
-set xrange [23:53]
+set xrange [0:30]
 plot "config/step_error.txt" using 1:2 title "Erreur" with lines linestyle 2,"config/step_error.txt" using 1:3 title "Erreur moyenne" with lines linestyle 1

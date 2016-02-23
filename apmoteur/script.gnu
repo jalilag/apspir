@@ -15,4 +15,4 @@ set yrange [-1:1]
 set sample 10000
 set lmargin 0
 g0(x)=((x>=0 && x<=30) ? 1 : 1/0)
-plot sin(2*pi/7*x)*g0(x) with lines linestyle 1 title "Courbe théorique"
+plot sin(2*pi/7*x)*g0(x) with lines linestyle 1 title "Courbe théorique", "config/helix_record.txt" using 1:2 title "Courbe réelle" with lines linestyle 2

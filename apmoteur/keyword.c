@@ -18,9 +18,8 @@ extern SLAVES_conf slaves[SLAVE_NUMBER_LIMIT];
 extern PROF profiles[PROFILE_NUMBER];
 extern int run_laser,set_up;
 extern INTEGER32 rot_pos; // Position de démarrage moteur
-extern double length_start,actual_length; // Longueur de début
+extern double length_start,length_covered_laser; // Longueur de début
 extern CONFIG conf1;
-extern struct timespec tstart, tend;
 extern INTEGER32 rot_pos_err_in_step,rot_pos_err_mean_in_step;
 extern double rot_pos_err_in_mm,rot_pos_err_mean_in_mm;
 
@@ -114,11 +113,14 @@ void keyword_init () {
 
 
 }
-double length_old = 0;
+//double length_old = 0;
 
 extern int motor_running;
 int iii = 0;
 gboolean keyword_maj(gpointer data) {
+    //
+    GtkWidget* lev = gui_local_get_widget(gui_get_widget("gridVisu"),"levelBar");
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(lev),(int)length_covered_laser*100/conf1.pipeLength);
     // Laser
     serialtools_plotLaserState();
     gui_local_label_set("labErrInstMm",strtools_gnum2str(&rot_pos_err_in_mm,0x10),"gridVisu");

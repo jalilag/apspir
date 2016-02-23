@@ -31,7 +31,7 @@ extern struct timespec tstart, tend;
 CONFIG conf1;
 
 static int step[2][20] = {{0}};
-static double support[20]={0};
+static double support[2][20]={{0}};
 
 extern double time_start,time_actual_sync,time_actual_laser,min_length,tcalc;
 extern int trans_type,rot_direction,max_error;
@@ -1387,7 +1387,7 @@ gboolean slave_gui_load_visu(gpointer data) {
         for (j=0;j<2;j++){
             step[j][i] = 0;
         }
-        support[i] = 0;
+        support[0][i] = 0;
     }
     conf1.step_size = 0;
     conf1.support_size = 0;
@@ -1427,7 +1427,7 @@ gboolean slave_gui_load_visu(gpointer data) {
                 valid++;
             }
             if (sscanf(chaine,"--%lf",&dat3) == 1) {
-                support[i2] = dat3;
+                support[0][i2] = dat3;
                 i2++;
                 conf1.support_size = i2;
             }
@@ -1475,6 +1475,7 @@ gboolean slave_gui_load_visu(gpointer data) {
     gtk_widget_set_halign(labErr2,GTK_ALIGN_START);
     if (valid == 2 && i1>0 && i2>0) {
         GtkWidget* lev = gtk_level_bar_new();
+        gtk_widget_set_name(lev,"levelBar");
         gtk_level_bar_set_mode(GTK_LEVEL_BAR(lev),GTK_LEVEL_BAR_MODE_CONTINUOUS);
         gtk_level_bar_set_min_value(GTK_LEVEL_BAR(lev),0);
         gtk_level_bar_set_max_value(GTK_LEVEL_BAR(lev),100);
@@ -1499,9 +1500,9 @@ gboolean slave_gui_load_visu(gpointer data) {
         }
         int l;
         for (i=0; i<conf1.support_size; i++) {
-            l = conf1.length2pipe+conf1.pipeLength-(int)support[i];
+            l = conf1.length2pipe+conf1.pipeLength-(int)support[0][i];
 
-            if (l >= 0 && l <= conf1.pipeLength) {
+            if (l >= 0 && l <= conf1.pipeLength-1) {
                 j = i+1;
                 GtkWidget* lab = gui_create_widget("lab",strtools_concat("labSupport_",strtools_gnum2str(&j,0x04),NULL),"X","bold","blue",NULL);
                 if (l == 0) gtk_grid_attach(grid,lab,l,3,1,1);
@@ -1566,7 +1567,7 @@ int slave_gen_plot() {
     str2build3 = strtools_concat("set terminal pngcairo size ",strtools_gnum2str(&wgridVel,0x04),",150 enhanced font 'Verdana,8' background rgb 'black'",str2build3,NULL);
     str2build3 = strtools_concat(str2build3, "\nset lmargin 7",NULL);
     str2build3 = strtools_concat(str2build3, "\nset yrange [-25000:150000]",NULL);
-    str2build3 = strtools_concat(str2build3, "\nset grid",NULL);
+    str2build3 = strtools_concat(str2build3, "\nset grid lc rgb '#808080' lt 1",NULL);
     str2build3 = strtools_concat(str2build3, "\nset key inside right horizontal top textcolor rgb \"white\"",NULL);
     int l,y1=0,y2=0;
     for (l=0; l<conf1.step_size;l++) {
@@ -1621,8 +1622,8 @@ int slave_gen_plot() {
         coord[l] = y1;
         if (l != conf1.step_size-1) str2build = strtools_concat(str2build,",",NULL);
     }
+    str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 title \"Courbe réelle\" with lines linestyle 2",NULL);
     if (set_up) {
-        str2build = strtools_concat(str2build, ", \"",FILE_HELIX_RECORDED,"\" using 1:2 title \"Courbe réelle\" with lines linestyle 2",NULL);
         double temps = time_actual_sync- time_start + 15;
         if (temps < 30) {
             str2build2 = strtools_concat(str2build2, "\nset xrange [0:30]",NULL);
@@ -1775,4 +1776,20 @@ int slave_check_asserv_config() {
         if(!strtools_build_file(FILE_ASSERV_CONFIG,str2build)) return 0;
     }
     return 1;
+}
+void slave_support_init() {
+    int i;
+    for (i=0;i<conf1.support_size;i++) {
+        support[1][i] = 1;
+    }
+}
+int slave_support_check(double l) {
+    int i;
+    for (i=0;i<conf1.support_size;i++) {
+        if (support[1][i] > 0.5 && l < support[0][i]+1 && l > support[0][i]) {
+            support[1][i] =0;
+            return 1;
+        }
+    }
+    return 0;
 }

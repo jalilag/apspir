@@ -24,17 +24,14 @@
 GtkBuilder *builder;
 
 extern int run_init, SLAVE_NUMBER, current_menu, motor_running;
-extern PROF profiles[PROFILE_NUMBER];
-extern INTEGER32 velocity_inc[SLAVE_NUMBER_LIMIT];
 extern PARAM pardata[PARAM_NUMBER];
 extern GMutex lock_gui_box;
 extern int set_up,trans_direction,rot_direction,trans_type;
 extern int run_laser;
 extern GThread* lthread;
 extern CONFIG conf1;
-extern struct timespec tstart, tend;
 extern INTEGER32 rot_pos;
-extern double length_start,actual_length;
+extern double length_start,actual_length,tcalc;
 
 
 void gtksig_init () {
@@ -258,7 +255,7 @@ void on_butAddSlave_clicked (GtkWidget* pEntry) {
     }
     GtkWidget* comb = gui_create_widget("combo",strtools_concat("labParamM",strtools_gnum2str(&j,0x02),"SlaveProfile",NULL),NULL,NULL);
     for (l=0; l<PROFILE_NUMBER;l++) {
-        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profiles[l].title);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(comb),strtools_gnum2str(&l,0x02),profile_get_title_with_index(l));
     }
     gtk_grid_attach(GTK_GRID(grid),comb,5,i,1,1);
     gtk_widget_show_all(gui_get_widget("boxParam"));
@@ -751,13 +748,15 @@ void on_butStartSet_clicked (GtkWidget* but) {
         // initialisation des variables
         if (!asserv_motor_config()) return;
         if (!asserv_init()) return;
-        if (!asserv_motor_start()) return;
         set_up = 1;
+        if (!asserv_motor_start()) {
+            on_butStopSet_clicked(NULL);
+            return;
+        }
         // Thread de calcul de la vitesse moyenne
-        GError * mean_vel_err;
-        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, &mean_vel_err);
+        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, NULL);
         if (velthread == NULL) {
-            set_up = 0;
+            on_butStopSet_clicked(NULL);
             errgen_set(ERR_VELOCITY_MEAN_LOOP,NULL);
         }
     }
@@ -773,27 +772,22 @@ void on_butContinueSet_clicked (GtkWidget* but) {
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotVit") l++;
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
         }
-        if (j + k != 2) return;
-        if (l != 1 && m != 1) return;
+        if (trans_type == 1 && k < 2) return;
+        if (trans_type == 2 && j< 1 && k < 1) return;
+        if (l < 1 && m < 1) return;
         if (run_laser != LASER_STATE_READY) return;
-        // Configuration des moteurs
-        for (i=0;i<SLAVE_NUMBER;i++) {
-                if (slave_get_profile_id_with_index(i) == "TransCouple")
-                    if (!motor_forward(slave_get_node_with_index(i),trans_direction)) return;
-                if (slave_get_profile_id_with_index(i) == "RotVit" || slave_get_profile_id_with_index(i) == "RotCouple")
-                    if (!motor_forward(slave_get_node_with_index(i),rot_direction)) return;
-
-        }
-        //Demarrage des moteurs
-//        if(!motor_start(slave_get_node_with_index(i),1)) return;
-
-        slave_set_param("Couple2send",slave_get_index_with_profile_id("RotCouple"),motor_get_couple_for_rot(0));
+        // initialisation des variables
+        if (!asserv_motor_config()) return;
+//        if (!asserv_init()) return;
         set_up = 1;
+        if (!asserv_motor_start()) {
+            on_butStopSet_clicked(NULL);
+            return;
+        }
         // Thread de calcul de la vitesse moyenne
-        GError * mean_vel_err;
-        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, &mean_vel_err);
+        GThread * velthread = g_thread_try_new ("mean_vel_loop", asserv_calc_mean_velocity,NULL, NULL);
         if (velthread == NULL) {
-            set_up = 0;
+            on_butStopSet_clicked(NULL);
             errgen_set(ERR_VELOCITY_MEAN_LOOP,NULL);
         }
     }
@@ -801,8 +795,7 @@ void on_butContinueSet_clicked (GtkWidget* but) {
 
 void on_butStopSet_clicked (GtkWidget* but) {
     if (set_up == 1) {
-        set_up = 0;
-        Exit(0);
+        asserv_motor_stop(NULL);
     }
 }
 

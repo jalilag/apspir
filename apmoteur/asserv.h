@@ -21,6 +21,6 @@ int asserv_get_const_index_with_name(char* name);
 int asserv_get_const_index_with_id(char* id);
 char* asserv_get_const_name_with_id(char* id);
 int asserv_check_const(char* name,double val);
-
+gpointer asserv_motor_stop (gpointer data);
 #endif
 

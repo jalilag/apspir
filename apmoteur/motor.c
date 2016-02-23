@@ -413,6 +413,8 @@ int motor_get_couple_for_trans(INTEGER32 vel) {
     else if (vel >= 341000 ) return 400;
 }
 INTEGER32 motor_get_couple_for_rot(INTEGER32 vel) {
-    if (vel == 0) return 50;
-    else return 1000;
+    if (vel >= 0 && vel < 100000) return 50;
+    if (vel >= 100000 && vel < 200000) return 500;
+    if (vel >= 200000 && vel < 250000) return 700;
+    if (vel >= 250000) return 1000;
 }

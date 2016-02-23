@@ -324,6 +324,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_DRIVER_OPEN_TITLE "Ouverture du bus"
 #define ERR_INIT_LOOP_RUN_TITLE "Boucle d'initialisation"
 #define ERR_GUI_LOOP_RUN_TITLE "Interface graphique"
+#define ERR_LASER_LOOP_RUN_TITLE "Erreur laser"
+#define ERR_VELOCITY_MEAN_LOOP_TITLE "Boucle vitesse moyenne"
+#define ERR_VEL_STOP_LOOP_TITLE "Arret moteur"
+#define ERR_SUPPORT_STOP_TITLE "Support détecté"
 
 #define ERR_FILE_OPEN_TITLE "Ouverture de fichier"
 #define ERR_FILE_EMPTY_TITLE "Fichier vide"
@@ -414,6 +418,10 @@ gboolean keyword_active_maj(gpointer data);
 #define ERR_DRIVER_OPEN_CONTENT "L'ouverture du bus can pour l'envoie d'information a échoué"
 #define ERR_INIT_LOOP_RUN_CONTENT "Le lancement de la boucle d'initialisation a échoué"
 #define ERR_GUI_LOOP_RUN_CONTENT "Le lancement de l'interface graphique a échoué"
+#define ERR_LASER_LOOP_RUN_CONTENT "Le laser n'a pas pu démarrer"
+#define ERR_VELOCITY_MEAN_LOOP_CONTENT "La boucle de calcul de vitesse moyenne n'a pas pu démarrer"
+#define ERR_VEL_STOP_LOOP_CONTENT "L'arret des moteurs a échoué"
+#define ERR_SUPPORT_STOP_CONTENT "La machine arrive à proximité d'un support. Veuillez le retirer et appuyer sur continuer"
 
 #define ERR_FILE_OPEN_CONTENT "L'Ouverture du fichier a échoué, un nouveau fichier va donc être généré."
 #define ERR_FILE_EMPTY_CONTENT "Le fichier listé ci-dessous est vide"
