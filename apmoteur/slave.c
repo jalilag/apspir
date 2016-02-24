@@ -1786,7 +1786,7 @@ void slave_support_init() {
 int slave_support_check(double l) {
     int i;
     for (i=0;i<conf1.support_size;i++) {
-        if (support[1][i] > 0.5 && l < support[0][i]+1 && l > support[0][i]) {
+        if (support[1][i] > 0.5 && l < support[0][i]+0.8 && l > support[0][i]) {
             support[1][i] =0;
             return 1;
         }

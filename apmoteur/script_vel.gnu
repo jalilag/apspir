@@ -12,5 +12,5 @@ set rmargin 0
 set lmargin 4
 set yrange [0:6]
 set key inside right horizontal top textcolor rgb "white"
-set xrange [0:30]
+set xrange [93:123]
 plot "config/velocity_laser.txt" using 1:2 title "Vit. Laser Mean" with lines linestyle 2, "config/velocity_laser.txt" using 1:3 title "Vit. Laser Inst." with lines linestyle 3, "config/velocity_sync.txt" using 1:2 title "Vit. Translation" with lines linestyle 4, "config/velocity_sync.txt" using 1:3 title "Vit. Rotation" with lines linestyle 5
