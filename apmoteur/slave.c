@@ -1745,7 +1745,7 @@ int slave_load_const() {
             i++;
         }
         if (sscanf(chaine,"%19s %lf",title,&datV) == 2 && strcmp(title,"VitTrans") == 0) {
-            trans_vel = (INTEGER32)datV/60*STEP_PER_REV*TRANS_REDUCTION/WHEEL_PERIMETER;
+            trans_vel = (INTEGER32)datV*STEP_PER_REV*TRANS_REDUCTION/(WHEEL_PERIMETER*60);
             i++;
         }
         if (sscanf(chaine,"%19s %lf",title,&datVmax) == 2 && strcmp(title,"VitRotMax") == 0) {

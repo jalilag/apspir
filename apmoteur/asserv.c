@@ -131,8 +131,8 @@ int asserv_check() {
         return 0;
     }
     if (t-time_actual_laser >= tcalc) {
-    // Asservissement translation
-//        if (trans_type == 2) {
+    // Asservissement translation à revoir
+        if (trans_type == 2) {
 //            int j1 = slave_get_index_with_profile_id("TransVit");
 //            int j2 = slave_get_index_with_profile_id("TransCouple");
 //            INTEGER32 vt =slave_get_param_in_num("Velocity",j1);
@@ -145,8 +145,11 @@ int asserv_check() {
 //                slave_set_param("Couple2send",j2,motor_get_couple_for_trans(vt+20000));
 //            }
 //            if (motor_get_slippage((UNS16)slave_get_param_in_num("Power",slave_get_index_with_profile_id("TransVit")))) {
-//                slave_set_param("Vel2send",j1,vt-20000);
-//                slave_set_param("Couple2send",j2,motor_get_couple_for_trans(vt-20000));
+//                printf("\n\nSLIPPAGE %d\n\n",slave_get_param_in_num("Velocity",j1));
+//                if (vt-20000>20000) {
+//                    slave_set_param("Vel2send",j1,vt-20000);
+//                    slave_set_param("Couple2send",j2,motor_get_couple_for_trans(vt-20000));
+//                }
 //            } else
 //                if (vt < 0.90*trans_vel) {
 //                    if (vt-trans_vel>20000) {
@@ -157,7 +160,8 @@ int asserv_check() {
 //                        slave_set_param("Couple2send",j2,motor_get_couple_for_trans(trans_vel));
 //                    }
 //                }
-//        }
+
+        }
         rot_pos_actual = abs(slave_get_param_in_num("Position",slave_get_index_with_profile_id("RotVit")));
         INTEGER32 vel_rot_actual = abs(slave_get_param_in_num("Velocity",slave_get_index_with_profile_id("RotVit")));
         // longueur, temps et vitesse actuelle
@@ -301,6 +305,8 @@ int asserv_motor_config() {
         trans_vel = 200000;
         mean_velocity = trans_vel*WHEEL_PERIMETER/(STEP_PER_REV*TRANS_REDUCTION);
     }
+    if (trans_type == 2) mean_velocity = trans_vel*WHEEL_PERIMETER/(STEP_PER_REV*TRANS_REDUCTION);
+
     if (trans_type == 3) trans_vel = 0;
     int i;
     for (i=0;i<SLAVE_NUMBER;i++) {
@@ -318,6 +324,7 @@ int asserv_motor_config() {
                 if (trans_type == 2) {
                     if (!motor_forward(slave_get_node_with_index(i),trans_direction)) return 0;
                     INTEGER32 acc = trans_vel/tcalc;
+                    printf("transvel %d",trans_vel);
                     if(!motor_set_param(slave_get_node_with_index(i),"Acc",acc)) return 0;
                     slave_set_param("Vel2send",i,trans_vel);
                 }

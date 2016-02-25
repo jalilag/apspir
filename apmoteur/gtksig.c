@@ -742,8 +742,8 @@ void on_butStartSet_clicked (GtkWidget* but) {
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
         }
         if (trans_type == 1 && k < 2) return;
-        if (trans_type == 2 && j< 1 && k < 1) return;
-        if (l < 1 && m < 1) return;
+        if (trans_type == 2 && (j< 1 || k < 1)) return;
+        if (l < 1 || m < 1) return;
         if (run_laser != LASER_STATE_READY) return;
         // initialisation des variables
         if (!asserv_motor_config()) return;
@@ -773,8 +773,8 @@ void on_butContinueSet_clicked (GtkWidget* but) {
             if (slave_get_param_in_num("Active",i) && slave_get_profile_id_with_index(i) == "RotCouple") m++;
         }
         if (trans_type == 1 && k < 2) return;
-        if (trans_type == 2 && j< 1 && k < 1) return;
-        if (l < 1 && m < 1) return;
+        if (trans_type == 2 && (j< 1 || k < 1)) return;
+        if (l < 1 || m < 1) return;
         if (run_laser != LASER_STATE_READY) return;
         // initialisation des variables
         if (!asserv_motor_config()) return;
